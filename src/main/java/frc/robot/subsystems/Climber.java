@@ -4,30 +4,28 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Intake extends SubsystemBase {
+public class Climber extends SubsystemBase {
+  /** Creates a new Climber. */
 
-  private CANSparkMax intakeMotor = new CANSparkMax(21, MotorType.kBrushless);
+  private CANSparkMax climberMotor = new CANSparkMax(42, MotorType.kBrushless);
+  public Climber() {
+    climberMotor.restoreFactoryDefaults();
 
-  /** Creates a new Intake. */
-  public Intake() {
-    intakeMotor.restoreFactoryDefaults();
-
-    intakeMotor.setSmartCurrentLimit(40);
-    intakeMotor.setIdleMode(IdleMode.kBrake);
-
-    intakeMotor.burnFlash();
+    climberMotor.setSmartCurrentLimit(40);
+    climberMotor.setIdleMode(IdleMode.kBrake);
+    
+    climberMotor.burnFlash();
   }
 
-  public void setIntakeSpeed(double speed){
-    intakeMotor.set(speed);
+  public void setClimberSpeed(double speed){
+    climberMotor.set(speed);
   }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
