@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 
@@ -14,16 +15,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   private CANSparkMax shooterMotor = new CANSparkMax(33, MotorType.kBrushless);
-  private TalonFX shooter1Motor = new TalonFX(5);
-  private TalonFX shooter2Motor = new TalonFX(2);
+  private TalonFX shooter1Motor = new TalonFX(31);
+  private TalonFX shooter2Motor = new TalonFX(32);
+  private TalonFX shooterPivot = new TalonFX(34);
   public Shooter() {
-shooterMotor.restoreFactoryDefaults();
+  shooterMotor.restoreFactoryDefaults();
 
-shooterMotor.setSmartCurrentLimit(40);
-shooterMotor.setIdleMode(IdleMode.kBrake);
-shooterMotor.setInverted(true);
+  shooterMotor.setSmartCurrentLimit(40);
+  shooterMotor.setIdleMode(IdleMode.kBrake);
+  shooterMotor.setInverted(true);
 
-shooterMotor.burnFlash();
+  shooterMotor.burnFlash();
+
+  shooterPivot.setNeutralMode(NeutralModeValue.Brake);
 
   }
 
@@ -31,6 +35,9 @@ shooterMotor.burnFlash();
     shooterMotor.set(speed/2);
     shooter1Motor.set(speed);
     shooter2Motor.set(speed);
+  }
+ public void setPivotSpeed(double speed){
+    shooterPivot.set(speed);
   }
 
   @Override

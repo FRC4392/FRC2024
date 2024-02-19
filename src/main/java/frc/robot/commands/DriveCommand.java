@@ -86,7 +86,7 @@ public class DriveCommand extends CommandBase {
       mController.setRumble(RumbleType.kRightRumble, 0);
     }
 
-    rotVel = mController.getRightTriggerAxis() - mController.getLeftTriggerAxis();
+    rotVel = mController.getLeftTriggerAxis() - mController.getRightTriggerAxis();
     yVel = yHelper.setInput(yVel).applyPower(2).value;
     xVel = xHelper.setInput(xVel).applyPower(2).value;
     rotVel = rotHelper.setInput(rotVel).applyPower(2).value;

@@ -101,17 +101,29 @@ public class Robot extends TimedRobot {
 
 if (operatorController.getBButton()) {
   shooter.setShooterSpeed(1);
-} else {
+} else if (operatorController.getXButton()) {
+ shooter.setShooterSpeed(-.2);
+ intake.setIntakeSpeed(-.2);
+} else if (operatorController.getAButton()) {
+      intake.setIntakeSpeed(1);
+    } else {
   shooter.setShooterSpeed(0);
+  intake.setIntakeSpeed(0);
 }
-
 if (operatorController.getYButton()) {
   climber.setClimberSpeed(1);
 } else {
   climber.setClimberSpeed(0);
-}
   }
 
+if (operatorController.getLeftBumper()) {
+  shooter.setPivotSpeed(.1);
+} else if (operatorController.getRightBumper()) {
+  shooter.setPivotSpeed(-.1);
+  } else {
+    shooter.setPivotSpeed(0);
+  }
+}
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
