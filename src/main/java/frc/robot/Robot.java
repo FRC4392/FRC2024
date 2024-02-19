@@ -5,8 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -17,12 +23,21 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
+  private XboxController driverController = new XboxController(0);
+  private XboxController operatorController = new XboxController(1);
+
+  private Drivetrain drivetrain = new Drivetrain();
+  private Intake intake = new Intake();
+  private Shooter shooter = new Shooter();
+  private Climber climber = new Climber();
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+    drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
   }
@@ -77,7 +92,25 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if (operatorController.getAButton()) {
+      intake.setIntakeSpeed(1);
+    } else {
+      intake.setIntakeSpeed(0);
+    }
+
+if (operatorController.getBButton()) {
+  shooter.setShooterSpeed(1);
+} else {
+  shooter.setShooterSpeed(0);
+}
+
+if (operatorController.getYButton()) {
+  climber.setClimberSpeed(1);
+} else {
+  climber.setClimberSpeed(0);
+}
+  }
 
   @Override
   public void testInit() {

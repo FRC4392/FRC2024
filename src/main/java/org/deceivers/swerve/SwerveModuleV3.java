@@ -1,10 +1,13 @@
 package org.deceivers.swerve;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,18 +18,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class SwerveModuleV3 implements SwerveModule {
 
     private final CANSparkMax mAzimuthMotor;
-    private final CANSparkMax mDriveMotor;
+    private final CANSparkFlex mDriveMotor;
     private final AbsoluteEncoder mAzimuthAbsoluteEncoder;
     private final RelativeEncoder mAzimuthIncrementalEncoder;
     private final RelativeEncoder mDriveEncoder;
-    private final SparkMaxPIDController mDrivePID;
-    private final SparkMaxPIDController mAzimuthPID;
+    private final SparkPIDController mDrivePID;
+    private final SparkPIDController mAzimuthPID;
     private final Translation2d mLocation;
     private final String mName;
 
     // need to update the speed to m/s
 
-    public SwerveModuleV3(CANSparkMax azimuthMotor, CANSparkMax driveMotor,
+    public SwerveModuleV3(CANSparkMax azimuthMotor, CANSparkFlex driveMotor,
             Translation2d location, String name) {
 
         mDriveMotor = driveMotor;
@@ -51,8 +54,8 @@ public class SwerveModuleV3 implements SwerveModule {
         mDriveMotor.setInverted(true);
         mDriveMotor.setClosedLoopRampRate(0);
         mDriveMotor.setOpenLoopRampRate(.1);
-        mDriveMotor.setIdleMode(com.revrobotics.CANSparkBase.IdleMode.kCoast);
-        mDriveMotor.setSmartCurrentLimit(40, 60, 5700);
+        mDriveMotor.setIdleMode(IdleMode.kBrake);
+        mDriveMotor.setSmartCurrentLimit(80);
 
         // Configure Drive Encoder
         mDriveEncoder.setPositionConversionFactor(0.2393893602 / ((18.0*45.0)/(12.0*15.0)));
@@ -63,7 +66,7 @@ public class SwerveModuleV3 implements SwerveModule {
         mAzimuthMotor.setInverted(true);
         mAzimuthMotor.setClosedLoopRampRate(0);
         mAzimuthMotor.setOpenLoopRampRate(0);
-        mAzimuthMotor.setIdleMode(com.revrobotics.CANSparkBase.IdleMode.kBrake);
+        mAzimuthMotor.setIdleMode(IdleMode.kBrake);
         mAzimuthMotor.setSmartCurrentLimit(20);
 
         // Configure drive absolute encoder
@@ -72,7 +75,9 @@ public class SwerveModuleV3 implements SwerveModule {
         mAzimuthAbsoluteEncoder.setAverageDepth(1);
 
         // Configure azimuth incremental encoder
-        mAzimuthIncrementalEncoder.setPositionConversionFactor(360.0 / 35.94);
+        mAzimuthIncrementalEncoder.setPositionConversionFactor(360.0 /(5.23*3.61*(58.0/18.0)));
+
+        
 
         // Configure drive PID
         mDrivePID.setFF(.3);
@@ -151,7 +156,7 @@ public class SwerveModuleV3 implements SwerveModule {
         SwerveModuleState optimizedState = SwerveModuleState.optimize(drive, current);
         double setpoint = optimizedState.angle.getDegrees();
         double velocity = optimizedState.speedMetersPerSecond;
-        mAzimuthPID.setReference(setpoint, com.revrobotics.CANSparkBase.ControlType.kPosition);
+        mAzimuthPID.setReference(setpoint, ControlType.kPosition);
         mDriveMotor.set(velocity);
     }
 
@@ -161,8 +166,8 @@ public class SwerveModuleV3 implements SwerveModule {
         SwerveModuleState optimizedState = SwerveModuleState.optimize(drive, current);
         double setpoint = optimizedState.angle.getDegrees();
         double velocity = optimizedState.speedMetersPerSecond;
-        mAzimuthPID.setReference(setpoint, com.revrobotics.CANSparkBase.ControlType.kPosition);
-        mDrivePID.setReference(velocity, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        mAzimuthPID.setReference(setpoint, ControlType.kPosition);
+        mDrivePID.setReference(velocity, ControlType.kVelocity);
     }
 
     // Stop all motors
@@ -175,7 +180,7 @@ public class SwerveModuleV3 implements SwerveModule {
     // set angle of swerve drive
     @Override
     public void setAngle(double angle) {
-        mAzimuthPID.setReference(angle, com.revrobotics.CANSparkBase.ControlType.kPosition);
+        mAzimuthPID.setReference(angle, ControlType.kPosition);
 
     }
 

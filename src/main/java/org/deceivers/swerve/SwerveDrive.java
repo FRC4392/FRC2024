@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -18,15 +17,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
-
-// import com.pathplanner.lib.PathPlannerTrajectory;
-// import com.pathplanner.lib.PathPlannerTrajectory.EventMarker;
-// import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
 public class SwerveDrive {
     //Swerve Devices
@@ -40,9 +33,6 @@ public class SwerveDrive {
 
     //Network Table Data
     private final NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
-    private final DoubleArrayPublisher pathGoalPose;
-    private final DoubleArrayPublisher pathGoalPoseError;
-    private final DoubleArrayPublisher swervePose;
 
     public SwerveDrive(DoubleSupplier gyroAngle, SwerveModule... modules){
 
@@ -52,9 +42,6 @@ public class SwerveDrive {
 
         //Network Table setup
         NetworkTable swerveTable = networkTableInstance.getTable("swervetable");
-        pathGoalPose = swerveTable.getDoubleArrayTopic("/swervetable/pathgoalpose").publish();
-        pathGoalPoseError = swerveTable.getDoubleArrayTopic("/swervetable/pathgoalposeerror").publish();
-        swervePose = swerveTable.getDoubleArrayTopic("/swervetable/swervepose").publish();
 
         Translation2d[] moduleLocations = new Translation2d[numModules];
         for (int i = 0; i < numModules; i++){
@@ -170,18 +157,5 @@ public class SwerveDrive {
     public void log(){
         Arrays.stream(mModules).forEach(SwerveModule::log);
         double[] swervePoseArray = {getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees()};
-        swervePose.set(swervePoseArray);
-
-        // if (LimelightHelpers.getTV("")){
-        // Pose2d botPose = LimelightHelpers.getBotPose2d_wpiBlue("");
-        // double timeDelay = Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Capture("")/1000.0) - (LimelightHelpers.getLatency_Pipeline("")/1000.0);
-
-        // SmartDashboard.putNumber("limelightTIme", timeDelay);
-        // SmartDashboard.putNumber("limex", botPose.getY());
-        // SmartDashboard.putNumber("limey", botPose.getX());
-        // SmartDashboard.putNumber("limeRot", botPose.getRotation().getDegrees());
-        // SmartDashboard.putNumber("odometryRotation", mSwerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
-        // SmartDashboard.putNumber("Tags", LimelightHelpers.getLatestResults("").targetingResults.targets_Retro.length);
-        //}
     }
 }
