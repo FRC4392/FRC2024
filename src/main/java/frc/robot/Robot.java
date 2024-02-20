@@ -110,7 +110,7 @@ if (operatorController.getBButton()) {
 } else if (operatorController.getAButton()) {
       intake.setIntakeSpeed(1);
     } else {
-  shooter.setShooterSpeed(0);
+  shooter.setShooterSpeed(operatorController.getLeftTriggerAxis());
   intake.setIntakeSpeed(0);
 }
 if (operatorController.getYButton()) {
