@@ -95,15 +95,18 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     if (operatorController.getAButton()) {
       intake.setIntakeSpeed(1);
+      shooter.setFeedSpeed(.5);
     } else {
       intake.setIntakeSpeed(0);
+      shooter.setFeedSpeed(0);
     }
 
 if (operatorController.getBButton()) {
-  shooter.setShooterSpeed(1);
+  shooter.setShooterSpeed(.5);
 } else if (operatorController.getXButton()) {
  shooter.setShooterSpeed(-.2);
  intake.setIntakeSpeed(-.2);
+ shooter.setFeedSpeed(-.2);
 } else if (operatorController.getAButton()) {
       intake.setIntakeSpeed(1);
     } else {

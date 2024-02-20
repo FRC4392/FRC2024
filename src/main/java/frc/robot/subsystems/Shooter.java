@@ -32,12 +32,15 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setShooterSpeed(double speed){
-    shooterMotor.set(speed/2);
     shooter1Motor.set(speed);
     shooter2Motor.set(speed);
   }
  public void setPivotSpeed(double speed){
     shooterPivot.set(speed);
+  }
+  
+  public void setFeedSpeed(double speed){
+    shooterMotor.set(speed);
   }
 
   @Override
