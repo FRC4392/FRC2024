@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -25,7 +26,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private XboxController driverController = new XboxController(0);
-  private XboxController operatorController = new XboxController(1);
+  private CommandXboxController operatorController = new CommandXboxController(1);
 
   private Drivetrain drivetrain = new Drivetrain();
   private Intake intake = new Intake();
@@ -96,41 +97,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
-    if (operatorController.getAButton()) {
-      intake.setIntakeSpeed(1);
-      shooter.setFeedSpeed(.5);
-    } else {
-      intake.setIntakeSpeed(0);
-      shooter.setFeedSpeed(0);
-    }
-
-if (operatorController.getBButton()) {
-  shooter.setShooterSpeed(.5);
-} else if (operatorController.getXButton()) {
- shooter.setShooterSpeed(-.2);
- intake.setIntakeSpeed(-.2);
- shooter.setFeedSpeed(-.2);
-} else if (operatorController.getAButton()) {
-      intake.setIntakeSpeed(1);
-    } else {
-  shooter.setShooterSpeed(operatorController.getLeftTriggerAxis());
-  intake.setIntakeSpeed(0);
-}
-if (operatorController.getYButton()) {
-  climber.setClimberSpeed(1);
-} else {
-  climber.setClimberSpeed(0);
   }
 
-if (operatorController.getLeftBumper()) {
-  shooter.setPivotSpeed(.1);
-} else if (operatorController.getRightBumper()) {
-  shooter.setPivotSpeed(-.1);
-  } else {
-    shooter.setPivotSpeed(0);
-  }
-}
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
@@ -148,4 +116,8 @@ if (operatorController.getLeftBumper()) {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  public void configureButtonBindings(){
+    operatorController.a().whileTrue(intake.intakeCommand());
+  }
 }
