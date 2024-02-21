@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -118,8 +121,13 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   public void configureButtonBindings(){
-    operatorController.a().and(()->shooter.getShooterSensor()).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
+
+    Trigger IntakeTrigger = operatorController.a();
+    IntakeTrigger.and(()->shooter.getShooterSensor()).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
     operatorController.b().whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()).alongWith(shooter.backfeedCommand()));
     operatorController.x().whileTrue(shooter.runShooter());
+    operatorController.y().whileTrue(shooter.feedCommand());
+    operatorController.povUp().whileTrue(shooter.pivotCommand());
+    operatorController.povDown().whileTrue(shooter.pivotBackCommand());
   }
 }

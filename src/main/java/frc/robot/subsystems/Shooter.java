@@ -24,6 +24,8 @@ public class Shooter extends SubsystemBase {
     kOutfeedSpeed(-0.3),
     kShootSpeed(.5),
     kBackfeedSpeed(-.15),
+    kPivotSpeed(.1),
+    kPivotBackSpeed(-.1),
     kStopSpeed(0);
 
     public final double speed;
@@ -55,6 +57,10 @@ public class Shooter extends SubsystemBase {
 
   public void stopFeed(){
     shooterMotor.set(shooterSpeeds.kStopSpeed.speed);
+  }
+
+  public void stopPivot(){
+    shooterPivot.set(shooterSpeeds.kStopSpeed.speed);
   }
 
   public void stopShooter(){
@@ -94,6 +100,14 @@ public class Shooter extends SubsystemBase {
 
   public Command runShooter(){
     return this.runEnd(()->setShooterSpeed(shooterSpeeds.kShootSpeed), ()->stopShooter());
+  }
+
+  public Command pivotCommand(){
+    return this.runEnd(()->setShooterSpeed(shooterSpeeds.kPivotSpeed), ()->stopPivot());
+  }
+
+  public Command pivotBackCommand(){
+    return this.runEnd(()->setShooterSpeed(shooterSpeeds.kPivotSpeed), ()->stopPivot());
   }
 
   @Override
