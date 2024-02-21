@@ -13,6 +13,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.LED;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -30,6 +31,7 @@ public class Robot extends TimedRobot {
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
   private Climber climber = new Climber();
+  LED led = new LED();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
+    led.setLEDColor(0,0,100);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
   }
@@ -93,6 +96,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    
     if (operatorController.getAButton()) {
       intake.setIntakeSpeed(1);
       shooter.setFeedSpeed(.5);

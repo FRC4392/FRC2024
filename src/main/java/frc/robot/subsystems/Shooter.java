@@ -9,7 +9,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.ctre.phoenix.CANifier;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -19,7 +18,6 @@ public class Shooter extends SubsystemBase {
   private TalonFX shooter1Motor = new TalonFX(31);
   private TalonFX shooter2Motor = new TalonFX(32);
   private TalonFX shooterPivot = new TalonFX(34);
-  private CANifier noteSensor = new CANifier(35);
   
   public Shooter() {
   shooterMotor.restoreFactoryDefaults();

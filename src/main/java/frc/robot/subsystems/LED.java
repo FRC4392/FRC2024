@@ -5,9 +5,19 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix.CANifier;
+import com.ctre.phoenix.CANifier.GeneralPin;
+import com.ctre.phoenix.CANifier.LEDChannel;
 
 public class LED extends SubsystemBase {
-  /** Creates a new LED. */
+  private CANifier remoteIO = new CANifier(35);
+  
+  public void setLEDColor(double R, double G, double B) {
+    remoteIO.setLEDOutput(G, LEDChannel.LEDChannelC);
+    remoteIO.setLEDOutput(B, LEDChannel.LEDChannelA);
+    remoteIO.setLEDOutput(R, LEDChannel.LEDChannelB);
+  }
+
   public LED() {}
 
   @Override
