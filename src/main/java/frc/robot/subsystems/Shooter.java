@@ -5,16 +5,20 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix.CANifier;
+import com.ctre.phoenix.CANifier.GeneralPin;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   private CANSparkMax shooterMotor = new CANSparkMax(33, MotorType.kBrushless);
+  CANifier shooterCanifier = new CANifier(35);
   private TalonFX shooter1Motor = new TalonFX(31);
   private TalonFX shooter2Motor = new TalonFX(32);
   private TalonFX shooterPivot = new TalonFX(34);
@@ -42,6 +46,10 @@ public class Shooter extends SubsystemBase {
   
   public void setFeedSpeed(double speed){
     shooterMotor.set(speed);
+  }
+
+  public boolean getShooterSensor(){
+    return shooterCanifier.getGeneralInput(GeneralPin.LIMR);
   }
 
   @Override
