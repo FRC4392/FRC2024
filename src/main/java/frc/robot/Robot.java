@@ -118,7 +118,8 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   public void configureButtonBindings(){
-    operatorController.a().and(()->shooter.getShooterSensor()).whileTrue(intake.intakeCommand());
-    operatorController.b().whileTrue(intake.outtakeCommand());
+    operatorController.a().and(()->shooter.getShooterSensor()).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
+    operatorController.b().whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()).alongWith(shooter.backfeedCommand()));
+    operatorController.x().whileTrue(shooter.runShooter());
   }
 }

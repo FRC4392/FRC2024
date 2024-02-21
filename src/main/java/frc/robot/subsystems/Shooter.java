@@ -13,10 +13,27 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.CAN;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
-  /** Creates a new Shooter. */
+
+  public enum shooterSpeeds{
+
+    kFeedSpeed(1),
+    kOutfeedSpeed(-0.3),
+    kShootSpeed(.5),
+    kBackfeedSpeed(-.15),
+    kStopSpeed(0);
+
+    public final double speed;
+
+    private shooterSpeeds(double speeds){
+      this.speed = speeds;
+    }
+
+  }
+
   private CANSparkMax shooterMotor = new CANSparkMax(33, MotorType.kBrushless);
   CANifier shooterCanifier = new CANifier(35);
   private TalonFX shooter1Motor = new TalonFX(31);
@@ -36,20 +53,47 @@ public class Shooter extends SubsystemBase {
 
   }
 
-  public void setShooterSpeed(double speed){
-    shooter1Motor.set(speed);
-    shooter2Motor.set(speed);
+  public void stopFeed(){
+    shooterMotor.set(shooterSpeeds.kStopSpeed.speed);
   }
+
+  public void stopShooter(){
+    shooter1Motor.set(shooterSpeeds.kStopSpeed.speed);
+    shooter2Motor.set(shooterSpeeds.kStopSpeed.speed);
+  }
+
+  public void setShooterSpeed(shooterSpeeds speed){
+    shooter1Motor.set(speed.speed);
+    shooter2Motor.set(speed.speed);
+  }
+
+  
  public void setPivotSpeed(double speed){
     shooterPivot.set(speed);
   }
   
-  public void setFeedSpeed(double speed){
-    shooterMotor.set(speed);
+  public void setFeedSpeed(shooterSpeeds speed){
+    shooterMotor.set(speed.speed);
   }
 
   public boolean getShooterSensor(){
     return shooterCanifier.getGeneralInput(GeneralPin.LIMR);
+  }
+
+  public Command feedCommand(){
+    return this.runEnd(()->setFeedSpeed(shooterSpeeds.kFeedSpeed), ()->stopFeed());
+  }
+
+  public Command outfeedCommand(){
+    return this.runEnd(()->setFeedSpeed(shooterSpeeds.kOutfeedSpeed), ()->stopFeed());
+  }
+
+  public Command backfeedCommand(){
+    return this.runEnd(()->setShooterSpeed(shooterSpeeds.kBackfeedSpeed), ()->stopShooter());
+  }
+
+  public Command runShooter(){
+    return this.runEnd(()->setShooterSpeed(shooterSpeeds.kShootSpeed), ()->stopShooter());
   }
 
   @Override

@@ -16,7 +16,7 @@ public class Intake extends SubsystemBase {
   public enum IntakeSpeeds{
 
     kIntakeSpeed(1),
-    kOuttakeSpeed(-0.5),
+    kOuttakeSpeed(-0.3),
     kStopSpeed(0);
 
     public final double speed;
