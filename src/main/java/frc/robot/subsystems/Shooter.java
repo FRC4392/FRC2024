@@ -5,6 +5,9 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -22,7 +25,6 @@ public class Shooter extends SubsystemBase {
 
     kFeedSpeed(1),
     kOutfeedSpeed(-0.3),
-    kShootSpeed(.5),
     kBackfeedSpeed(-.15),
     kPivotSpeed(.1),
     kPivotBackSpeed(-.1),
@@ -73,6 +75,11 @@ public class Shooter extends SubsystemBase {
     shooter2Motor.set(speed.speed);
   }
 
+  public void setShotSpeed(double speed) {
+    shooter1Motor.set(speed);
+    shooter2Motor.set(speed);
+  }
+
   
  public void setPivotSpeed(double speed){
     shooterPivot.set(speed);
@@ -98,8 +105,8 @@ public class Shooter extends SubsystemBase {
     return this.runEnd(()->setShooterSpeed(shooterSpeeds.kBackfeedSpeed), ()->stopShooter());
   }
 
-  public Command runShooter(){
-    return this.runEnd(()->setShooterSpeed(shooterSpeeds.kShootSpeed), ()->stopShooter());
+  public Command runShooter(DoubleSupplier speed){
+    return this.runEnd(()->setShotSpeed(speed.getAsDouble()), ()->stopShooter());
   }
 
   public Command pivotCommand(){

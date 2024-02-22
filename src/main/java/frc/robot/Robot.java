@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -123,12 +124,29 @@ public class Robot extends TimedRobot {
 
   public void configureButtonBindings(){
 
-    Trigger IntakeTrigger = operatorController.a();
-    IntakeTrigger.and(()->shooter.getShooterSensor()).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
-    operatorController.b().whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()).alongWith(shooter.backfeedCommand()));
-    operatorController.x().whileTrue(shooter.runShooter());
-    operatorController.y().whileTrue(shooter.feedCommand());
-    operatorController.povUp().whileTrue(shooter.pivotCommand());
-    operatorController.povDown().whileTrue(shooter.pivotBackCommand());
+    DoubleSupplier shotSpeed =() -> operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis();
+    Trigger Intake = operatorController.a();
+    Trigger Outtake = operatorController.y();
+    Trigger FixedShot = operatorController.x();
+    Trigger Feed = operatorController.b();
+    Trigger PivotUp = operatorController.povUp();
+    Trigger PivotDown = operatorController.povDown();
+
+    Intake.and(()->shooter.getShooterSensor()).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
+    Outtake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()).alongWith(shooter.backfeedCommand()));
+    FixedShot.whileTrue(shooter.runShooter(shotSpeed));
+    Feed.whileTrue(shooter.feedCommand());
+    PivotUp.whileTrue(shooter.pivotCommand());
+    PivotDown.whileTrue(shooter.pivotBackCommand());
+
+    BooleanSupplier brakeSupplier = () -> driverController.getXButton();
+    BooleanSupplier intakeButton = () -> driverController.getLeftBumper();
+
+    Trigger brake = new Trigger(brakeSupplier);
+    Trigger driverIntake = new Trigger(intakeButton);
+
+    brake.whileTrue(drivetrain.brakeCommand());
+    driverIntake.and(()->shooter.getShooterSensor()).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
+
   }
 }
