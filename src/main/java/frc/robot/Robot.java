@@ -45,6 +45,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
     led.setLEDColor(0,0,100);
+    configureButtonBindings();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
   }
