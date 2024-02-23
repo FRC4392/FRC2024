@@ -124,29 +124,48 @@ public class Robot extends TimedRobot {
 
   public void configureButtonBindings(){
 
-    DoubleSupplier shotSpeed =() -> operatorController.getLeftTriggerAxis();
-    Trigger Intake = operatorController.a();
-    Trigger Outtake = operatorController.y();
-    Trigger FixedShot = operatorController.leftBumper();
-    Trigger Feed = operatorController.b();
-    Trigger PivotUp = operatorController.povUp();
-    Trigger PivotDown = operatorController.povDown();
+    BooleanSupplier sensorSupplier = () -> shooter.getShooterSensor();
+    Trigger shooterOccupied = new Trigger(sensorSupplier);
+    shooterOccupied.whileTrue(led.setLedOccupied());
 
-    Intake.and(()->shooter.getShooterSensor()).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
+    DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
+    DoubleSupplier wallSpeed = () -> operatorController.getRightY();
+    Trigger Intake = operatorController.a();
+    Trigger Outtake = operatorController.x();
+    Trigger HumanTake = operatorController.y();
+    Trigger ClimbUp = operatorController.povUp();
+    Trigger ClimbDown = operatorController.povDown();
+    Trigger Feed = operatorController.b();
+    Trigger PivotUp = operatorController.leftBumper();
+    Trigger PivotDown = operatorController.rightBumper();
+
+    Intake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
     Outtake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
-    FixedShot.whileTrue(shooter.runShooter(shotSpeed));
+    HumanTake.whileTrue(shooter.backfeedCommand());
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());
     PivotDown.whileTrue(shooter.pivotBackCommand());
+    operatorController.leftTrigger(0).whileTrue(shooter.runShooter(shotSpeed));
+    ClimbUp.whileTrue(climber.ClimbUpCommand());
+    ClimbDown.whileTrue(climber.ClimbDownCommand());
+    operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
+
 
     BooleanSupplier brakeSupplier = () -> driverController.getXButton();
     BooleanSupplier intakeButton = () -> driverController.getLeftBumper();
+    BooleanSupplier outtakeButton = () -> driverController.getRightBumper();
+    BooleanSupplier spitButton = () -> driverController.getLeftStickButton();
 
     Trigger brake = new Trigger(brakeSupplier);
     Trigger driverIntake = new Trigger(intakeButton);
+    Trigger driverOuttake = new Trigger(outtakeButton);
+    Trigger driverSpit = new Trigger(spitButton);
 
     brake.whileTrue(drivetrain.brakeCommand());
-    driverIntake.and(()->shooter.getShooterSensor()).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
+    driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
+    driverOuttake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
+    driverSpit.whileTrue(shooter.spitCommand());
+
 
   }
 }

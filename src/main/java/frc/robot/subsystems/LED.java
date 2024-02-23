@@ -4,9 +4,10 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.CANifier.GeneralPin;
 import com.ctre.phoenix.CANifier.LEDChannel;
 
 public class LED extends SubsystemBase {
@@ -21,7 +22,9 @@ public class LED extends SubsystemBase {
   public LED() {}
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public void periodic() {}
+
+  public Command setLedOccupied(){
+    return this.runEnd(()->setLEDColor(100,60,0), ()->setLEDColor(0, 0, 100));
   }
 }

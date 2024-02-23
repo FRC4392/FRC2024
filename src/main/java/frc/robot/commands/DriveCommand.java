@@ -72,7 +72,7 @@ public class DriveCommand extends CommandBase {
     xrVel = mController.getRightX();
 
     // slow down `on
-    if (mController.getRightBumper()) {
+    if (mController.getRightStickButton()) {
       driveFactor = 0.5;
     } else {
       driveFactor = 1.0;
