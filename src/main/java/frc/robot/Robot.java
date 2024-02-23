@@ -124,16 +124,16 @@ public class Robot extends TimedRobot {
 
   public void configureButtonBindings(){
 
-    DoubleSupplier shotSpeed =() -> operatorController.getLeftTriggerAxis() - operatorController.getRightTriggerAxis();
+    DoubleSupplier shotSpeed =() -> operatorController.getLeftTriggerAxis();
     Trigger Intake = operatorController.a();
     Trigger Outtake = operatorController.y();
-    Trigger FixedShot = operatorController.x();
+    Trigger FixedShot = operatorController.leftBumper();
     Trigger Feed = operatorController.b();
     Trigger PivotUp = operatorController.povUp();
     Trigger PivotDown = operatorController.povDown();
 
     Intake.and(()->shooter.getShooterSensor()).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
-    Outtake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()).alongWith(shooter.backfeedCommand()));
+    Outtake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
     FixedShot.whileTrue(shooter.runShooter(shotSpeed));
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());

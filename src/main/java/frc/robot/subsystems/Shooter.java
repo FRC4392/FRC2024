@@ -23,7 +23,7 @@ public class Shooter extends SubsystemBase {
 
   public enum shooterSpeeds{
 
-    kFeedSpeed(1),
+    kFeedSpeed(.3),
     kOutfeedSpeed(-0.3),
     kBackfeedSpeed(-.15),
     kPivotSpeed(.1),
@@ -81,8 +81,8 @@ public class Shooter extends SubsystemBase {
   }
 
   
- public void setPivotSpeed(double speed){
-    shooterPivot.set(speed);
+ public void setPivotSpeed(shooterSpeeds speed){
+    shooterPivot.set(speed.speed);
   }
   
   public void setFeedSpeed(shooterSpeeds speed){
@@ -110,11 +110,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command pivotCommand(){
-    return this.runEnd(()->setShooterSpeed(shooterSpeeds.kPivotSpeed), ()->stopPivot());
+    return this.runEnd(()->setPivotSpeed(shooterSpeeds.kPivotSpeed), ()->stopPivot());
   }
 
   public Command pivotBackCommand(){
-    return this.runEnd(()->setShooterSpeed(shooterSpeeds.kPivotSpeed), ()->stopPivot());
+    return this.runEnd(()->setPivotSpeed(shooterSpeeds.kPivotBackSpeed), ()->stopPivot());
   }
 
   @Override
