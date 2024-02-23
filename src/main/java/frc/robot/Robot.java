@@ -164,7 +164,7 @@ public class Robot extends TimedRobot {
     brake.whileTrue(drivetrain.brakeCommand());
     driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
     driverOuttake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
-    driverSpit.whileTrue(shooter.spitCommand());
+    driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
 
 
   }
