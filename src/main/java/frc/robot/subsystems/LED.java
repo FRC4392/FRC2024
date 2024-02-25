@@ -15,8 +15,8 @@ public class LED extends SubsystemBase {
   
   public void setLEDColor(double R, double G, double B) {
     remoteIO.setLEDOutput(G, LEDChannel.LEDChannelC);
-    remoteIO.setLEDOutput(B, LEDChannel.LEDChannelA);
-    remoteIO.setLEDOutput(R, LEDChannel.LEDChannelB);
+    remoteIO.setLEDOutput(R, LEDChannel.LEDChannelA);
+    remoteIO.setLEDOutput(B, LEDChannel.LEDChannelB);
   }
 
   public LED() {}
@@ -25,6 +25,10 @@ public class LED extends SubsystemBase {
   public void periodic() {}
 
   public Command setLedOccupied(){
-    return this.runEnd(()->setLEDColor(100,60,0), ()->setLEDColor(0, 0, 100));
+    return this.runEnd(()->setLEDColor(0,0,1), ()->setLEDColor(1,.2,0));
+  }
+
+  public Command setLedRed() {
+    return this.runEnd(()->setLEDColor(100,0,0), ()->setLEDColor(100,0,0));
   }
 }

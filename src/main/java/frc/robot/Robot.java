@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
-    led.setLEDColor(0,0,100);
+    led.setLEDColor(0, 0, 100);
     configureButtonBindings();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
@@ -130,6 +130,7 @@ public class Robot extends TimedRobot {
 
     DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
+    DoubleSupplier elevateSpeed = () -> operatorController.getLeftY();
     Trigger Intake = operatorController.a();
     Trigger Outtake = operatorController.x();
     Trigger HumanTake = operatorController.y();
@@ -149,6 +150,7 @@ public class Robot extends TimedRobot {
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
     operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
+    operatorController.a().whileFalse(climber.ElevateCommand(elevateSpeed));
 
 
     BooleanSupplier brakeSupplier = () -> driverController.getXButton();

@@ -10,6 +10,7 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
+import com.ctre.phoenix.CANifier.LEDChannel;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
@@ -58,6 +59,12 @@ public class Shooter extends SubsystemBase {
 
   }
 
+  // public void setLEDColor(double R, double G, double B) {
+  //       shooterCanifier.setLEDOutput(G, LEDChannel.LEDChannelC);
+  //       shooterCanifier.setLEDOutput(B, LEDChannel.LEDChannelA);
+  //       shooterCanifier.setLEDOutput(R, LEDChannel.LEDChannelB);
+  //      }
+
   public void stopFeed(){
     shooterMotor.set(shooterSpeeds.kStopSpeed.speed);
   }
@@ -103,7 +110,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean getShooterSensor(){
-    return shooterCanifier.getGeneralInput(GeneralPin.LIMR);
+    return shooterCanifier.getGeneralInput(GeneralPin.QUAD_A);
   }
 
   public Command feedCommand(){
@@ -133,7 +140,6 @@ public class Shooter extends SubsystemBase {
   public Command spitCommand(){
     return this.runEnd(()->setSpitSpeed(shooterSpeeds.kFeedSpeed,shooterSpeeds.kSpitSpeed), ()->stop());
   }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
