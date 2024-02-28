@@ -10,7 +10,7 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
-import com.ctre.phoenix.CANifier.LEDChannel;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
@@ -59,13 +59,24 @@ public class Shooter extends SubsystemBase {
   shooterPivot.setNeutralMode(NeutralModeValue.Brake);
   elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
 
-  }
+  TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
+  var shooterCurrentLimits = shooterConfig.CurrentLimits;
+        shooterCurrentLimits.SupplyCurrentLimit = 80;
+        shooterCurrentLimits.SupplyCurrentThreshold = 80;
+        shooterCurrentLimits.SupplyTimeThreshold = 0.1;
+        shooterCurrentLimits.StatorCurrentLimit = 80;
+        shooterCurrentLimits.StatorCurrentLimitEnable = true;
+        shooterCurrentLimits.SupplyCurrentLimitEnable = true;
 
-  // public void setLEDColor(double R, double G, double B) {
-  //       shooterCanifier.setLEDOutput(G, LEDChannel.LEDChannelC);
-  //       shooterCanifier.setLEDOutput(B, LEDChannel.LEDChannelA);
-  //       shooterCanifier.setLEDOutput(R, LEDChannel.LEDChannelB);
-  //      }
+        shooter1Motor.getConfigurator().apply(new TalonFXConfiguration());
+        shooter1Motor.getConfigurator().apply(shooterConfig);
+        shooter2Motor.getConfigurator().apply(new TalonFXConfiguration());
+        shooter2Motor.getConfigurator().apply(shooterConfig);
+        shooterPivot.getConfigurator().apply(new TalonFXConfiguration());
+        shooterPivot.getConfigurator().apply(shooterConfig);
+        elevatorMotor.getConfigurator().apply(new TalonFXConfiguration());
+        elevatorMotor.getConfigurator().apply(shooterConfig);
+  }
 
   public void stopFeed(){
     shooterMotor.set(shooterSpeeds.kStopSpeed.speed);
