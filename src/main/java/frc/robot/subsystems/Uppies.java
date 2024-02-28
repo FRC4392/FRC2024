@@ -16,15 +16,14 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Climber extends SubsystemBase {
+public class Uppies extends SubsystemBase {
   /** Creates a new Climber. */
 
   private CANSparkMax wallMotor = new CANSparkMax(42, MotorType.kBrushless);
-  private TalonFX elevatorMotor = new TalonFX(41);
   private TalonFX climberMotor = new TalonFX(44);
   
 
-  public Climber() {
+  public Uppies() {
     wallMotor.restoreFactoryDefaults();
 
     wallMotor.setSmartCurrentLimit(40);
@@ -33,7 +32,6 @@ public class Climber extends SubsystemBase {
     wallMotor.burnFlash();
 
     climberMotor.setNeutralMode(NeutralModeValue.Brake);
-    elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public void setWallDriveSpeed(double speed){
@@ -44,19 +42,11 @@ public class Climber extends SubsystemBase {
     climberMotor.set(speed);
   }
 
-  public void setElevateSpeed (double speed) {
-    elevatorMotor.set(speed);
-  }
-
   public void stopClimb () {
     climberMotor.set(0);
   }
 
   public void stopWall ()  {
-    wallMotor.set(0);
-  }
-
-  public void stopElevator ()  {
     wallMotor.set(0);
   }
 
@@ -73,9 +63,6 @@ public class Climber extends SubsystemBase {
     return this.runEnd(()->setWallDriveSpeed(speed.getAsDouble()), ()->stopWall());
   }
 
-  public Command ElevateCommand(DoubleSupplier speed){
-    return this.runEnd(()->setElevateSpeed(speed.getAsDouble()), ()->stopElevator());
-  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

@@ -45,6 +45,7 @@ public class Shooter extends SubsystemBase {
   private TalonFX shooter1Motor = new TalonFX(31);
   private TalonFX shooter2Motor = new TalonFX(32);
   private TalonFX shooterPivot = new TalonFX(34);
+  private TalonFX elevatorMotor = new TalonFX(41);
   
   public Shooter() {
   shooterMotor.restoreFactoryDefaults();
@@ -56,6 +57,7 @@ public class Shooter extends SubsystemBase {
   shooterMotor.burnFlash();
 
   shooterPivot.setNeutralMode(NeutralModeValue.Brake);
+  elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
 
   }
 
@@ -76,6 +78,10 @@ public class Shooter extends SubsystemBase {
   public void stopShooter(){
     shooter1Motor.set(shooterSpeeds.kStopSpeed.speed);
     shooter2Motor.set(shooterSpeeds.kStopSpeed.speed);
+  }
+
+  public void stopElevator ()  {
+    elevatorMotor.set(0);
   }
 
   public void stop(){
@@ -109,6 +115,10 @@ public class Shooter extends SubsystemBase {
     shooterMotor.set(speed.speed);
   }
 
+  public void setElevateSpeed (double speed) {
+    elevatorMotor.set(speed);
+  }
+
   public boolean getShooterSensor(){
     return shooterCanifier.getGeneralInput(GeneralPin.QUAD_A);
   }
@@ -139,6 +149,10 @@ public class Shooter extends SubsystemBase {
 
   public Command spitCommand(){
     return this.runEnd(()->setSpitSpeed(shooterSpeeds.kFeedSpeed,shooterSpeeds.kSpitSpeed), ()->stop());
+  }
+
+  public Command ElevateCommand(DoubleSupplier speed){
+    return this.runEnd(()->setElevateSpeed(speed.getAsDouble()), ()->stopElevator());
   }
   @Override
   public void periodic() {

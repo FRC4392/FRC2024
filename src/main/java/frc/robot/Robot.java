@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Uppies;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
   private Drivetrain drivetrain = new Drivetrain();
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
-  private Climber climber = new Climber();
+  private Uppies climber = new Uppies();
   LED led = new LED();
 
   /**
@@ -150,7 +150,7 @@ public class Robot extends TimedRobot {
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
     operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
-    operatorController.a().whileFalse(climber.ElevateCommand(elevateSpeed));
+    operatorController.a().whileFalse(shooter.ElevateCommand(elevateSpeed));
 
 
     BooleanSupplier brakeSupplier = () -> driverController.getXButton();
