@@ -13,6 +13,7 @@ import com.ctre.phoenix.CANifier.GeneralPin;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -51,6 +52,7 @@ public class Shooter extends SubsystemBase {
   private TalonFX shooter2Motor = new TalonFX(32);
   private TalonFX shooterPivot = new TalonFX(34);
   private TalonFX elevatorMotor = new TalonFX(41);
+  private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
 
   public Shooter() {
     shooterMotor.restoreFactoryDefaults();
@@ -79,7 +81,7 @@ public class Shooter extends SubsystemBase {
 
     FlyWheelConfigs.Feedback.SensorToMechanismRatio = 1.0/1.5;
 
-    FlyWheelConfigs.Slot0.kV = 0; // velocity  speed from smart dashboard/11
+    FlyWheelConfigs.Slot0.kV = 136/11; // velocity  speed from smart dashboard/11
     FlyWheelConfigs.Slot0.kP = 0; // proportional
     FlyWheelConfigs.Slot0.kI = 0; // integral
     FlyWheelConfigs.Slot0.kD = 0; // derivative
@@ -137,9 +139,9 @@ public class Shooter extends SubsystemBase {
     shooter1Motor.setControl(voltage);
   }
 
-  public void setShooterSpeed(shooterSpeeds speed) {
-    shooter1Motor.set(speed.speed);
-    shooter2Motor.set(speed.speed);
+  public void setShooterSpeed(double velo) {
+    shooter1Motor.setControl(m_voltageVelocity.withVelocity(velo));
+    shooter2Motor.setControl(m_voltageVelocity.withVelocity(velo));
   }
 
   public void setShotSpeed(double speed) {
@@ -178,11 +180,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command backfeedCommand() {
-    return this.runEnd(() -> setShooterSpeed(shooterSpeeds.kBackfeedSpeed), () -> stopShooter());
+    return this.runEnd(() -> setShooterSpeed(-10), () -> stopShooter());
   }
 
-  public Command runShooter(DoubleSupplier speed) {
-    return this.runEnd(() -> setShotSpeed(speed.getAsDouble()), () -> stopShooter());
+  public Command runShooter() {
+    return this.runEnd(() -> setShooterSpeed(1), () -> stopShooter());
   }
 
   public Command pivotCommand() {

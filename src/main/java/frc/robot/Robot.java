@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
     Trigger shooterOccupied = new Trigger(sensorSupplier);
     shooterOccupied.whileTrue(led.setLedOccupied());
 
-    DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
+    //DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
     DoubleSupplier elevateSpeed = () -> operatorController.getLeftY();
     Trigger Intake = operatorController.a();
@@ -142,11 +142,11 @@ public class Robot extends TimedRobot {
 
     Intake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
     Outtake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
-    HumanTake.whileTrue(shooter.backfeedCommand());
+    HumanTake.whileTrue(shooter.CalibrateKs());
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());
     PivotDown.whileTrue(shooter.pivotBackCommand());
-    operatorController.leftTrigger(0).whileTrue(shooter.runShooter(shotSpeed));
+    operatorController.leftTrigger(0).whileTrue(shooter.runShooter());
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
     operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
