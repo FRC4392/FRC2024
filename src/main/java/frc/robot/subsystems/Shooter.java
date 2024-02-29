@@ -10,19 +10,24 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.CAN;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
 
-  public enum shooterSpeeds{
+  public enum shooterSpeeds {
 
     kFeedSpeed(.3),
     kOutfeedSpeed(-0.3),
@@ -34,7 +39,7 @@ public class Shooter extends SubsystemBase {
 
     public final double speed;
 
-    private shooterSpeeds(double speeds){
+    private shooterSpeeds(double speeds) {
       this.speed = speeds;
     }
 
@@ -46,62 +51,93 @@ public class Shooter extends SubsystemBase {
   private TalonFX shooter2Motor = new TalonFX(32);
   private TalonFX shooterPivot = new TalonFX(34);
   private TalonFX elevatorMotor = new TalonFX(41);
-  
+
   public Shooter() {
-  shooterMotor.restoreFactoryDefaults();
+    shooterMotor.restoreFactoryDefaults();
 
-  shooterMotor.setSmartCurrentLimit(40);
-  shooterMotor.setIdleMode(IdleMode.kBrake);
-  shooterMotor.setInverted(true);
+    shooterMotor.setSmartCurrentLimit(40);
+    shooterMotor.setIdleMode(IdleMode.kBrake);
+    shooterMotor.setInverted(true);
 
-  shooterMotor.burnFlash();
+    shooterMotor.burnFlash();
 
-  shooterPivot.setNeutralMode(NeutralModeValue.Brake);
-  elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+    shooterPivot.setNeutralMode(NeutralModeValue.Brake);
+    elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
 
-  TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
-  var shooterCurrentLimits = shooterConfig.CurrentLimits;
-        shooterCurrentLimits.SupplyCurrentLimit = 80;
-        shooterCurrentLimits.SupplyCurrentThreshold = 80;
-        shooterCurrentLimits.SupplyTimeThreshold = 0.1;
-        shooterCurrentLimits.StatorCurrentLimit = 80;
-        shooterCurrentLimits.StatorCurrentLimitEnable = true;
-        shooterCurrentLimits.SupplyCurrentLimitEnable = true;
+    CurrentLimitsConfigs shooterCurrentLimits = new CurrentLimitsConfigs();
 
-        shooter1Motor.getConfigurator().apply(new TalonFXConfiguration());
-        shooter1Motor.getConfigurator().apply(shooterConfig);
-        shooter2Motor.getConfigurator().apply(new TalonFXConfiguration());
-        shooter2Motor.getConfigurator().apply(shooterConfig);
-        shooterPivot.getConfigurator().apply(new TalonFXConfiguration());
-        shooterPivot.getConfigurator().apply(shooterConfig);
-        elevatorMotor.getConfigurator().apply(new TalonFXConfiguration());
-        elevatorMotor.getConfigurator().apply(shooterConfig);
+    shooterCurrentLimits.SupplyCurrentLimit = 40;
+    shooterCurrentLimits.SupplyCurrentThreshold = 100;
+    shooterCurrentLimits.SupplyTimeThreshold = 1;
+
+    shooterCurrentLimits.StatorCurrentLimit = 80;
+
+    shooterCurrentLimits.StatorCurrentLimitEnable = true;
+    shooterCurrentLimits.SupplyCurrentLimitEnable = true;
+
+    TalonFXConfiguration FlyWheelConfigs = new TalonFXConfiguration();
+
+    FlyWheelConfigs.Feedback.SensorToMechanismRatio = 1.0/1.5;
+
+    FlyWheelConfigs.Slot0.kV = 0; // velocity  speed from smart dashboard/11
+    FlyWheelConfigs.Slot0.kP = 0; // proportional
+    FlyWheelConfigs.Slot0.kI = 0; // integral
+    FlyWheelConfigs.Slot0.kD = 0; // derivative
+    
+    FlyWheelConfigs.CurrentLimits = shooterCurrentLimits;
+
+    shooter1Motor.getConfigurator().apply(FlyWheelConfigs);
+    shooter2Motor.getConfigurator().apply(FlyWheelConfigs);
+
+    TalonFXConfiguration PivotConfigs = new TalonFXConfiguration();
+
+    PivotConfigs.Feedback.SensorToMechanismRatio = 50/12 * 50/14 * 117/10;
+
+    PivotConfigs.Slot0.kV = 0; // velocity
+    PivotConfigs.Slot0.kA = 0; // acceleration
+    PivotConfigs.Slot0.kG = 0; // gravity
+
+    PivotConfigs.Slot0.kP = 0; // proportional
+    PivotConfigs.Slot0.kI = 0; // integral
+    PivotConfigs.Slot0.kD = 0; // derivative
+
+    PivotConfigs.CurrentLimits = shooterCurrentLimits;
+
+    TalonFXConfiguration ElevatorConfigs = new TalonFXConfiguration();
+
+    shooterPivot.getConfigurator().apply(PivotConfigs);
+    elevatorMotor.getConfigurator().apply(ElevatorConfigs);
   }
 
-  public void stopFeed(){
+  public void stopFeed() {
     shooterMotor.set(shooterSpeeds.kStopSpeed.speed);
   }
 
-  public void stopPivot(){
+  public void stopPivot() {
     shooterPivot.set(shooterSpeeds.kStopSpeed.speed);
   }
 
-  public void stopShooter(){
+  public void stopShooter() {
     shooter1Motor.set(shooterSpeeds.kStopSpeed.speed);
     shooter2Motor.set(shooterSpeeds.kStopSpeed.speed);
   }
 
-  public void stopElevator ()  {
+  public void stopElevator() {
     elevatorMotor.set(0);
   }
 
-  public void stop(){
+  public void stop() {
     shooter1Motor.set(shooterSpeeds.kStopSpeed.speed);
     shooter2Motor.set(shooterSpeeds.kStopSpeed.speed);
     shooterMotor.set(shooterSpeeds.kStopSpeed.speed);
   }
 
-  public void setShooterSpeed(shooterSpeeds speed){
+  public void setShooterVoltage(double volts){
+    VoltageOut voltage = new VoltageOut(volts);
+    shooter1Motor.setControl(voltage);
+  }
+
+  public void setShooterSpeed(shooterSpeeds speed) {
     shooter1Motor.set(speed.speed);
     shooter2Motor.set(speed.speed);
   }
@@ -117,56 +153,63 @@ public class Shooter extends SubsystemBase {
     shooterMotor.set(speedF.speed);
   }
 
-  
- public void setPivotSpeed(shooterSpeeds speed){
+  public void setPivotSpeed(shooterSpeeds speed) {
     shooterPivot.set(speed.speed);
   }
-  
-  public void setFeedSpeed(shooterSpeeds speed){
+
+  public void setFeedSpeed(shooterSpeeds speed) {
     shooterMotor.set(speed.speed);
   }
 
-  public void setElevateSpeed (double speed) {
+  public void setElevateSpeed(double speed) {
     elevatorMotor.set(speed);
   }
 
-  public boolean getShooterSensor(){
+  public boolean getShooterSensor() {
     return shooterCanifier.getGeneralInput(GeneralPin.QUAD_A);
   }
 
-  public Command feedCommand(){
-    return this.runEnd(()->setFeedSpeed(shooterSpeeds.kFeedSpeed), ()->stopFeed());
+  public Command feedCommand() {
+    return this.runEnd(() -> setFeedSpeed(shooterSpeeds.kFeedSpeed), () -> stopFeed());
   }
 
-  public Command outfeedCommand(){
-    return this.runEnd(()->setFeedSpeed(shooterSpeeds.kOutfeedSpeed), ()->stopFeed());
+  public Command outfeedCommand() {
+    return this.runEnd(() -> setFeedSpeed(shooterSpeeds.kOutfeedSpeed), () -> stopFeed());
   }
 
-  public Command backfeedCommand(){
-    return this.runEnd(()->setShooterSpeed(shooterSpeeds.kBackfeedSpeed), ()->stopShooter());
+  public Command backfeedCommand() {
+    return this.runEnd(() -> setShooterSpeed(shooterSpeeds.kBackfeedSpeed), () -> stopShooter());
   }
 
-  public Command runShooter(DoubleSupplier speed){
-    return this.runEnd(()->setShotSpeed(speed.getAsDouble()), ()->stopShooter());
+  public Command runShooter(DoubleSupplier speed) {
+    return this.runEnd(() -> setShotSpeed(speed.getAsDouble()), () -> stopShooter());
   }
 
-  public Command pivotCommand(){
-    return this.runEnd(()->setPivotSpeed(shooterSpeeds.kPivotSpeed), ()->stopPivot());
+  public Command pivotCommand() {
+    return this.runEnd(() -> setPivotSpeed(shooterSpeeds.kPivotSpeed), () -> stopPivot());
   }
 
-  public Command pivotBackCommand(){
-    return this.runEnd(()->setPivotSpeed(shooterSpeeds.kPivotBackSpeed), ()->stopPivot());
+  public Command pivotBackCommand() {
+    return this.runEnd(() -> setPivotSpeed(shooterSpeeds.kPivotBackSpeed), () -> stopPivot());
   }
 
-  public Command spitCommand(){
-    return this.runEnd(()->setSpitSpeed(shooterSpeeds.kFeedSpeed,shooterSpeeds.kSpitSpeed), ()->stop());
+  public Command spitCommand() {
+    return this.runEnd(() -> setSpitSpeed(shooterSpeeds.kFeedSpeed, shooterSpeeds.kSpitSpeed), () -> stop());
   }
 
-  public Command ElevateCommand(DoubleSupplier speed){
-    return this.runEnd(()->setElevateSpeed(speed.getAsDouble()), ()->stopElevator());
+  public Command ElevateCommand(DoubleSupplier speed) {
+    return this.runEnd(() -> setElevateSpeed(speed.getAsDouble()), () -> stopElevator());
   }
+
+  public Command CalibrateKs(){
+    return this.run(() -> setShooterVoltage(11));
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    SmartDashboard.putNumber("Shooter 1 Speed", shooter1Motor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Shooter 2 Speed", shooter2Motor.getVelocity().getValueAsDouble());
   }
 }
