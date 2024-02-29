@@ -1,8 +1,8 @@
 package org.deceivers.swerve;
 
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
+//import edu.wpi.first.math.controller.HolonomicDriveController;
+//import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,9 +14,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.DoubleArrayPublisher;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+//import edu.wpi.first.networktables.NetworkTable;
+//import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
@@ -27,12 +26,12 @@ public class SwerveDrive {
     private final int numModules;
     private final SwerveDriveKinematics mKinematics;
     private final SwerveDrivePoseEstimator mSwerveDrivePoseEstimator;
-    private final HolonomicDriveController mDriveController;
+    //private final HolonomicDriveController mDriveController;
     private final DoubleSupplier mGyroAngle;
     private final ProfiledPIDController rotationPIDController = new ProfiledPIDController(15,.1,.1,new TrapezoidProfile.Constraints(500, 500));
 
     //Network Table Data
-    private final NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
+    //private final NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
 
     public SwerveDrive(DoubleSupplier gyroAngle, SwerveModule... modules){
 
@@ -41,7 +40,7 @@ public class SwerveDrive {
         mModules = Arrays.copyOf(modules, numModules);
 
         //Network Table setup
-        NetworkTable swerveTable = networkTableInstance.getTable("swervetable");
+        //NetworkTable swerveTable = networkTableInstance.getTable("swervetable");
 
         Translation2d[] moduleLocations = new Translation2d[numModules];
         for (int i = 0; i < numModules; i++){
@@ -52,7 +51,7 @@ public class SwerveDrive {
 
         rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
-        mDriveController = new HolonomicDriveController(new PIDController(4,0,0), new PIDController(4,0,0), rotationPIDController);
+        //mDriveController = new HolonomicDriveController(new PIDController(4,0,0), new PIDController(4,0,0), rotationPIDController);
 
         SwerveModulePosition[] states = new SwerveModulePosition[numModules];
         for (int i = 0; i < numModules; i++) {
@@ -156,6 +155,6 @@ public class SwerveDrive {
 
     public void log(){
         Arrays.stream(mModules).forEach(SwerveModule::log);
-        double[] swervePoseArray = {getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees()};
+        //double[] swervePoseArray = {getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees()};
     }
 }
