@@ -104,7 +104,7 @@ public class Shooter extends SubsystemBase {
 
     TalonFXConfiguration ElevatorConfigs = new TalonFXConfiguration();
 
-     ElevatorConfigs.Feedback.SensorToMechanismRatio = 52/12 * 56/14 * ;
+     ElevatorConfigs.Feedback.SensorToMechanismRatio = 52/12 * 56/14;
 
     ElevatorConfigs.Slot0.kV = 1/.05; // velocity
     ElevatorConfigs.Slot0.kA = 0; // acceleration
