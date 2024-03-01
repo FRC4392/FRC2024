@@ -31,6 +31,8 @@ public class Robot extends TimedRobot {
 
   private XboxController driverController = new XboxController(0);
   private CommandXboxController operatorController = new CommandXboxController(1);
+  private CommandXboxController testController = new CommandXboxController(2);
+
 
   private Drivetrain drivetrain = new Drivetrain();
   private Intake intake = new Intake();
@@ -142,7 +144,7 @@ public class Robot extends TimedRobot {
 
     Intake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
     Outtake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
-    HumanTake.whileTrue(shooter.CalibrateKs());
+    HumanTake.whileTrue(shooter.backfeedCommand());
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());
     PivotDown.whileTrue(shooter.pivotBackCommand());
@@ -151,6 +153,11 @@ public class Robot extends TimedRobot {
     ClimbDown.whileTrue(climber.ClimbDownCommand());
     operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
     operatorController.a().whileFalse(shooter.ElevateCommand(elevateSpeed));
+
+    testController.povUp().whileTrue(shooter.CalibrateKe(1));
+    testController.povDown().whileTrue(shooter.CalibrateKe(-1));
+    testController.leftBumper().whileTrue(shooter.CalibrateKs(1));
+    testController.rightBumper().whileTrue(shooter.CalibrateKs(-1));
 
 
     BooleanSupplier brakeSupplier = () -> driverController.getXButton();

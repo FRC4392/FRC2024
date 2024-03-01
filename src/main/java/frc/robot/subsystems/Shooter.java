@@ -104,15 +104,17 @@ public class Shooter extends SubsystemBase {
 
     TalonFXConfiguration ElevatorConfigs = new TalonFXConfiguration();
 
-     PivotConfigs.Feedback.SensorToMechanismRatio = 50/12 * 50/14 * 117/10;
+     ElevatorConfigs.Feedback.SensorToMechanismRatio = 1;
 
-    PivotConfigs.Slot0.kV = 1/.05; // velocity
-    PivotConfigs.Slot0.kA = 0; // acceleration
-    PivotConfigs.Slot0.kG = 0; // gravity
+    ElevatorConfigs.Slot0.kV = 1/.05; // velocity
+    ElevatorConfigs.Slot0.kA = 0; // acceleration
+    ElevatorConfigs.Slot0.kG = 0; // gravity
 
-    PivotConfigs.Slot0.kP = 0; // proportional
-    PivotConfigs.Slot0.kI = 0; // integral
-    PivotConfigs.Slot0.kD = 0; // derivative
+    ElevatorConfigs.Slot0.kP = 0; // proportional
+    ElevatorConfigs.Slot0.kI = 0; // integral
+    ElevatorConfigs.Slot0.kD = 0; // derivative
+
+    PivotConfigs.CurrentLimits = shooterCurrentLimits;
 
     shooterPivot.getConfigurator().apply(PivotConfigs);
     elevatorMotor.getConfigurator().apply(ElevatorConfigs);
@@ -147,6 +149,11 @@ public class Shooter extends SubsystemBase {
   public void setShooterVoltage(double volts){
     VoltageOut voltage = new VoltageOut(volts);
     shooterPivot.setControl(voltage);
+  }
+
+  public void setElevatorVoltage(double volts){
+    VoltageOut voltage = new VoltageOut(volts);
+    elevatorMotor.setControl(voltage);
   }
 
   public void setShooterSpeed(double velo) {
@@ -219,8 +226,12 @@ public class Shooter extends SubsystemBase {
     return this.runEnd(() -> setElevateSpeed(speed.getAsDouble()), () -> stopElevator());
   }
 
-  public Command CalibrateKs(){
-    return this.runEnd(() -> setShooterVoltage(.2), () -> stopPivot());
+  public Command CalibrateKs(double volts){
+    return this.runEnd(() -> setShooterVoltage(volts), () -> stopPivot());
+  }
+
+  public Command CalibrateKe(double volts){
+    return this.runEnd(() -> setShooterVoltage(volts), () -> stopElevator());
   }
 
   @Override
