@@ -154,11 +154,12 @@ public class Robot extends TimedRobot {
     operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
     operatorController.a().whileFalse(shooter.ElevateCommand(elevateSpeed));
 
-    testController.povUp().whileTrue(shooter.CalibrateKe(1));
-    testController.povDown().whileTrue(shooter.CalibrateKe(-1));
+    testController.povUp().whileTrue(shooter.CalibrateKe(2.6));
+    testController.povDown().whileTrue(shooter.CalibrateKe(-1.4));
     testController.leftBumper().whileTrue(shooter.CalibrateKs(1));
     testController.rightBumper().whileTrue(shooter.CalibrateKs(-1));
-
+    testController.y().whileTrue(shooter.pivotToPosCommand(.06));
+    testController.b().whileTrue(shooter.pivotToPosCommand(.09));
 
     BooleanSupplier brakeSupplier = () -> driverController.getXButton();
     BooleanSupplier intakeButton = () -> driverController.getLeftBumper();
