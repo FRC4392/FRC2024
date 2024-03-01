@@ -52,7 +52,7 @@ public class Shooter extends SubsystemBase {
   private TalonFX shooter2Motor = new TalonFX(32);
   private TalonFX shooterPivot = new TalonFX(34);
   private TalonFX elevatorMotor = new TalonFX(41);
-  private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
+  private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, false, 0, 0, false, false, false);
 
   public Shooter() {
     shooterMotor.restoreFactoryDefaults();
@@ -62,9 +62,6 @@ public class Shooter extends SubsystemBase {
     shooterMotor.setInverted(true);
 
     shooterMotor.burnFlash();
-
-    shooterPivot.setNeutralMode(NeutralModeValue.Brake);
-    elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
 
     CurrentLimitsConfigs shooterCurrentLimits = new CurrentLimitsConfigs();
 
@@ -81,8 +78,8 @@ public class Shooter extends SubsystemBase {
 
     FlyWheelConfigs.Feedback.SensorToMechanismRatio = 1.0/1.5;
 
-    FlyWheelConfigs.Slot0.kV = 136/11; // velocity  speed from smart dashboard/11
-    FlyWheelConfigs.Slot0.kP = 0; // proportional
+    FlyWheelConfigs.Slot0.kV = 1/12.5; // velocity  speed from smart dashboard/11
+    FlyWheelConfigs.Slot0.kP = .4; // proportional
     FlyWheelConfigs.Slot0.kI = 0; // integral
     FlyWheelConfigs.Slot0.kD = 0; // derivative
     
@@ -95,7 +92,7 @@ public class Shooter extends SubsystemBase {
 
     PivotConfigs.Feedback.SensorToMechanismRatio = 50/12 * 50/14 * 117/10;
 
-    PivotConfigs.Slot0.kV = 0; // velocity
+    PivotConfigs.Slot0.kV = 1/.05; // velocity
     PivotConfigs.Slot0.kA = 0; // acceleration
     PivotConfigs.Slot0.kG = 0; // gravity
 
@@ -107,8 +104,21 @@ public class Shooter extends SubsystemBase {
 
     TalonFXConfiguration ElevatorConfigs = new TalonFXConfiguration();
 
+     PivotConfigs.Feedback.SensorToMechanismRatio = 50/12 * 50/14 * 117/10;
+
+    PivotConfigs.Slot0.kV = 1/.05; // velocity
+    PivotConfigs.Slot0.kA = 0; // acceleration
+    PivotConfigs.Slot0.kG = 0; // gravity
+
+    PivotConfigs.Slot0.kP = 0; // proportional
+    PivotConfigs.Slot0.kI = 0; // integral
+    PivotConfigs.Slot0.kD = 0; // derivative
+
     shooterPivot.getConfigurator().apply(PivotConfigs);
     elevatorMotor.getConfigurator().apply(ElevatorConfigs);
+
+    shooterPivot.setNeutralMode(NeutralModeValue.Brake);
+    elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public void stopFeed() {
@@ -136,7 +146,7 @@ public class Shooter extends SubsystemBase {
 
   public void setShooterVoltage(double volts){
     VoltageOut voltage = new VoltageOut(volts);
-    shooter1Motor.setControl(voltage);
+    shooterPivot.setControl(voltage);
   }
 
   public void setShooterSpeed(double velo) {
@@ -163,6 +173,12 @@ public class Shooter extends SubsystemBase {
     shooterMotor.set(speed.speed);
   }
 
+   public void setFeedandShooterSpeed(double speed, double velo) {
+    shooterMotor.set(speed);
+    shooter1Motor.setControl(m_voltageVelocity.withVelocity(velo));
+    shooter2Motor.setControl(m_voltageVelocity.withVelocity(velo));
+  }
+
   public void setElevateSpeed(double speed) {
     elevatorMotor.set(speed);
   }
@@ -172,7 +188,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command feedCommand() {
-    return this.runEnd(() -> setFeedSpeed(shooterSpeeds.kFeedSpeed), () -> stopFeed());
+    return this.runEnd(() -> setFeedandShooterSpeed(.2,100), () -> stop());
   }
 
   public Command outfeedCommand() {
@@ -184,7 +200,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runShooter() {
-    return this.runEnd(() -> setShooterSpeed(1), () -> stopShooter());
+    return this.runEnd(() -> setShooterSpeed(100), () -> stopShooter());
   }
 
   public Command pivotCommand() {
@@ -204,7 +220,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command CalibrateKs(){
-    return this.run(() -> setShooterVoltage(11));
+    return this.runEnd(() -> setShooterVoltage(.2), () -> stopPivot());
   }
 
   @Override
@@ -213,5 +229,7 @@ public class Shooter extends SubsystemBase {
 
     SmartDashboard.putNumber("Shooter 1 Speed", shooter1Motor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Shooter 2 Speed", shooter2Motor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Elevator Speed", elevatorMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Pivot Speed", shooterPivot.getVelocity().getValueAsDouble());
   }
 }
