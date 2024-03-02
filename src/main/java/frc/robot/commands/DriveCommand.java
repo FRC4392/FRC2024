@@ -88,7 +88,7 @@ public class DriveCommand extends CommandBase {
       mController.setRumble(RumbleType.kRightRumble, 0);
     }
 
-    rotVel = mController.getLeftTriggerAxis() - mController.getRightTriggerAxis();
+    rotVel = mController.getRightX();
     yVel = yHelper.setInput(yVel).applyPower(2).value;
     xVel = xHelper.setInput(xVel).applyPower(2).value;
     rotVel = rotHelper.setInput(rotVel).applyPower(2).value;
@@ -100,23 +100,22 @@ public class DriveCommand extends CommandBase {
     xVel = xVel * driveFactor;
     rotVel = rotVel * driveFactor;
 
-    Rotation2d joystickAngle = Rotation2d.fromRadians(Math.atan2(-mController.getRightX(), -mController.getRightY()));
-    if (!mController.getLeftBumper()) {
-      joystickAngle = joystickAngle.plus(Rotation2d.fromDegrees(180));
-    }
+    // Rotation2d joystickAngle = Rotation2d.fromRadians(Math.atan2(-mController.getRightX(), -mController.getRightY()));
+    // if (!mController.getLeftBumper()) {
+    //   joystickAngle = joystickAngle.plus(Rotation2d.fromDegrees(180));
+    // }
 
-    double joystickMagnitude = Math.sqrt(
-        (mController.getRightY() * mController.getRightY()) + (mController.getRightX() * mController.getRightX()));
-    if (joystickMagnitude > .1) {
-      rotVel = -rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(),
-          joystickAngle.getRadians());
-      if (Math.abs(rotVel) > joystickMagnitude) {
-        rotVel = joystickMagnitude * Math.signum(rotVel);
-      }
-    }
+    // double joystickMagnitude = Math.sqrt(
+    //     (mController.getRightY() * mController.getRightY()) + (mController.getRightX() * mController.getRightX()));
+    // if (joystickMagnitude > .1) {
+    //   rotVel = -rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(),
+    //       joystickAngle.getRadians());
+    //   if (Math.abs(rotVel) > joystickMagnitude) {
+    //     rotVel = joystickMagnitude * Math.signum(rotVel);
+    //   }
+    //}
 
-    rotVel = -rotVel; // controls were inverted
-
+    
     if (mController.getRawButton(7) & !lastScan) {
       mDrivetrain.resetGyro();
     }
@@ -143,14 +142,14 @@ public class DriveCommand extends CommandBase {
 
 
   // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    mDrivetrain.stop();
-  }
+ // @Override
+  // public void end(boolean interrupted) {
+  //   mDrivetrain.stop();
+  // }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+  // // Returns true when the command should end.
+  // @Override
+  // public boolean isFinished() {
+  //   return false;
+  // }
 }

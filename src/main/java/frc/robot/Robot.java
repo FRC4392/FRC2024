@@ -174,7 +174,7 @@ public class Robot extends TimedRobot {
     Trigger driverSpit = new Trigger(spitButton);
 
     brake.whileTrue(drivetrain.brakeCommand());
-    driverIntake.and(shooterOccupied).toggleOnTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
+    driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
     driverOuttake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
     driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
 
