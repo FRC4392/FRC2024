@@ -82,7 +82,7 @@ public class SwerveModuleV3 implements SwerveModule {
         
 
         // Configure drive PID
-        mDrivePID.setFF(.3);
+        mDrivePID.setFF(.43);
         mDrivePID.setP(.1);
 
         // Configure azimuth PID
