@@ -14,13 +14,11 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.controls.compound.Diff_MotionMagicVoltage_Position;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
+
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -97,16 +95,16 @@ public class Shooter extends SubsystemBase {
     SoftwareLimitSwitchConfigs pivotSoftLimits = new SoftwareLimitSwitchConfigs();
     
     pivotSoftLimits.ForwardSoftLimitThreshold = .12;
-    pivotSoftLimits.ReverseSoftLimitThreshold = .01;
+    pivotSoftLimits.ReverseSoftLimitThreshold = .04;
     
     pivotSoftLimits.ForwardSoftLimitEnable = true;
     pivotSoftLimits.ReverseSoftLimitEnable = true;
 
     MotionMagicConfigs pivMotionMagicConfigs = new MotionMagicConfigs();
 
-    pivMotionMagicConfigs.MotionMagicAcceleration = .1;
-    pivMotionMagicConfigs.MotionMagicCruiseVelocity = .1;
-    pivMotionMagicConfigs.MotionMagicJerk = .1;
+    pivMotionMagicConfigs.MotionMagicAcceleration = 1;
+    pivMotionMagicConfigs.MotionMagicCruiseVelocity = .2;
+    pivMotionMagicConfigs.MotionMagicJerk = 0;
 
     TalonFXConfiguration PivotConfigs = new TalonFXConfiguration();
 
@@ -116,26 +114,43 @@ public class Shooter extends SubsystemBase {
     PivotConfigs.Slot0.kA = 0; // acceleration
     PivotConfigs.Slot0.kG = 0; // gravity
 
-    PivotConfigs.Slot0.kP = .2; // proportional
+    PivotConfigs.Slot0.kP = 1000; // proportional
     PivotConfigs.Slot0.kI = 0; // integral
     PivotConfigs.Slot0.kD = 0; // derivative
 
     PivotConfigs.CurrentLimits = shooterCurrentLimits;
     PivotConfigs.SoftwareLimitSwitch = pivotSoftLimits;
+    PivotConfigs.MotionMagic = pivMotionMagicConfigs;
 
     TalonFXConfiguration ElevatorConfigs = new TalonFXConfiguration();
 
+     SoftwareLimitSwitchConfigs elevatorSoftLimits = new SoftwareLimitSwitchConfigs();
+    
+    elevatorSoftLimits.ForwardSoftLimitThreshold = 3;
+    elevatorSoftLimits.ReverseSoftLimitThreshold = 0;
+    
+    elevatorSoftLimits.ForwardSoftLimitEnable = true;
+    elevatorSoftLimits.ReverseSoftLimitEnable = true;
+
+    MotionMagicConfigs elevatorMotionMagicConfigs = new MotionMagicConfigs();
+
+    elevatorMotionMagicConfigs.MotionMagicAcceleration = 4;
+    elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = 2;
+    elevatorMotionMagicConfigs.MotionMagicJerk = 0;
+
      ElevatorConfigs.Feedback.SensorToMechanismRatio = 52/12 * 56/14;
 
-    ElevatorConfigs.Slot0.kV = 1/.05; // velocity
+    ElevatorConfigs.Slot0.kV = 2/1.1; // velocity
     ElevatorConfigs.Slot0.kA = 0; // acceleration
     ElevatorConfigs.Slot0.kG = 0; // gravity
 
-    ElevatorConfigs.Slot0.kP = 0; // proportional
+    ElevatorConfigs.Slot0.kP = 40; // proportional
     ElevatorConfigs.Slot0.kI = 0; // integral
     ElevatorConfigs.Slot0.kD = 0; // derivative
 
-    PivotConfigs.CurrentLimits = shooterCurrentLimits;
+    ElevatorConfigs.CurrentLimits = shooterCurrentLimits;
+    ElevatorConfigs.MotionMagic = elevatorMotionMagicConfigs;
+    ElevatorConfigs.SoftwareLimitSwitch = elevatorSoftLimits;
 
     shooterPivot.getConfigurator().apply(PivotConfigs);
     elevatorMotor.getConfigurator().apply(ElevatorConfigs);
@@ -153,7 +168,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setPivotPos(double pos) {
-    shooterPivot.setControl(m_MotionMagicVoltage.withPosition(pos));
+    shooterPivot.setControl(m_MotionMagicVoltage.withPosition(pos).withSlot(0));
+  }
+
+  public void setElevatorPos(double pos) {
+    elevatorMotor.setControl(m_MotionMagicVoltage.withPosition(pos).withSlot(0));
   }
 
   public void stopShooter() {
@@ -212,7 +231,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setElevateSpeed(double speed) {
-    elevatorMotor.set(speed);
+    elevatorMotor.setControl(m_voltageVelocity.withVelocity(speed));
   }
 
   public boolean getShooterSensor() {
@@ -247,8 +266,12 @@ public class Shooter extends SubsystemBase {
     return this.runEnd(() -> setSpitSpeed(shooterSpeeds.kFeedSpeed, shooterSpeeds.kSpitSpeed), () -> stop());
   }
 
-  public Command ElevateCommand(DoubleSupplier speed) {
-    return this.runEnd(() -> setElevateSpeed(speed.getAsDouble()), () -> stopElevator());
+  public Command ElevateCommand() {
+    return this.runEnd(() -> setElevateSpeed(1), () -> stopElevator());
+  }
+
+  public Command DeElevateCommand() {
+    return this.runEnd(() -> setElevateSpeed(-1), () -> stopElevator());
   }
 
   public Command CalibrateKs(double volts){
@@ -260,7 +283,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command pivotToPosCommand(double pos) {
-    return this.runEnd(() -> setPivotPos(pos), () -> stopPivot());
+    return this.run(() -> setPivotPos(pos));
+  }
+
+  public Command elevateToPosCommand(double pos) {
+    return this.run(() -> setElevatorPos(pos));
   }
 
   @Override
@@ -271,6 +298,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter 2 Speed", shooter2Motor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Elevator Speed", elevatorMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Pivot Speed", shooterPivot.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("PivotPos", shooterPivot.getPosition().getValueAsDouble()); //up 0.015 down .13
+    SmartDashboard.putNumber("PivotPos", shooterPivot.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("ElevatorPos", elevatorMotor.getPosition().getValueAsDouble()); //up 0.015 down .13
   }
 }
