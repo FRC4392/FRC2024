@@ -264,15 +264,15 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runShooter() {
-    return this.runEnd(() -> setShooterSpeed(100), () -> stopShooter());
+    return this.runEnd(() -> setShooterSpeed(80), () -> stopShooter());
   }
 
   public Command pivotCommand() {
-    return this.runEnd(() -> setPivotSpeed(-.3), () -> stopPivot());
+    return this.runEnd(() -> setPivotSpeed(-.1), () -> stopPivot());
   }
 
   public Command pivotBackCommand() {
-    return this.runEnd(() -> setPivotSpeed(.3), () -> stopPivot());
+    return this.runEnd(() -> setPivotSpeed(.1), () -> stopPivot());
   }
 
   public Command spitCommand() {

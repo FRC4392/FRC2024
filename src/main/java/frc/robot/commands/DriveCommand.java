@@ -11,9 +11,11 @@ import org.deceivers.drivers.LimelightHelpers;
 import org.deceivers.util.JoystickHelper;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -34,7 +36,7 @@ public class DriveCommand extends CommandBase {
   private JoystickHelper xrHelper = new JoystickHelper(0);
   private JoystickHelper yrHelper = new JoystickHelper(0);
   private double driveFactor = 1;
-  private PIDController rotationController = new PIDController(0.4, .0, .0);
+  private ProfiledPIDController rotationController = new ProfiledPIDController(0.0125, 0, 0, new TrapezoidProfile.Constraints(10, 100));
 
   private PIDController limController = new PIDController(0.3, 0.0, 0.0);
   private PIDController strafeController = new PIDController(0.3,0,0);

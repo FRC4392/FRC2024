@@ -142,8 +142,8 @@ public class Robot extends TimedRobot {
     Trigger PivotUp = operatorController.leftBumper();
     Trigger PivotDown = operatorController.rightBumper();
 
-    HighShot.whileTrue(shooter.pivotToPosCommand(.03));
-    LowShot.whileTrue(shooter.pivotToPosCommand(.08));
+    HighShot.whileTrue(shooter.pivotToPosCommand(.06));
+    LowShot.whileTrue(shooter.pivotToPosCommand(.085));
     HumanTake.whileTrue(shooter.backfeedCommand());
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());
@@ -158,15 +158,15 @@ public class Robot extends TimedRobot {
     testController.povDown().whileTrue(shooter.DeElevateCommand());
     testController.leftBumper().whileTrue(shooter.CalibrateKs(1));
     testController.rightBumper().whileTrue(shooter.CalibrateKs(-1));
-    testController.y().whileTrue(shooter.pivotToPosCommand(.06));
+    testController.y().whileTrue(shooter.pivotToPosCommand(.08));
     testController.b().whileTrue(shooter.pivotToPosCommand(.12));
     testController.x().whileTrue(shooter.elevateToPosCommand(1));
     testController.a().whileTrue(shooter.elevateToPosCommand(0));
 
     BooleanSupplier brakeSupplier = () -> driverController.getXButton();
-    BooleanSupplier intakeButton = () -> driverController.getLeftBumper();
+    BooleanSupplier intakeButton = () -> driverController.getLeftStickButton();
     BooleanSupplier outtakeButton = () -> driverController.getRightBumper();
-    BooleanSupplier spitButton = () -> driverController.getLeftStickButton();
+    BooleanSupplier spitButton = () -> driverController.getLeftBumper();
 
     Trigger brake = new Trigger(brakeSupplier);
     Trigger driverIntake = new Trigger(intakeButton);
@@ -174,7 +174,7 @@ public class Robot extends TimedRobot {
     Trigger driverSpit = new Trigger(spitButton);
 
     brake.whileTrue(drivetrain.brakeCommand());
-    driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
+    driverIntake.and(shooterOccupied).toggleOnTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
     driverOuttake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
     driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
 
