@@ -58,8 +58,8 @@ public class SwerveModuleV3 implements SwerveModule {
         mDriveMotor.setSmartCurrentLimit(80);
 
         // Configure Drive Encoder
-        mDriveEncoder.setPositionConversionFactor(0.2393893602 / ((18.0*45.0)/(12.0*15.0)));
-        mDriveEncoder.setVelocityConversionFactor(((0.2393893602 / ((18.0 / 12.0) * (45.0 / 15.0))) / 60));
+        mDriveEncoder.setPositionConversionFactor(0.2393893602 / ((20.0*45.0)/(13.0*15.0)));
+        mDriveEncoder.setVelocityConversionFactor(((0.2393893602 / ((20.0 / 13.0) * (45.0 / 15.0))) / 60));
         mDriveEncoder.setPosition(0);
 
         // Configure azimuth motor controller parameters
