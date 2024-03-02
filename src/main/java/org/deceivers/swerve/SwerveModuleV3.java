@@ -3,11 +3,13 @@ package org.deceivers.swerve;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.EncoderType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.SparkRelativeEncoder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -42,9 +44,9 @@ public class SwerveModuleV3 implements SwerveModule {
         mAzimuthMotor.restoreFactoryDefaults();
 
         // Get encoders
-        mAzimuthAbsoluteEncoder = mAzimuthMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        mAzimuthAbsoluteEncoder = mAzimuthMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
         mAzimuthIncrementalEncoder = mAzimuthMotor.getEncoder();
-        mDriveEncoder = mDriveMotor.getEncoder();
+        mDriveEncoder = mDriveMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
 
         // Get PIDs
         mDrivePID = mDriveMotor.getPIDController();
