@@ -133,8 +133,8 @@ public class Robot extends TimedRobot {
     //DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
     DoubleSupplier elevateSpeed = () -> operatorController.getLeftY();
-    Trigger Intake = operatorController.a();
-    Trigger Outtake = operatorController.x();
+    Trigger HighShot = operatorController.a();
+    Trigger LowShot = operatorController.x();
     Trigger HumanTake = operatorController.y();
     Trigger ClimbUp = operatorController.povUp();
     Trigger ClimbDown = operatorController.povDown();
@@ -142,8 +142,8 @@ public class Robot extends TimedRobot {
     Trigger PivotUp = operatorController.leftBumper();
     Trigger PivotDown = operatorController.rightBumper();
 
-    Intake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedCommand()));
-    Outtake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
+    HighShot.whileTrue(shooter.pivotToPosCommand(.03));
+    LowShot.whileTrue(shooter.pivotToPosCommand(.08));
     HumanTake.whileTrue(shooter.backfeedCommand());
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());
@@ -159,7 +159,7 @@ public class Robot extends TimedRobot {
     testController.leftBumper().whileTrue(shooter.CalibrateKs(1));
     testController.rightBumper().whileTrue(shooter.CalibrateKs(-1));
     testController.y().whileTrue(shooter.pivotToPosCommand(.06));
-    testController.b().whileTrue(shooter.pivotToPosCommand(.11));
+    testController.b().whileTrue(shooter.pivotToPosCommand(.12));
     testController.x().whileTrue(shooter.elevateToPosCommand(1));
     testController.a().whileTrue(shooter.elevateToPosCommand(0));
 

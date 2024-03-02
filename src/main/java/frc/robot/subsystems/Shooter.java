@@ -102,8 +102,8 @@ public class Shooter extends SubsystemBase {
 
     MotionMagicConfigs pivMotionMagicConfigs = new MotionMagicConfigs();
 
-    pivMotionMagicConfigs.MotionMagicAcceleration = 1;
-    pivMotionMagicConfigs.MotionMagicCruiseVelocity = .2;
+    pivMotionMagicConfigs.MotionMagicAcceleration = 5;
+    pivMotionMagicConfigs.MotionMagicCruiseVelocity = .6;
     pivMotionMagicConfigs.MotionMagicJerk = 0;
 
     TalonFXConfiguration PivotConfigs = new TalonFXConfiguration();
@@ -134,8 +134,8 @@ public class Shooter extends SubsystemBase {
 
     MotionMagicConfigs elevatorMotionMagicConfigs = new MotionMagicConfigs();
 
-    elevatorMotionMagicConfigs.MotionMagicAcceleration = 4;
-    elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = 2;
+    elevatorMotionMagicConfigs.MotionMagicAcceleration = 6;
+    elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = 3;
     elevatorMotionMagicConfigs.MotionMagicJerk = 0;
 
      ElevatorConfigs.Feedback.SensorToMechanismRatio = 52/12 * 56/14;
@@ -173,6 +173,7 @@ public class Shooter extends SubsystemBase {
 
   public void setElevatorPos(double pos) {
     elevatorMotor.setControl(m_MotionMagicVoltage.withPosition(pos).withSlot(0));
+    shooterPivot.setControl(m_MotionMagicVoltage.withPosition(.04).withSlot(0));
   }
 
   public void stopShooter() {
@@ -224,6 +225,13 @@ public class Shooter extends SubsystemBase {
     shooterMotor.set(speed.speed);
   }
 
+   public void setFeedwithPos(shooterSpeeds speed, double pos) {
+    shooterMotor.set(speed.speed);
+    shooterPivot.setControl(m_MotionMagicVoltage.withPosition(pos).withSlot(0));
+    elevatorMotor.setControl(m_MotionMagicVoltage.withPosition(0).withSlot(0));
+  }
+
+
    public void setFeedandShooterSpeed(double speed, double velo) {
     shooterMotor.set(speed);
     shooter1Motor.setControl(m_voltageVelocity.withVelocity(velo));
@@ -232,6 +240,7 @@ public class Shooter extends SubsystemBase {
 
   public void setElevateSpeed(double speed) {
     elevatorMotor.setControl(m_voltageVelocity.withVelocity(speed));
+    shooterPivot.setControl(m_MotionMagicVoltage.withPosition(.04).withSlot(0));
   }
 
   public boolean getShooterSensor() {
@@ -239,7 +248,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command feedCommand() {
-    return this.runEnd(() -> setFeedandShooterSpeed(.2,100), () -> stop());
+    return this.runEnd(() -> setFeedSpeed(shooterSpeeds.kFeedSpeed), () -> stop());
+  }
+
+  public Command feedWithPosCommand() {
+    return this.runEnd(() -> setFeedwithPos(shooterSpeeds.kFeedSpeed, 0.12), () -> stop());
   }
 
   public Command outfeedCommand() {
