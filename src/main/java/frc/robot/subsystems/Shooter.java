@@ -18,6 +18,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.Orchestra;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
@@ -57,7 +59,18 @@ public class Shooter extends SubsystemBase {
   private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, false, 0, 0, false, false, false);
   private MotionMagicVoltage m_MotionMagicVoltage = new MotionMagicVoltage(0);
 
+  Orchestra m_orchestra = new Orchestra();
+
   public Shooter() {
+    m_orchestra.addInstrument(elevatorMotor);
+    m_orchestra.addInstrument(shooter1Motor);
+    m_orchestra.addInstrument(shooter2Motor);
+    m_orchestra.addInstrument(shooterPivot);
+
+    m_orchestra.loadMusic("output.chrp");
+    SmartDashboard.putBoolean(getName(), m_orchestra.isPlaying());
+    //m_orchestra.play();
+
     shooterMotor.restoreFactoryDefaults();
 
     shooterMotor.setSmartCurrentLimit(40);
