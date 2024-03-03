@@ -7,6 +7,15 @@ package frc.robot;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import org.deceivers.swerve.SwerveDrive;
+import org.deceivers.swerve.SwerveModuleV3;
+
+import com.ctre.phoenix6.hardware.Pigeon2;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.Uppies;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.LED;
@@ -34,7 +42,26 @@ public class Robot extends TimedRobot {
   private CommandXboxController testController = new CommandXboxController(2);
 
 
-  private Drivetrain drivetrain = new Drivetrain();
+  private final CANSparkFlex mDriveMotor1 = new CANSparkFlex(11, MotorType.kBrushless);
+  private final CANSparkFlex mDriveMotor2 = new CANSparkFlex(13, MotorType.kBrushless);
+  private final CANSparkFlex mDriveMotor3 = new CANSparkFlex(15, MotorType.kBrushless);
+  private final CANSparkFlex mDriveMotor4 = new CANSparkFlex(17, MotorType.kBrushless);
+
+  private final CANSparkMax mAzimuth1 = new CANSparkMax(12, MotorType.kBrushless);
+  private final CANSparkMax mAzimuth2 = new CANSparkMax(14, MotorType.kBrushless);
+  private final CANSparkMax mAzimuth3 = new CANSparkMax(16, MotorType.kBrushless);
+  private final CANSparkMax mAzimuth4 = new CANSparkMax(18, MotorType.kBrushless);
+
+  private final Pigeon2 pidgey = new Pigeon2(10);
+
+  private final SwerveModuleV3 Module1 = new SwerveModuleV3(mAzimuth1, mDriveMotor1, new Translation2d(0.256519, 0.256519), "Module 1");
+  private final SwerveModuleV3 Module2 = new SwerveModuleV3(mAzimuth2, mDriveMotor2, new Translation2d(0.256519, -0.256519), "Module 2");
+  private final SwerveModuleV3 Module3 = new SwerveModuleV3(mAzimuth3, mDriveMotor3, new Translation2d(-0.256519, -0.256519), "Module 3");
+  private final SwerveModuleV3 Module4 = new SwerveModuleV3(mAzimuth4, mDriveMotor4, new Translation2d(-0.256519,  0.256519), "Module 4");
+
+  private final SwerveDrive mSwerveDrive = new SwerveDrive(()->pidgey.getYaw().getValueAsDouble(), Module1, Module2, Module3, Module4);
+
+
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
   private Uppies climber = new Uppies();
@@ -46,7 +73,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
     led.setLEDColor(0, 0, 100);
     configureButtonBindings();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -173,7 +199,7 @@ public class Robot extends TimedRobot {
     Trigger driverOuttake = new Trigger(outtakeButton);
     Trigger driverSpit = new Trigger(spitButton);
 
-    brake.whileTrue(drivetrain.brakeCommand());
+    brake.whileTrue(mSwerveDrive.brakeCommand());
     driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
     driverOuttake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
     driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
