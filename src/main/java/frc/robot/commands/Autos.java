@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.Robot;
 
 public final class Autos {
 

@@ -20,9 +20,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.Uppies;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -37,7 +37,7 @@ import frc.robot.subsystems.LED;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
-  private XboxController driverController = new XboxController(0);
+  private CommandXboxController driverController = new CommandXboxController(0);
   private CommandXboxController operatorController = new CommandXboxController(1);
   private CommandXboxController testController = new CommandXboxController(2);
 
@@ -59,9 +59,8 @@ public class Robot extends TimedRobot {
   private final SwerveModuleV3 Module3 = new SwerveModuleV3(mAzimuth3, mDriveMotor3, new Translation2d(-0.256519, -0.256519), "Module 3");
   private final SwerveModuleV3 Module4 = new SwerveModuleV3(mAzimuth4, mDriveMotor4, new Translation2d(-0.256519,  0.256519), "Module 4");
 
+
   private final SwerveDrive mSwerveDrive = new SwerveDrive(()->pidgey.getYaw().getValueAsDouble(), Module1, Module2, Module3, Module4);
-
-
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
   private Uppies climber = new Uppies();
@@ -189,21 +188,39 @@ public class Robot extends TimedRobot {
     testController.x().whileTrue(shooter.elevateToPosCommand(1));
     testController.a().whileTrue(shooter.elevateToPosCommand(0));
 
-    BooleanSupplier brakeSupplier = () -> driverController.getXButton();
-    BooleanSupplier intakeButton = () -> driverController.getLeftStickButton();
-    BooleanSupplier outtakeButton = () -> driverController.getRightBumper();
-    BooleanSupplier spitButton = () -> driverController.getLeftBumper();
+    //Driver Controls
 
-    Trigger brake = new Trigger(brakeSupplier);
-    Trigger driverIntake = new Trigger(intakeButton);
-    Trigger driverOuttake = new Trigger(outtakeButton);
-    Trigger driverSpit = new Trigger(spitButton);
+      //left stick - x,y movement
+      //right stick - rotation movement
+      //pov up
+      //pov down
+      //pov left
+      //pov right
+      //a
+      //b
+      //x
+      //y
+      //left bumper - spit command
+      //left trigger - robot oriented
+      //right bumper - outtake commnad
+      //right trigger
+      //left stick - intake command
+      //right stick - slow mode
+      //back - reset gyro
+      //start
+    DoubleSupplier xSupplier = () -> driverController.getLeftX();
+    DoubleSupplier ySupplier = () -> driverController.getLeftY();
+    DoubleSupplier rotSupplier = () -> driverController.getRightX();
 
-    brake.whileTrue(mSwerveDrive.brakeCommand());
-    driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
-    driverOuttake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
-    driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
+    mSwerveDrive.setDefaultCommand(mSwerveDrive.FastFieldRelativeDrive(xSupplier, ySupplier, rotSupplier));
+    driverController.leftTrigger().and(driverController.rightStick().negate()).whileTrue(mSwerveDrive.FastRobotdRelativeDrive(xSupplier, ySupplier, rotSupplier));
+    driverController.leftTrigger().and(driverController.rightStick()).whileTrue(mSwerveDrive.SlowRobotdRelativeDrive(xSupplier, ySupplier, rotSupplier));
+    driverController.rightStick().and(driverController.leftTrigger().negate()).whileTrue(mSwerveDrive.SlowFieldRelativeDrive(xSupplier, ySupplier, rotSupplier));
 
-
+    driverController.x().whileTrue(mSwerveDrive.brakeCommand());
+    driverController.back().onTrue(mSwerveDrive.restGyro());
+    driverController.leftStick().and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
+    driverController.rightBumper().whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
+    driverController.leftBumper().whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
   }
 }
