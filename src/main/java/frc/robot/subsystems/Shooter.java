@@ -12,6 +12,7 @@ import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -21,6 +22,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.Orchestra;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -34,7 +36,7 @@ public class Shooter extends SubsystemBase {
 
   public enum shooterSpeeds {
 
-    kFeedSpeed(.3),
+    kFeedSpeed(.2),
     kOutfeedSpeed(-0.3),
     kBackfeedSpeed(-.15),
     kPivotSpeed(.1),
@@ -58,18 +60,19 @@ public class Shooter extends SubsystemBase {
   private TalonFX elevatorMotor = new TalonFX(41);
   private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, false, 0, 0, false, false, false);
   private MotionMagicVoltage m_MotionMagicVoltage = new MotionMagicVoltage(0);
+  private InvertedValue Inverted = InvertedValue.CounterClockwise_Positive;
 
-  Orchestra m_orchestra = new Orchestra();
+  // Orchestra m_orchestra = new Orchestra();
 
   public Shooter() {
-    m_orchestra.addInstrument(elevatorMotor);
-    m_orchestra.addInstrument(shooter1Motor);
-    m_orchestra.addInstrument(shooter2Motor);
-    m_orchestra.addInstrument(shooterPivot);
+    // m_orchestra.addInstrument(elevatorMotor);
+    // m_orchestra.addInstrument(shooter1Motor);
+    // m_orchestra.addInstrument(shooter2Motor);
+    // m_orchestra.addInstrument(shooterPivot);
 
-    m_orchestra.loadMusic("output.chrp");
-    SmartDashboard.putBoolean(getName(), m_orchestra.isPlaying());
-    //m_orchestra.play();
+    // m_orchestra.loadMusic("output.chrp");
+    // SmartDashboard.putBoolean(getName(), m_orchestra.isPlaying());
+    // //m_orchestra.play()
 
     shooterMotor.restoreFactoryDefaults();
 
@@ -107,8 +110,8 @@ public class Shooter extends SubsystemBase {
     
     SoftwareLimitSwitchConfigs pivotSoftLimits = new SoftwareLimitSwitchConfigs();
     
-    pivotSoftLimits.ForwardSoftLimitThreshold = .12;
-    pivotSoftLimits.ReverseSoftLimitThreshold = .04;
+    pivotSoftLimits.ForwardSoftLimitThreshold = .005;
+    pivotSoftLimits.ReverseSoftLimitThreshold = .12;
     
     pivotSoftLimits.ForwardSoftLimitEnable = true;
     pivotSoftLimits.ReverseSoftLimitEnable = true;
@@ -118,6 +121,10 @@ public class Shooter extends SubsystemBase {
     pivMotionMagicConfigs.MotionMagicAcceleration = 5;
     pivMotionMagicConfigs.MotionMagicCruiseVelocity = .6;
     pivMotionMagicConfigs.MotionMagicJerk = 0;
+
+    MotorOutputConfigs pivOutputConfigs = new MotorOutputConfigs();
+
+    pivOutputConfigs.withInverted(Inverted);
 
     TalonFXConfiguration PivotConfigs = new TalonFXConfiguration();
 
@@ -219,9 +226,11 @@ public class Shooter extends SubsystemBase {
     shooter2Motor.setControl(m_voltageVelocity.withVelocity(velo));
   }
 
-  public void setShotSpeed(double speed) {
-    shooter1Motor.set(speed);
-    shooter2Motor.set(speed);
+  public void setHumanTake() {
+    shooter1Motor.set(-.1);
+    shooter2Motor.set(-.1);
+    shooterMotor.set(-.2);
+    shooterPivot.setControl(m_MotionMagicVoltage.withPosition(.12).withSlot(0));
   }
 
   public void setSpitSpeed(shooterSpeeds speedF, shooterSpeeds speedS) {

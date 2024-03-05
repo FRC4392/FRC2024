@@ -45,7 +45,7 @@ public class SwerveModuleV3 implements SwerveModule {
         // Get encoders
         mAzimuthAbsoluteEncoder = mAzimuthMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
         mAzimuthIncrementalEncoder = mAzimuthMotor.getEncoder();
-        mDriveEncoder = mDriveMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
+        mDriveEncoder = mDriveMotor.getEncoder();
 
         // Get PIDs
         mDrivePID = mDriveMotor.getPIDController();

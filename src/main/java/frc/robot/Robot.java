@@ -138,9 +138,10 @@ public class Robot extends TimedRobot {
     Trigger HumanTake = operatorController.y();
     Trigger ClimbUp = operatorController.povUp();
     Trigger ClimbDown = operatorController.povDown();
-    Trigger Feed = operatorController.b();
+    Trigger Feed = operatorController.rightTrigger(0);
     Trigger PivotUp = operatorController.leftBumper();
     Trigger PivotDown = operatorController.rightBumper();
+    Trigger OpIntake = operatorController.b();
 
     HighShot.whileTrue(shooter.pivotToPosCommand(.06));
     LowShot.whileTrue(shooter.pivotToPosCommand(.085));
@@ -149,6 +150,7 @@ public class Robot extends TimedRobot {
     PivotUp.whileTrue(shooter.pivotCommand());
     PivotDown.whileTrue(shooter.pivotBackCommand());
     operatorController.leftTrigger(0).whileTrue(shooter.runShooter());
+    OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
     operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
