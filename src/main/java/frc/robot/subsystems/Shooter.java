@@ -285,8 +285,8 @@ public class Shooter extends SubsystemBase {
     return this.runEnd(() -> setShooterSpeed(-10), () -> stopShooter());
   }
 
-  public Command runShooter() {
-    return this.runEnd(() -> setShooterSpeed(80), () -> stopShooter());
+  public Command runShooter(double velo) {
+    return this.runEnd(() -> setShooterSpeed(velo), () -> stopShooter());
   }
 
   public Command pivotCommand() {
@@ -323,6 +323,10 @@ public class Shooter extends SubsystemBase {
 
   public Command elevateToPosCommand(double pos) {
     return this.run(() -> setElevatorPos(pos));
+  }
+
+  public Command humanTakeCommand() {
+    return this.runEnd(() -> setHumanTake(), () -> stop());
   }
 
   @Override

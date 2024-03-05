@@ -132,25 +132,29 @@ public class Robot extends TimedRobot {
 
     //DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
-    DoubleSupplier elevateSpeed = () -> operatorController.getLeftY();
+    Trigger AltButton = operatorController.rightStick();
     Trigger HighShot = operatorController.a();
-    Trigger LowShot = operatorController.x();
     Trigger HumanTake = operatorController.y();
+    Trigger OpOuttake = operatorController.x();
+    Trigger OpIntake = operatorController.b();
     Trigger ClimbUp = operatorController.povUp();
     Trigger ClimbDown = operatorController.povDown();
     Trigger Feed = operatorController.rightTrigger(0);
+    Trigger Shoot = operatorController.leftTrigger(0).and(AltButton.negate());
+    Trigger SlowShoot = operatorController.leftTrigger(0).and(AltButton);
     Trigger PivotUp = operatorController.leftBumper();
     Trigger PivotDown = operatorController.rightBumper();
-    Trigger OpIntake = operatorController.b();
+    Trigger AutoAim = operatorController.leftStick();
 
-    HighShot.whileTrue(shooter.pivotToPosCommand(.06));
-    LowShot.whileTrue(shooter.pivotToPosCommand(.085));
-    HumanTake.whileTrue(shooter.backfeedCommand());
+    HighShot.whileTrue(shooter.pivotToPosCommand(.12));
+    HumanTake.whileTrue(shooter.humanTakeCommand());
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());
     PivotDown.whileTrue(shooter.pivotBackCommand());
-    operatorController.leftTrigger(0).whileTrue(shooter.runShooter());
+    Shoot.whileTrue(shooter.runShooter(.8));
+    SlowShoot.whileTrue(shooter.runShooter(.4));
     OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
+    OpOuttake.whileTrue(shooter.outfeedCommand());
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
     operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
