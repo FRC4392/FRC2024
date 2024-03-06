@@ -36,7 +36,8 @@ public class Shooter extends SubsystemBase {
 
   public enum shooterSpeeds {
 
-    kFeedSpeed(.2),
+    kFeedSpeed(.3),
+    kIntakeSpeed(.2),
     kOutfeedSpeed(-0.3),
     kBackfeedSpeed(-.15),
     kPivotSpeed(.1),
@@ -60,7 +61,7 @@ public class Shooter extends SubsystemBase {
   private TalonFX elevatorMotor = new TalonFX(41);
   private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, false, 0, 0, false, false, false);
   private MotionMagicVoltage m_MotionMagicVoltage = new MotionMagicVoltage(0);
-  private InvertedValue Inverted = InvertedValue.CounterClockwise_Positive;
+  private InvertedValue Inverted = InvertedValue.Clockwise_Positive;
 
   // Orchestra m_orchestra = new Orchestra();
 
@@ -98,7 +99,7 @@ public class Shooter extends SubsystemBase {
     FlyWheelConfigs.Feedback.SensorToMechanismRatio = 1.0/1.5;
 
     FlyWheelConfigs.Slot0.kV = 1/12.5; // velocity  speed from smart dashboard/11
-    FlyWheelConfigs.Slot0.kP = .4; // proportional
+    FlyWheelConfigs.Slot0.kP = .2; // proportional
     FlyWheelConfigs.Slot0.kI = 0; // integral
     FlyWheelConfigs.Slot0.kD = 0; // derivative
     
@@ -110,8 +111,8 @@ public class Shooter extends SubsystemBase {
     
     SoftwareLimitSwitchConfigs pivotSoftLimits = new SoftwareLimitSwitchConfigs();
     
-    pivotSoftLimits.ForwardSoftLimitThreshold = .005;
-    pivotSoftLimits.ReverseSoftLimitThreshold = .12;
+    pivotSoftLimits.ForwardSoftLimitThreshold = .12;
+    pivotSoftLimits.ReverseSoftLimitThreshold = .0;
     
     pivotSoftLimits.ForwardSoftLimitEnable = true;
     pivotSoftLimits.ReverseSoftLimitEnable = true;
@@ -134,13 +135,14 @@ public class Shooter extends SubsystemBase {
     PivotConfigs.Slot0.kA = 0; // acceleration
     PivotConfigs.Slot0.kG = 0; // gravity
 
-    PivotConfigs.Slot0.kP = 1000; // proportional
+    PivotConfigs.Slot0.kP = 1200; // proportional
     PivotConfigs.Slot0.kI = 0; // integral
     PivotConfigs.Slot0.kD = 0; // derivative
 
     PivotConfigs.CurrentLimits = shooterCurrentLimits;
     PivotConfigs.SoftwareLimitSwitch = pivotSoftLimits;
     PivotConfigs.MotionMagic = pivMotionMagicConfigs;
+    PivotConfigs.MotorOutput = pivOutputConfigs;
 
     TalonFXConfiguration ElevatorConfigs = new TalonFXConfiguration();
 
@@ -262,7 +264,12 @@ public class Shooter extends SubsystemBase {
 
   public void setElevateSpeed(double speed) {
     elevatorMotor.setControl(m_voltageVelocity.withVelocity(speed));
-    shooterPivot.setControl(m_MotionMagicVoltage.withPosition(.04).withSlot(0));
+    //shooterPivot.setControl(m_MotionMagicVoltage.withPosition(.04).withSlot(0));
+  }
+
+  public void RunShooterAndFeeder(double speed){
+    setFeedSpeed(shooterSpeeds.kFeedSpeed);
+    setShooterSpeed(speed);
   }
 
   public boolean getShooterSensor() {
@@ -274,7 +281,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command feedWithPosCommand() {
-    return this.runEnd(() -> setFeedwithPos(shooterSpeeds.kFeedSpeed, 0.12), () -> stop());
+    return this.runEnd(() -> setFeedwithPos(shooterSpeeds.kIntakeSpeed, 0), () -> stop());
   }
 
   public Command outfeedCommand() {
@@ -286,7 +293,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runShooter(double velo) {
-    return this.runEnd(() -> setShooterSpeed(velo), () -> stopShooter());
+    return this.run(() -> setShooterSpeed(velo));
   }
 
   public Command pivotCommand() {
@@ -327,6 +334,10 @@ public class Shooter extends SubsystemBase {
 
   public Command humanTakeCommand() {
     return this.runEnd(() -> setHumanTake(), () -> stop());
+  }
+
+  public Command shootAndFeed(double speed){
+    return this.runEnd(()->RunShooterAndFeeder(speed), () ->stop());
   }
 
   @Override

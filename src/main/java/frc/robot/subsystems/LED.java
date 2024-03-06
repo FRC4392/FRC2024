@@ -32,7 +32,7 @@ public class LED extends SubsystemBase {
 
   @Override
   public void periodic() {
-    rainbow();
+   // rainbow();
   }
 
   public Command setLedOccupied(){

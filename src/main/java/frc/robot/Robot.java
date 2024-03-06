@@ -151,13 +151,18 @@ public class Robot extends TimedRobot {
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());
     PivotDown.whileTrue(shooter.pivotBackCommand());
-    Shoot.whileTrue(shooter.runShooter(.8));
-    SlowShoot.whileTrue(shooter.runShooter(.4));
+    Shoot.whileTrue(shooter.runShooter(80));
+    SlowShoot.whileTrue(shooter.runShooter(130));
     OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
     OpOuttake.whileTrue(shooter.outfeedCommand());
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
     operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
+
+    operatorController.povLeft().whileTrue(shooter.ElevateCommand());
+    operatorController.povRight().whileTrue(shooter.DeElevateCommand());
+
+    //operatorController.povLeft().whileTrue(shooter.pivotToPosCommand(.0335));
     //operatorController.a().whileFalse(shooter.ElevateCommand(elevateSpeed));
 
     BooleanSupplier brakeSupplier = () -> driverController.getXButton();

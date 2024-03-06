@@ -51,7 +51,7 @@ public class Uppies extends SubsystemBase {
   }
 
   public Command ClimbUpCommand(){
-    return this.runEnd(()->setClimbSpeed(.1), ()->stopClimb());
+    return this.runEnd(()->setClimbSpeed(.5), ()->stopClimb());
   }
 
   public Command ClimbDownCommand(){
