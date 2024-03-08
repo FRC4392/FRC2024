@@ -10,13 +10,16 @@ package frc.robot.commands;
 import org.deceivers.drivers.LimelightHelpers;
 import org.deceivers.util.JoystickHelper;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,7 +39,7 @@ public class DriveCommand extends CommandBase {
   private JoystickHelper xrHelper = new JoystickHelper(0);
   private JoystickHelper yrHelper = new JoystickHelper(0);
   private double driveFactor = 1;
-  private ProfiledPIDController rotationController = new ProfiledPIDController(0.0125, 0, 0, new TrapezoidProfile.Constraints(10, 100));
+  private PIDController rotationController = new PIDController(.5, 0, 0.00);
 
   private PIDController limController = new PIDController(0.3, 0.0, 0.0);
   private PIDController strafeController = new PIDController(0.3,0,0);
@@ -44,6 +47,8 @@ public class DriveCommand extends CommandBase {
   private SlewRateLimiter xfilter = new SlewRateLimiter(1000);
   private SlewRateLimiter yfilter = new SlewRateLimiter(1000);
   private SlewRateLimiter rotfilter = new SlewRateLimiter(1000);
+  private double lastSpeed;
+  private double lastTime;
 
   public DriveCommand(Drivetrain Drivetrain, XboxController XboxController) {
     mDrivetrain = Drivetrain;
@@ -56,6 +61,7 @@ public class DriveCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    rotationController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -95,6 +101,20 @@ public class DriveCommand extends CommandBase {
 
     yrVel = yrHelper.setInput(yrVel).applyPower(yrVel).value;
     xrVel = xrHelper.setInput(xrVel).applyPower(yrVel).value;
+
+    Rotation2d angle = new Rotation2d(0);
+    if (mController.getAButton()){
+      new Rotation2d();
+      angle = Rotation2d.fromDegrees(90);
+
+      rotVel = -rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
+    } else if (mController.getBButton()) {
+      new Rotation2d();
+      angle = Rotation2d.fromDegrees(0);
+      rotVel = -rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
+    } else {
+      rotationController.reset();
+    }
 
     yVel = yVel * driveFactor;
     xVel = xVel * driveFactor;

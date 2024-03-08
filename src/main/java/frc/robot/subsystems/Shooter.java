@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import java.util.function.DoubleSupplier;
 
@@ -81,6 +82,14 @@ public class Shooter extends SubsystemBase {
     shooterMotor.setIdleMode(IdleMode.kBrake);
     shooterMotor.setInverted(true);
 
+    shooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 65535);
+    shooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 65535);
+    shooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 65535);
+    shooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65535);
+    shooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 65535);
+    shooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535);
+    shooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535);
+
     shooterMotor.burnFlash();
 
     CurrentLimitsConfigs shooterCurrentLimits = new CurrentLimitsConfigs();
@@ -107,6 +116,9 @@ public class Shooter extends SubsystemBase {
 
     shooter1Motor.getConfigurator().apply(FlyWheelConfigs);
     shooter2Motor.getConfigurator().apply(FlyWheelConfigs);
+
+    shooter1Motor.optimizeBusUtilization();
+    shooter2Motor.optimizeBusUtilization();
 
     
     SoftwareLimitSwitchConfigs pivotSoftLimits = new SoftwareLimitSwitchConfigs();
@@ -175,7 +187,10 @@ public class Shooter extends SubsystemBase {
     ElevatorConfigs.SoftwareLimitSwitch = elevatorSoftLimits;
 
     shooterPivot.getConfigurator().apply(PivotConfigs);
+
+    shooterPivot.optimizeBusUtilization();
     elevatorMotor.getConfigurator().apply(ElevatorConfigs);
+    elevatorMotor.optimizeBusUtilization();
 
     shooterPivot.setNeutralMode(NeutralModeValue.Brake);
     elevatorMotor.setNeutralMode(NeutralModeValue.Brake);

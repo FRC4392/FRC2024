@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
     Trigger shooterOccupied = new Trigger(sensorSupplier);
     shooterOccupied.whileTrue(led.setLedOccupied());
 
-    //DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
+    DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
     Trigger AltButton = operatorController.rightStick();
     Trigger HighShot = operatorController.a();
@@ -146,7 +146,7 @@ public class Robot extends TimedRobot {
     Trigger PivotDown = operatorController.rightBumper();
     Trigger AutoAim = operatorController.leftStick();
 
-    HighShot.whileTrue(shooter.pivotToPosCommand(.12));
+    HighShot.whileTrue(shooter.pivotToPosCommand(.06));
     HumanTake.whileTrue(shooter.humanTakeCommand());
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());
@@ -162,7 +162,7 @@ public class Robot extends TimedRobot {
     operatorController.povLeft().whileTrue(shooter.ElevateCommand());
     operatorController.povRight().whileTrue(shooter.DeElevateCommand());
 
-    //operatorController.povLeft().whileTrue(shooter.pivotToPosCommand(.0335));
+    operatorController.povLeft().whileTrue(shooter.pivotToPosCommand(.0335));
     //operatorController.a().whileFalse(shooter.ElevateCommand(elevateSpeed));
 
     BooleanSupplier brakeSupplier = () -> driverController.getXButton();
