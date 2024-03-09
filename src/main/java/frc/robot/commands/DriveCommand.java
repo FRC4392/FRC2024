@@ -50,6 +50,8 @@ public class DriveCommand extends CommandBase {
   private double lastSpeed;
   private double lastTime;
 
+  Rotation2d angle = new Rotation2d(0);
+
   public DriveCommand(Drivetrain Drivetrain, XboxController XboxController) {
     mDrivetrain = Drivetrain;
     mController = XboxController;
@@ -94,7 +96,7 @@ public class DriveCommand extends CommandBase {
       mController.setRumble(RumbleType.kRightRumble, 0);
     }
 
-    rotVel = mController.getRightX();
+    rotVel = -mController.getRightX();
     yVel = yHelper.setInput(yVel).applyPower(2).value;
     xVel = xHelper.setInput(xVel).applyPower(2).value;
     rotVel = rotHelper.setInput(rotVel).applyPower(2).value;
@@ -102,16 +104,15 @@ public class DriveCommand extends CommandBase {
     yrVel = yrHelper.setInput(yrVel).applyPower(yrVel).value;
     xrVel = xrHelper.setInput(xrVel).applyPower(yrVel).value;
 
-    Rotation2d angle = new Rotation2d(0);
+    
     if (mController.getAButton()){
-      new Rotation2d();
-      angle = Rotation2d.fromDegrees(90);
-
-      rotVel = -rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
+        new Rotation2d();
+        angle = Rotation2d.fromDegrees(-LimelightHelpers.getTX("limelight-april")).plus(Rotation2d.fromDegrees(mDrivetrain.getRotation()));
+      rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
     } else if (mController.getBButton()) {
       new Rotation2d();
       angle = Rotation2d.fromDegrees(0);
-      rotVel = -rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
+      rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
     } else {
       rotationController.reset();
     }

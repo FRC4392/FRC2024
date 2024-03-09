@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.Uppies;
+import frc.robot.subsystems.AprilTagLimelight;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -38,6 +39,7 @@ public class Robot extends TimedRobot {
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
   private Uppies climber = new Uppies();
+  private AprilTagLimelight limelightapril = new AprilTagLimelight();
   LED led = new LED();
 
   /**
@@ -146,12 +148,12 @@ public class Robot extends TimedRobot {
     Trigger PivotDown = operatorController.rightBumper();
     Trigger AutoAim = operatorController.leftStick();
 
-    HighShot.whileTrue(shooter.pivotToPosCommand(.06));
+    HighShot.whileTrue(shooter.setShooterWithLimelight());
     HumanTake.whileTrue(shooter.humanTakeCommand());
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());
     PivotDown.whileTrue(shooter.pivotBackCommand());
-    Shoot.whileTrue(shooter.runShooter(80));
+    Shoot.whileTrue(shooter.runShooter(90));
     SlowShoot.whileTrue(shooter.runShooter(130));
     OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
     OpOuttake.whileTrue(shooter.outfeedCommand());
@@ -179,7 +181,5 @@ public class Robot extends TimedRobot {
     driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
     driverOuttake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
     driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
-
-
   }
 }

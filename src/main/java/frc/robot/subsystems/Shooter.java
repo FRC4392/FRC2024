@@ -9,6 +9,11 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import java.util.function.DoubleSupplier;
 
+import org.deceivers.drivers.LimelightHelpers;
+import org.deceivers.util.interpolable.InterpolatingDouble;
+import org.deceivers.util.interpolable.InterpolatingTreeMap;
+import org.deceivers.util.interpolable.InverseInterpolable;
+
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -64,6 +69,19 @@ public class Shooter extends SubsystemBase {
   private MotionMagicVoltage m_MotionMagicVoltage = new MotionMagicVoltage(0);
   private InvertedValue Inverted = InvertedValue.Clockwise_Positive;
 
+  private static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<>();
+  static {
+    map.put(new InterpolatingDouble(22.76), new InterpolatingDouble(.12));
+    map.put(new InterpolatingDouble(12.25), new InterpolatingDouble(.1));
+    map.put(new InterpolatingDouble(7.0), new InterpolatingDouble(.082));
+    map.put(new InterpolatingDouble(0.0), new InterpolatingDouble(.063));
+    map.put(new InterpolatingDouble(-.38), new InterpolatingDouble(.059));
+    map.put(new InterpolatingDouble(-.637), new InterpolatingDouble(.047));
+    map.put(new InterpolatingDouble(-8.185), new InterpolatingDouble(.045));
+    map.put(new InterpolatingDouble(-10.15), new InterpolatingDouble(.038));
+    map.put(new InterpolatingDouble(-12.39), new InterpolatingDouble(.032));
+  }
+
   // Orchestra m_orchestra = new Orchestra();
 
   public Shooter() {
@@ -117,8 +135,8 @@ public class Shooter extends SubsystemBase {
     shooter1Motor.getConfigurator().apply(FlyWheelConfigs);
     shooter2Motor.getConfigurator().apply(FlyWheelConfigs);
 
-    shooter1Motor.optimizeBusUtilization();
-    shooter2Motor.optimizeBusUtilization();
+    // shooter1Motor.optimizeBusUtilization();
+    // shooter2Motor.optimizeBusUtilization();
 
     
     SoftwareLimitSwitchConfigs pivotSoftLimits = new SoftwareLimitSwitchConfigs();
@@ -188,12 +206,14 @@ public class Shooter extends SubsystemBase {
 
     shooterPivot.getConfigurator().apply(PivotConfigs);
 
-    shooterPivot.optimizeBusUtilization();
+    // shooterPivot.optimizeBusUtilization();
     elevatorMotor.getConfigurator().apply(ElevatorConfigs);
-    elevatorMotor.optimizeBusUtilization();
+    // elevatorMotor.optimizeBusUtilization();
 
     shooterPivot.setNeutralMode(NeutralModeValue.Brake);
     elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+
+    
   }
 
   public void stopFeed() {
@@ -353,6 +373,23 @@ public class Shooter extends SubsystemBase {
 
   public Command shootAndFeed(double speed){
     return this.runEnd(()->RunShooterAndFeeder(speed), () ->stop());
+  }
+
+  public Command setShooterWithLimelight(){
+    return this.run(this::setPivotWithLimelight);
+  }
+
+  private void setPivotWithLimelight(){
+    setShooterSpeed(80);
+    double target = LimelightHelpers.getTY("limelight-april");
+
+    double angle = map.getInterpolated(new InterpolatingDouble(target)).value;
+    setPivotPos(angle);
+  }
+
+  private void endTargeting(){
+    setPivotPos(0);
+    stop();
   }
 
   @Override
