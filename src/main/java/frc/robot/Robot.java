@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
 
   private XboxController driverController = new XboxController(0);
   private CommandXboxController operatorController = new CommandXboxController(1);
-  private CommandXboxController testController = new CommandXboxController(2);
+ // private CommandXboxController testController = new CommandXboxController(2);
 
 
   private Drivetrain drivetrain = new Drivetrain();
@@ -135,7 +135,7 @@ public class Robot extends TimedRobot {
     DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
     Trigger AltButton = operatorController.rightStick();
-    Trigger HighShot = operatorController.a();
+    Trigger FixShotClose = operatorController.a();
     Trigger HumanTake = operatorController.y();
     Trigger OpOuttake = operatorController.x();
     Trigger OpIntake = operatorController.b();
@@ -148,7 +148,8 @@ public class Robot extends TimedRobot {
     Trigger PivotDown = operatorController.rightBumper();
     Trigger AutoAim = operatorController.leftStick();
 
-    HighShot.whileTrue(shooter.setShooterWithLimelight());
+    AutoAim.whileTrue(shooter.setShooterWithLimelight());
+    FixShotClose.whileTrue(shooter.pivotToPosCommand(.12));
     HumanTake.whileTrue(shooter.humanTakeCommand());
     Feed.whileTrue(shooter.feedCommand());
     PivotUp.whileTrue(shooter.pivotCommand());
@@ -159,7 +160,7 @@ public class Robot extends TimedRobot {
     OpOuttake.whileTrue(shooter.outfeedCommand());
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
-    operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
+    //operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
 
     operatorController.povLeft().whileTrue(shooter.ElevateCommand());
     operatorController.povRight().whileTrue(shooter.DeElevateCommand());
