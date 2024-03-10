@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 //import edu.wpi.first.networktables.NetworkTable;
 //import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
@@ -58,7 +59,7 @@ public class SwerveDrive {
             states[i] = mModules[i].getPosition();
         }
 
-        mSwerveDrivePoseEstimator = new SwerveDrivePoseEstimator(mKinematics, Rotation2d.fromDegrees(mGyroAngle.getAsDouble()), states, new Pose2d(), VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(360)));
+        mSwerveDrivePoseEstimator = new SwerveDrivePoseEstimator(mKinematics, Rotation2d.fromDegrees(mGyroAngle.getAsDouble()), states, new Pose2d());
 
         Arrays.stream(mModules).forEach(SwerveModule::init);
     }
@@ -120,6 +121,7 @@ public class SwerveDrive {
         } else {
             speeds = new ChassisSpeeds(forward, strafe, azimuth);
         }
+        
         SwerveModuleState[] states = mKinematics.toSwerveModuleStates(speeds);
         //SwerveDriveKinematics.normalizeWheelSpeeds(states, 1);
         for (int i = 0; i < numModules; i++){

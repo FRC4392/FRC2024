@@ -8,14 +8,21 @@ import org.deceivers.swerve.SwerveDrive;
 import org.deceivers.swerve.SwerveModuleV3;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,10 +54,6 @@ public class Drivetrain extends SubsystemBase {
     
   public Drivetrain() {
     pidgey.setYaw(0);
-    mDriveMotor1.enableVoltageCompensation(11);
-    mDriveMotor2.enableVoltageCompensation(11);
-    mDriveMotor3.enableVoltageCompensation(11);
-    mDriveMotor4.enableVoltageCompensation(11);
   }
 
   public void drive(double forward, double strafe, double azimuth, boolean fieldRelative){
@@ -67,8 +70,18 @@ public class Drivetrain extends SubsystemBase {
     mSwerveDrive.driveClosedLoop(forward, strafe, azimuth, fieldRelative);
   }
 
+  public void driveAuto(ChassisSpeeds speeds){
+    SmartDashboard.putNumber("AutoChasisSpeedsY", speeds.vyMetersPerSecond);
+    SmartDashboard.putNumber("AutoChasisSpeedsX", speeds.vxMetersPerSecond);
+    mSwerveDrive.driveClosedLoop(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false);
+  }
+
   public void stop(){
     mSwerveDrive.stop();
+  }
+
+  public Pose2d getPose(){
+    return mSwerveDrive.getPose();
   }
 
   @Override
@@ -131,6 +144,31 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("pitch", pitch);
         SmartDashboard.putNumber("output", output);
       });
+    }
+
+    public Command FollowPath(String name){
+      PathPlannerPath path = PathPlannerPath.fromPathFile(name);
+
+      return new FollowPathHolonomic(
+        path, 
+        this::getPose, 
+        this::getSpeeds, 
+        this::driveAuto, 
+        new HolonomicPathFollowerConfig(
+          new PIDConstants(5.0, 0.0, 0.0), 
+          new PIDConstants(10, 0.0, 0.0),
+          4.5,
+          .414,
+          new ReplanningConfig()
+          ),
+          () -> {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+              return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+          },
+          this);
     }
 
 }

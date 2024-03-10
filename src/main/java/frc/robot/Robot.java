@@ -7,10 +7,14 @@ package frc.robot;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
@@ -51,6 +55,23 @@ public class Robot extends TimedRobot {
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
     led.setLEDColor(0, 0, 100);
     configureButtonBindings();
+    drivetrain.setLocation(1.34, 5.55, 0);
+    m_autonomousCommand = (shooter.runShooter(100).raceWith(Commands.waitSeconds(0.5))).andThen(
+      shooter.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
+        shooter.shootAndFeed(1).raceWith(Commands.waitSeconds(0.75))).andThen(
+          shooter.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
+            drivetrain.FollowPath("TestPath").raceWith(intake.intakeCommand())).andThen(
+              intake.intakeCommand().alongWith(shooter.feedCommand()).raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
+              shooter.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
+                shooter.shootAndFeed(80).raceWith(Commands.waitUntil(() -> shooter.getShooterSensor())).andThen(
+                  shooter.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
+                  drivetrain.FollowPath("TestPath2").raceWith(intake.intakeCommand()))).andThen(
+                    intake.intakeCommand().alongWith(shooter.feedCommand()).raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
+                      shooter.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
+                        shooter.shootAndFeed(80).raceWith(Commands.waitUntil(() -> shooter.getShooterSensor())))
+                )
+              )
+            );
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
   }
@@ -142,11 +163,11 @@ public class Robot extends TimedRobot {
     Trigger ClimbUp = operatorController.povUp();
     Trigger ClimbDown = operatorController.povDown();
     Trigger Feed = operatorController.rightTrigger(0);
-    Trigger Shoot = operatorController.leftTrigger(0).and(AltButton.negate());
-    Trigger SlowShoot = operatorController.leftTrigger(0).and(AltButton);
+    Trigger Shoot = operatorController.leftStick().and(AltButton.negate());
+    Trigger SlowShoot = operatorController.leftStick().and(AltButton);
     Trigger PivotUp = operatorController.leftBumper();
     Trigger PivotDown = operatorController.rightBumper();
-    Trigger AutoAim = operatorController.leftStick();
+    Trigger AutoAim = operatorController.leftTrigger(.1);
 
     AutoAim.whileTrue(shooter.setShooterWithLimelight());
     FixShotClose.whileTrue(shooter.pivotToPosCommand(.12));

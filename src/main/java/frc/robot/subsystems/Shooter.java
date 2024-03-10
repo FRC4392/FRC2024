@@ -76,10 +76,12 @@ public class Shooter extends SubsystemBase {
     map.put(new InterpolatingDouble(7.0), new InterpolatingDouble(.082));
     map.put(new InterpolatingDouble(0.0), new InterpolatingDouble(.063));
     map.put(new InterpolatingDouble(-.38), new InterpolatingDouble(.059));
-    map.put(new InterpolatingDouble(-.637), new InterpolatingDouble(.047));
+    map.put(new InterpolatingDouble(-6.37), new InterpolatingDouble(.048));
     map.put(new InterpolatingDouble(-8.185), new InterpolatingDouble(.045));
     map.put(new InterpolatingDouble(-10.15), new InterpolatingDouble(.038));
-    map.put(new InterpolatingDouble(-12.39), new InterpolatingDouble(.032));
+    map.put(new InterpolatingDouble(-12.39), new InterpolatingDouble(.0322));
+    map.put(new InterpolatingDouble(-13.47), new InterpolatingDouble(.0315));
+    map.put(new InterpolatingDouble(-15.67), new InterpolatingDouble(.026));
   }
 
   // Orchestra m_orchestra = new Orchestra();

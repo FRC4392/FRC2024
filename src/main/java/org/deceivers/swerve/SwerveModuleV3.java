@@ -48,6 +48,8 @@ public class SwerveModuleV3 implements SwerveModule {
         mAzimuthAbsoluteEncoder = mAzimuthMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
         mAzimuthIncrementalEncoder = mAzimuthMotor.getEncoder();
         mDriveEncoder = mDriveMotor.getEncoder(Type.kQuadrature, 7168);
+        mDriveEncoder.setAverageDepth(1);
+        mDriveEncoder.setMeasurementPeriod(1);
 
         // Get PIDs
         mDrivePID = mDriveMotor.getPIDController();
@@ -58,7 +60,7 @@ public class SwerveModuleV3 implements SwerveModule {
         mDriveMotor.setClosedLoopRampRate(0);
         mDriveMotor.setOpenLoopRampRate(.1);
         mDriveMotor.setIdleMode(IdleMode.kBrake);
-        mDriveMotor.setSmartCurrentLimit(80);
+        mDriveMotor.setSmartCurrentLimit(70);
 
         // Configure Drive Encoder
         mDriveEncoder.setPositionConversionFactor(0.2393893602 / ((20.0*45.0)/(13.0*15.0)));
@@ -83,8 +85,8 @@ public class SwerveModuleV3 implements SwerveModule {
         
 
         // Configure drive PID
-        mDrivePID.setFF(.43);
-        mDrivePID.setP(.1);
+        mDrivePID.setFF(.215);
+        mDrivePID.setP(.1);//.1
 
         // Configure azimuth PID
         mAzimuthPID.setFeedbackDevice(mAzimuthAbsoluteEncoder);
@@ -171,6 +173,8 @@ public class SwerveModuleV3 implements SwerveModule {
         double velocity = optimizedState.speedMetersPerSecond;
         mAzimuthPID.setReference(setpoint, ControlType.kPosition);
         mDrivePID.setReference(velocity, ControlType.kVelocity);
+
+        SmartDashboard.putNumber("Closed Loop Speed " + mName, velocity);
     }
 
     // Stop all motors

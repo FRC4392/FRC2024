@@ -105,7 +105,7 @@ public class DriveCommand extends CommandBase {
     xrVel = xrHelper.setInput(xrVel).applyPower(yrVel).value;
 
     
-    if (mController.getAButton()){
+    if (mController.getRightTriggerAxis() > .1){
         new Rotation2d();
         angle = Rotation2d.fromDegrees(-LimelightHelpers.getTX("limelight-april")).plus(Rotation2d.fromDegrees(mDrivetrain.getRotation()));
       rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
@@ -152,7 +152,7 @@ public class DriveCommand extends CommandBase {
     // mDrivetrain.drive(yVel*-1, xVel*-1, rotVel, fieldRelative);
     // }
 
-    boolean fieldRelative = !mController.getAButton();
+    boolean fieldRelative = !mController.getYButton();
         
         //X direction is arm direction on robot, y direction is out from the apriltag
         mDrivetrain.drive(yfilter.calculate(yVel), xfilter.calculate(xVel), rotfilter.calculate(rotVel), fieldRelative); 
