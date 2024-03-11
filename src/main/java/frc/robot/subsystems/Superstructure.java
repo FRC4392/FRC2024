@@ -199,6 +199,13 @@ public class Superstructure extends SubsystemBase {
     elevatorMotor.setControl(m_voltageVelocity.withVelocity(speed));
     //shooterPivot.setControl(m_MotionMagicVoltage.withPosition(.04).withSlot(0));
   }
+  
+  private void setPivotWithLimelight(){
+    double target = LimelightHelpers.getTY("limelight-april");
+
+    double angle = map.getInterpolated(new InterpolatingDouble(target)).value;
+    setPivotPos(angle);
+  }
 
   public Command pivotCommand() {
     return this.runEnd(() -> setPivotSpeed(-.1), () -> stopPivot());
@@ -216,27 +223,12 @@ public class Superstructure extends SubsystemBase {
     return this.runEnd(() -> setElevateSpeed(-1), () -> stopElevator());
   }
 
-  public Command CalibrateKs(double volts){
-    return this.runEnd(() -> setShooterVoltage(volts), () -> stopPivot());
-  }
-
-  public Command CalibrateKe(double volts){
-    return this.runEnd(() -> setElevatorVoltage(volts), () -> stopElevator());
-  }
-
   public Command pivotToPosCommand(double pos) {
     return this.run(() -> setPivotPos(pos));
   }
 
   public Command elevateToPosCommand(double pos) {
     return this.run(() -> setElevatorPos(pos));
-  }
-
-  private void setPivotWithLimelight(){
-    double target = LimelightHelpers.getTY("limelight-april");
-
-    double angle = map.getInterpolated(new InterpolatingDouble(target)).value;
-    setPivotPos(angle);
   }
 
   public Command setShooterWithLimelight(){

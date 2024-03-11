@@ -18,7 +18,10 @@ public class Intake extends SubsystemBase {
 
     kIntakeSpeed(1),
     kOuttakeSpeed(-0.3),
-    kStopSpeed(0);
+    kStopSpeed(0),
+    kFeedSpeed(.3),
+    kInfeedSpeed(.2),
+    kOutfeedSpeed(-.5);
 
     public final double speed;
 
@@ -28,27 +31,9 @@ public class Intake extends SubsystemBase {
 
   }
 
-  public enum shooterSpeeds {
-
-    kFeedSpeed(.3),
-    kIntakeSpeed(.2),
-    kOutfeedSpeed(-0.3),
-    kBackfeedSpeed(-.15),
-    kPivotSpeed(.1),
-    kPivotBackSpeed(-.1),
-    kSpitSpeed(.1),
-    kStopSpeed(0);
-
-    public final double speed;
-
-    private shooterSpeeds(double speeds) {
-      this.speed = speeds;
-    }
-
-  }
 
   private CANSparkMax intakeMotor = new CANSparkMax(21, MotorType.kBrushless);
-  private CANSparkMax shooterMotor = new CANSparkMax(33, MotorType.kBrushless);
+  private CANSparkMax feederMotor = new CANSparkMax(33, MotorType.kBrushless);
 
   /** Creates a new Intake. */
   public Intake() {
@@ -59,31 +44,35 @@ public class Intake extends SubsystemBase {
 
     intakeMotor.burnFlash();
 
-    shooterMotor.restoreFactoryDefaults();
+    feederMotor.restoreFactoryDefaults();
 
-    shooterMotor.setSmartCurrentLimit(40);
-    shooterMotor.setIdleMode(IdleMode.kBrake);
-    shooterMotor.setInverted(true);
+    feederMotor.setSmartCurrentLimit(40);
+    feederMotor.setIdleMode(IdleMode.kBrake);
+    feederMotor.setInverted(true);
 
-    shooterMotor.burnFlash();
+    feederMotor.burnFlash();
+  }
+
+  public void setFeedSpeed() {
+    feederMotor.set(IntakeSpeeds.kFeedSpeed.speed);
   }
 
   public void stopFeed() {
-    shooterMotor.set(shooterSpeeds.kStopSpeed.speed);
+    feederMotor.set(IntakeSpeeds.kStopSpeed.speed);
   }
 
-  
-
-  public void setIntakeSpeed(double speed){
-    intakeMotor.set(speed);
-  }
-
-  public void setIntakeSpeed(IntakeSpeeds speed){
+  public void setIntakeSpeed(IntakeSpeeds speed, IntakeSpeeds speed2) {
     intakeMotor.set(speed.speed);
+    feederMotor.set(speed2.speed);
   }
 
-  public void stop(){
+  public void stopIntake() {
     intakeMotor.set(IntakeSpeeds.kStopSpeed.speed);
+  }
+
+  public void stop() {
+    intakeMotor.set(0);
+    feederMotor.set(0);
   }
 
   @Override
@@ -92,33 +81,33 @@ public class Intake extends SubsystemBase {
   }
 
   public Command intakeCommand(){
-    return this.runEnd(()->setIntakeSpeed(IntakeSpeeds.kIntakeSpeed), ()->stop());
+    return this.runEnd(()->setIntakeSpeed(IntakeSpeeds.kIntakeSpeed, IntakeSpeeds.kInfeedSpeed), ()->stop());
   }
 
   public Command outtakeCommand(){
-    return this.runEnd(()->setIntakeSpeed(IntakeSpeeds.kOuttakeSpeed), ()->stop());
+    return this.runEnd(()->setIntakeSpeed(IntakeSpeeds.kOuttakeSpeed, IntakeSpeeds.kOutfeedSpeed), ()->stop());
   }
 
-  public void setFeedSpeed(shooterSpeeds speed) {
-    shooterMotor.set(speed.speed);
+  public void setFeedSpeed(IntakeSpeeds speed) {
+    feederMotor.set(speed.speed);
   }
 
   public Command feedCommand() {
-    return this.runEnd(() -> setFeedSpeed(shooterSpeeds.kFeedSpeed), () -> stop());
+    return this.runEnd(() -> setFeedSpeed(), () -> stopFeed());
   }
 
   public Command outfeedCommand() {
-    return this.runEnd(() -> setFeedSpeed(shooterSpeeds.kOutfeedSpeed), () -> stopFeed());
+    return this.runEnd(() -> setFeedSpeed(IntakeSpeeds.kOutfeedSpeed), () -> stopFeed());
   }
 
-  public Command intakeandFeedCommand() {
-    return this.runEnd(() -> {
-      setFeedSpeed(shooterSpeeds.kFeedSpeed);
-      setIntakeSpeed(1);
-    }, () -> {
-      stop();
-      stopFeed();
-    });
-  }
+//   public Command intakeandFeedCommand() {
+//     return this.runEnd(() -> {
+//       setFeedSpeed(IntakeSpeeds.kFeedSpeed);
+//       setIntakeSpeed(1);
+//     }, () -> {
+//       stop();
+//       stopFeed();
+//     });
+//   }
   
-}
+ }

@@ -41,8 +41,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Shooter extends SubsystemBase {
 
   public enum shooterSpeeds {
-
-    kFeedSpeed(.3),
     kIntakeSpeed(.2),
     kOutfeedSpeed(-0.3),
     kBackfeedSpeed(-.15),
@@ -92,17 +90,6 @@ public class Shooter extends SubsystemBase {
     shooter2Motor.getConfigurator().apply(FlyWheelConfigs);
   }
 
-  
-
-  
-
-  public void stopShooter() {
-    shooter1Motor.set(shooterSpeeds.kStopSpeed.speed);
-    shooter2Motor.set(shooterSpeeds.kStopSpeed.speed);
-  }
-
-  
-
   public void stop() {
     shooter1Motor.set(shooterSpeeds.kStopSpeed.speed);
     shooter2Motor.set(shooterSpeeds.kStopSpeed.speed);
@@ -113,18 +100,15 @@ public class Shooter extends SubsystemBase {
     shooter2Motor.setControl(m_voltageVelocity.withVelocity(velo));
   }
 
-  // public void setHumanTake() {
-  //   shooter1Motor.set(-.1);
-  //   shooter2Motor.set(-.1);
-  //   shooterMotor.set(-.2);
-  //   shooterPivot.setControl(m_MotionMagicVoltage.withPosition(.12).withSlot(0));
-  // }
+  public void setHumanTake() {
+    shooter1Motor.set(-.1);
+    shooter2Motor.set(-.1);
+  }
 
-  // public void setSpitSpeed(shooterSpeeds speedF, shooterSpeeds speedS) {
-  //   shooter1Motor.set(speedS.speed);
-  //   shooter2Motor.set(speedS.speed);
-  //   shooterMotor.set(speedF.speed);
-  // }
+  public void setSpitSpeed(shooterSpeeds speed) {
+    shooter1Motor.set(speed.speed);
+    shooter2Motor.set(speed.speed);
+  }
 
   
 
@@ -159,26 +143,20 @@ public class Shooter extends SubsystemBase {
   
 
   public Command backfeedCommand() {
-    return this.runEnd(() -> setShooterSpeed(-10), () -> stopShooter());
+    return this.runEnd(() -> setShooterSpeed(-10), () -> stop());
   }
 
   public Command runShooter(double velo) {
     return this.run(() -> setShooterSpeed(velo));
   }
 
-  
+  public Command spitCommand() {
+    return this.runEnd(() -> setSpitSpeed(shooterSpeeds.kSpitSpeed), () -> stop());
+  }
 
-  
-
-  // public Command spitCommand() {
-  //   return this.runEnd(() -> setSpitSpeed(shooterSpeeds.kFeedSpeed, shooterSpeeds.kSpitSpeed), () -> stop());
-  // }
-
-  
-
-  // public Command humanTakeCommand() {
-  //   return this.runEnd(() -> setHumanTake(), () -> stop());
-  // }
+  public Command humanTakeCommand() {
+    return this.runEnd(() -> setHumanTake(), () -> stop());
+  }
 
   // public Command shootAndFeed(double speed){
   //   return this.runEnd(()->RunShooterAndFeeder(speed), () ->stop());

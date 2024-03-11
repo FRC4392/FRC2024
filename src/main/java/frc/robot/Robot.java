@@ -62,12 +62,12 @@ public class Robot extends TimedRobot {
         intake.feedCommand()).raceWith(Commands.waitSeconds(0.75)).andThen(
           superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
             drivetrain.FollowPath("TestPath").raceWith(intake.intakeCommand())).andThen(
-              intake.intakeandFeedCommand().raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
+              intake.intakeCommand().raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
               superstructure.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
                 intake.feedCommand().raceWith(Commands.waitUntil(() -> shooter.getShooterSensor())).andThen(
                   superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
                   drivetrain.FollowPath("TestPath2").raceWith(intake.intakeCommand()))).andThen(
-                    intake.intakeandFeedCommand().raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
+                    intake.intakeCommand().raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
                       superstructure.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
                         intake.feedCommand().raceWith(Commands.waitUntil(() -> shooter.getShooterSensor())))
                 )
@@ -172,22 +172,22 @@ public class Robot extends TimedRobot {
 
     AutoAim.whileTrue(superstructure.setShooterWithLimelight());
     FixShotClose.whileTrue(superstructure.pivotToPosCommand(.12));
-    //HumanTake.whileTrue(shooter.humanTakeCommand());
+    HumanTake.whileTrue(shooter.humanTakeCommand().alongWith(intake.outfeedCommand()).alongWith(superstructure.pivotToPosCommand(.12)));
     Feed.whileTrue(intake.feedCommand());
     PivotUp.whileTrue(superstructure.pivotCommand());
     PivotDown.whileTrue(superstructure.pivotBackCommand());
     Shoot.whileTrue(shooter.runShooter(90));
     SlowShoot.whileTrue(shooter.runShooter(130));
-    OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(intake.feedCommand()));
+    OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand());
     OpOuttake.whileTrue(intake.outfeedCommand());
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
-    //operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
+    AltButton.whileTrue(climber.WallDriveCommand(wallSpeed));
 
     operatorController.povLeft().whileTrue(superstructure.ElevateCommand());
     operatorController.povRight().whileTrue(superstructure.DeElevateCommand());
 
-    operatorController.povLeft().whileTrue(superstructure.pivotToPosCommand(.0335));
+    //operatorController.povLeft().whileTrue(superstructure.pivotToPosCommand(.0335));
     //operatorController.a().whileFalse(shooter.ElevateCommand(elevateSpeed));
 
     BooleanSupplier brakeSupplier = () -> driverController.getXButton();
@@ -203,6 +203,6 @@ public class Robot extends TimedRobot {
     brake.whileTrue(drivetrain.brakeCommand());
     driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
     driverOuttake.whileTrue(intake.outtakeCommand().alongWith(intake.outfeedCommand()));
-    //driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
+    driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
   }
 }
