@@ -28,25 +28,51 @@ public class Intake extends SubsystemBase {
 
   }
 
+  public enum shooterSpeeds {
+
+    kFeedSpeed(.3),
+    kIntakeSpeed(.2),
+    kOutfeedSpeed(-0.3),
+    kBackfeedSpeed(-.15),
+    kPivotSpeed(.1),
+    kPivotBackSpeed(-.1),
+    kSpitSpeed(.1),
+    kStopSpeed(0);
+
+    public final double speed;
+
+    private shooterSpeeds(double speeds) {
+      this.speed = speeds;
+    }
+
+  }
+
   private CANSparkMax intakeMotor = new CANSparkMax(21, MotorType.kBrushless);
+  private CANSparkMax shooterMotor = new CANSparkMax(33, MotorType.kBrushless);
 
   /** Creates a new Intake. */
   public Intake() {
     intakeMotor.restoreFactoryDefaults();
 
-    // intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 65535);
-    // intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 65535);
-    // intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 65535);
-    // intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65535);
-    // intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 65535);
-    // intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535);
-    // intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535);
-
     intakeMotor.setSmartCurrentLimit(60);
     intakeMotor.setIdleMode(IdleMode.kBrake);
 
     intakeMotor.burnFlash();
+
+    shooterMotor.restoreFactoryDefaults();
+
+    shooterMotor.setSmartCurrentLimit(40);
+    shooterMotor.setIdleMode(IdleMode.kBrake);
+    shooterMotor.setInverted(true);
+
+    shooterMotor.burnFlash();
   }
+
+  public void stopFeed() {
+    shooterMotor.set(shooterSpeeds.kStopSpeed.speed);
+  }
+
+  
 
   public void setIntakeSpeed(double speed){
     intakeMotor.set(speed);
@@ -72,4 +98,27 @@ public class Intake extends SubsystemBase {
   public Command outtakeCommand(){
     return this.runEnd(()->setIntakeSpeed(IntakeSpeeds.kOuttakeSpeed), ()->stop());
   }
+
+  public void setFeedSpeed(shooterSpeeds speed) {
+    shooterMotor.set(speed.speed);
+  }
+
+  public Command feedCommand() {
+    return this.runEnd(() -> setFeedSpeed(shooterSpeeds.kFeedSpeed), () -> stop());
+  }
+
+  public Command outfeedCommand() {
+    return this.runEnd(() -> setFeedSpeed(shooterSpeeds.kOutfeedSpeed), () -> stopFeed());
+  }
+
+  public Command intakeandFeedCommand() {
+    return this.runEnd(() -> {
+      setFeedSpeed(shooterSpeeds.kFeedSpeed);
+      setIntakeSpeed(1);
+    }, () -> {
+      stop();
+      stopFeed();
+    });
+  }
+  
 }

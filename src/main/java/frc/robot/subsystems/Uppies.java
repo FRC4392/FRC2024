@@ -30,14 +30,6 @@ public class Uppies extends SubsystemBase {
     wallMotor.setSmartCurrentLimit(40);
     wallMotor.setIdleMode(IdleMode.kBrake);
 
-    // wallMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 65535);
-    // wallMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 65535);
-    // wallMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 65535);
-    // wallMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65535);
-    // wallMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 65535);
-    // wallMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535);
-    // wallMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535);
-
     wallMotor.burnFlash();
 
     climberMotor.setNeutralMode(NeutralModeValue.Brake);

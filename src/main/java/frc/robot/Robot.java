@@ -23,6 +23,7 @@ import frc.robot.subsystems.AprilTagLimelight;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.LED;
 
 /**
@@ -43,7 +44,7 @@ public class Robot extends TimedRobot {
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
   private Uppies climber = new Uppies();
-  private AprilTagLimelight limelightapril = new AprilTagLimelight();
+  private Superstructure superstructure = new Superstructure();
   LED led = new LED();
 
   /**
@@ -56,19 +57,19 @@ public class Robot extends TimedRobot {
     led.setLEDColor(0, 0, 100);
     configureButtonBindings();
     drivetrain.setLocation(1.34, 5.55, 0);
-    m_autonomousCommand = (shooter.runShooter(100).raceWith(Commands.waitSeconds(0.5))).andThen(
-      shooter.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
-        shooter.shootAndFeed(1).raceWith(Commands.waitSeconds(0.75))).andThen(
-          shooter.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
+    m_autonomousCommand = (shooter.runShooter(90).raceWith(Commands.waitSeconds(0.5))).andThen(
+      superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
+        intake.feedCommand()).raceWith(Commands.waitSeconds(0.75)).andThen(
+          superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
             drivetrain.FollowPath("TestPath").raceWith(intake.intakeCommand())).andThen(
-              intake.intakeCommand().alongWith(shooter.feedCommand()).raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
-              shooter.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
-                shooter.shootAndFeed(80).raceWith(Commands.waitUntil(() -> shooter.getShooterSensor())).andThen(
-                  shooter.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
+              intake.intakeandFeedCommand().raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
+              superstructure.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
+                intake.feedCommand().raceWith(Commands.waitUntil(() -> shooter.getShooterSensor())).andThen(
+                  superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
                   drivetrain.FollowPath("TestPath2").raceWith(intake.intakeCommand()))).andThen(
-                    intake.intakeCommand().alongWith(shooter.feedCommand()).raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
-                      shooter.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
-                        shooter.shootAndFeed(80).raceWith(Commands.waitUntil(() -> shooter.getShooterSensor())))
+                    intake.intakeandFeedCommand().raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
+                      superstructure.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
+                        intake.feedCommand().raceWith(Commands.waitUntil(() -> shooter.getShooterSensor())))
                 )
               )
             );
@@ -169,24 +170,24 @@ public class Robot extends TimedRobot {
     Trigger PivotDown = operatorController.rightBumper();
     Trigger AutoAim = operatorController.leftTrigger(.1);
 
-    AutoAim.whileTrue(shooter.setShooterWithLimelight());
-    FixShotClose.whileTrue(shooter.pivotToPosCommand(.12));
-    HumanTake.whileTrue(shooter.humanTakeCommand());
-    Feed.whileTrue(shooter.feedCommand());
-    PivotUp.whileTrue(shooter.pivotCommand());
-    PivotDown.whileTrue(shooter.pivotBackCommand());
+    AutoAim.whileTrue(superstructure.setShooterWithLimelight());
+    FixShotClose.whileTrue(superstructure.pivotToPosCommand(.12));
+    //HumanTake.whileTrue(shooter.humanTakeCommand());
+    Feed.whileTrue(intake.feedCommand());
+    PivotUp.whileTrue(superstructure.pivotCommand());
+    PivotDown.whileTrue(superstructure.pivotBackCommand());
     Shoot.whileTrue(shooter.runShooter(90));
     SlowShoot.whileTrue(shooter.runShooter(130));
-    OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
-    OpOuttake.whileTrue(shooter.outfeedCommand());
+    OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(intake.feedCommand()));
+    OpOuttake.whileTrue(intake.outfeedCommand());
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
     //operatorController.a().whileFalse(climber.WallDriveCommand(wallSpeed));
 
-    operatorController.povLeft().whileTrue(shooter.ElevateCommand());
-    operatorController.povRight().whileTrue(shooter.DeElevateCommand());
+    operatorController.povLeft().whileTrue(superstructure.ElevateCommand());
+    operatorController.povRight().whileTrue(superstructure.DeElevateCommand());
 
-    operatorController.povLeft().whileTrue(shooter.pivotToPosCommand(.0335));
+    operatorController.povLeft().whileTrue(superstructure.pivotToPosCommand(.0335));
     //operatorController.a().whileFalse(shooter.ElevateCommand(elevateSpeed));
 
     BooleanSupplier brakeSupplier = () -> driverController.getXButton();
@@ -200,8 +201,8 @@ public class Robot extends TimedRobot {
     Trigger driverSpit = new Trigger(spitButton);
 
     brake.whileTrue(drivetrain.brakeCommand());
-    driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(shooter.feedWithPosCommand()));
-    driverOuttake.whileTrue(intake.outtakeCommand().alongWith(shooter.outfeedCommand()));
-    driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
+    driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
+    driverOuttake.whileTrue(intake.outtakeCommand().alongWith(intake.outfeedCommand()));
+    //driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
   }
 }
