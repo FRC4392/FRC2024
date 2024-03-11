@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
     led.setLEDColor(0, 0, 100);
     configureButtonBindings();
-    drivetrain.setLocation(1.34, 5.55, 0);
+    drivetrain.setLocation(1.422, 5.55, 0);
     m_autonomousCommand = (shooter.runShooter(90).raceWith(Commands.waitSeconds(0.5))).andThen(
       superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
         intake.feedCommand()).raceWith(Commands.waitSeconds(0.75)).andThen(
@@ -69,7 +69,18 @@ public class Robot extends TimedRobot {
                   drivetrain.FollowPath("TestPath2").raceWith(intake.intakeCommand()))).andThen(
                     intake.intakeCommand().raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
                       superstructure.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
-                        intake.feedCommand().raceWith(Commands.waitUntil(() -> shooter.getShooterSensor())))
+                        intake.feedCommand().raceWith(Commands.waitUntil(() -> shooter.getShooterSensor()))).andThen(
+                        superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(  
+                          drivetrain.FollowPath("New Path").raceWith(intake.intakeCommand()))).andThen(
+                            intake.intakeCommand().raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
+                              superstructure.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
+                                intake.feedCommand().raceWith(Commands.waitUntil(() -> shooter.getShooterSensor()))).andThen(
+                                  superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(  
+                                    drivetrain.FollowPath("New New Path").raceWith(intake.intakeCommand()))).andThen(
+                                      intake.intakeCommand().raceWith(Commands.waitUntil(() -> !shooter.getShooterSensor()))).andThen(
+                                        superstructure.setShooterWithLimelight().raceWith(Commands.waitSeconds(1)).andThen(
+                                          intake.feedCommand().raceWith(Commands.waitUntil(() -> shooter.getShooterSensor()))))
+                        )
                 )
               )
             );
@@ -202,7 +213,7 @@ public class Robot extends TimedRobot {
 
     brake.whileTrue(drivetrain.brakeCommand());
     driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
-    driverOuttake.whileTrue(intake.outtakeCommand().alongWith(intake.outfeedCommand()));
+    //driverOuttake.whileTrue(intake.outtakeCommand().alongWith(intake.outfeedCommand()));
     driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
   }
 }
