@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import org.deceivers.drivers.LimelightHelpers;
 import org.deceivers.swerve.SwerveDrive;
 import org.deceivers.swerve.SwerveModuleV3;
 
@@ -18,6 +19,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -50,6 +52,8 @@ public class Drivetrain extends SubsystemBase {
     private final SwerveDrive mSwerveDrive = new SwerveDrive(this::getRotation, Module1, Module2, Module3, Module4);
 
     private double gyroOffset = 0;
+
+    private PIDController rotationController = new PIDController(.5, 0, 0.00);
 
     
   public Drivetrain() {
@@ -169,6 +173,14 @@ public class Drivetrain extends SubsystemBase {
             return false;
           },
           this);
+    }
+
+    public Command alignCommand(){
+      return this.runEnd(() -> {
+        Rotation2d angle = Rotation2d.fromDegrees(-LimelightHelpers.getTX("limelight-april")).plus(Rotation2d.fromDegrees(this.getRotation()));
+        double rotVel = rotationController.calculate(Rotation2d.fromDegrees(this.getRotation()).getRadians(), angle.getRadians());
+        drive(0, 0, rotVel, false);
+      }, () -> stop());
     }
 
 }

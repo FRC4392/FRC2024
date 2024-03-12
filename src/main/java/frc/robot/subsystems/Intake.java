@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix.CANifier;
+import com.ctre.phoenix.CANifier.GeneralPin;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
@@ -31,7 +33,7 @@ public class Intake extends SubsystemBase {
 
   }
 
-
+  CANifier shooterCanifier = new CANifier(35);
   private CANSparkMax intakeMotor = new CANSparkMax(21, MotorType.kBrushless);
   private CANSparkMax feederMotor = new CANSparkMax(33, MotorType.kBrushless);
 
@@ -62,8 +64,13 @@ public class Intake extends SubsystemBase {
   }
 
   public void setIntakeSpeed(IntakeSpeeds speed, IntakeSpeeds speed2) {
-    intakeMotor.set(speed.speed);
-    feederMotor.set(speed2.speed);
+    if (getShooterSensor()) {
+      intakeMotor.set(speed.speed);
+      feederMotor.set(speed2.speed);
+    } else {
+      stop();
+    }
+    
   }
 
   public void stopIntake() {
@@ -98,6 +105,10 @@ public class Intake extends SubsystemBase {
 
   public Command outfeedCommand() {
     return this.runEnd(() -> setFeedSpeed(IntakeSpeeds.kOutfeedSpeed), () -> stopFeed());
+  }
+
+  public boolean getShooterSensor() {
+    return shooterCanifier.getGeneralInput(GeneralPin.QUAD_A);
   }
 
 //   public Command intakeandFeedCommand() {

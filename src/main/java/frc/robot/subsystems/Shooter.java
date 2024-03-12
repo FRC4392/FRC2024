@@ -57,7 +57,7 @@ public class Shooter extends SubsystemBase {
 
   }
 
-  CANifier shooterCanifier = new CANifier(35);
+  
   private TalonFX shooter1Motor = new TalonFX(31);
   private TalonFX shooter2Motor = new TalonFX(32);
   private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, false, 0, 0, false, false, false);
@@ -130,9 +130,7 @@ public class Shooter extends SubsystemBase {
   //   setShooterSpeed(speed);
   // }
 
-  public boolean getShooterSensor() {
-    return shooterCanifier.getGeneralInput(GeneralPin.QUAD_A);
-  }
+  
 
   
 
