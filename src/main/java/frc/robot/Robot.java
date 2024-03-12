@@ -54,7 +54,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
-    led.setLEDColor(0, 0, 100);
+    led.setShooterLED(0, 0, 1);
+    led.setElevatorLED(0, 0, 255);
     configureButtonBindings();
     drivetrain.setLocation(0.96, 4.4, -60);
     m_autonomousCommand = (shooter.runShooter(90).raceWith(Commands.waitSeconds(0.5))).andThen(
@@ -163,7 +164,7 @@ public class Robot extends TimedRobot {
 
     BooleanSupplier sensorSupplier = () -> intake.getShooterSensor();
     Trigger shooterOccupied = new Trigger(sensorSupplier);
-    shooterOccupied.whileTrue(led.setLedOccupied());
+    shooterOccupied.whileTrue(led.setLedsOccupied());
 
     DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
@@ -193,7 +194,7 @@ public class Robot extends TimedRobot {
     OpOuttake.whileTrue(intake.outfeedCommand());
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
-    AltButton.whileTrue(climber.WallDriveCommand(wallSpeed));
+    AltButton.whileTrue(climber.WallDriveCommand(wallSpeed).alongWith(led.setLedsPurple()));
 
     operatorController.povLeft().whileTrue(superstructure.ElevateCommand());
     operatorController.povRight().whileTrue(superstructure.DeElevateCommand());

@@ -18,16 +18,33 @@ public class LED extends SubsystemBase {
   private AddressableLEDBuffer buffer = new AddressableLEDBuffer(33);
   int m_rainbowFirstPixelHue = 1;
   
-  public void setLEDColor(double R, double G, double B) {
+  public LED() {
+    leds.setLength(buffer.getLength());
+    leds.start();
+  }
+  
+  public void setShooterLED(double R, double G, double B) {
     remoteIO.setLEDOutput(G, LEDChannel.LEDChannelC);
     remoteIO.setLEDOutput(R, LEDChannel.LEDChannelA);
     remoteIO.setLEDOutput(B, LEDChannel.LEDChannelB);
   }
 
-  public LED() {
-    leds.setLength(buffer.getLength());
-    setLedCube();
-    leds.start();
+  public void setElevatorLED(int R, int G, int B) {
+    for (var i = 0; i < buffer.getLength(); i++) {
+      buffer.setRGB(i, R, G, B);
+    }
+    leds.setData(buffer);
+  }
+
+  public void setAllLED(int R, int G, int B) {
+    remoteIO.setLEDOutput(G/255, LEDChannel.LEDChannelC);
+    remoteIO.setLEDOutput(R/255, LEDChannel.LEDChannelA);
+    remoteIO.setLEDOutput(B/255, LEDChannel.LEDChannelB);
+
+    for (var i = 0; i < buffer.getLength(); i++) {
+      buffer.setRGB(i, R, G, B);
+    }
+    leds.setData(buffer);
   }
 
   @Override
@@ -35,20 +52,24 @@ public class LED extends SubsystemBase {
    // rainbow();
   }
 
-  public Command setLedOccupied(){
-    return this.runEnd(()->setLEDColor(0,0,1), ()->setLEDColor(1,.2,0));
+  public Command setShooterLedOccupied(){
+    return this.runEnd(()->setShooterLED(0,0,1), ()->setShooterLED(1,.2,0));
   }
 
-  public Command setLedRed() {
-    return this.runEnd(()->setLEDColor(100,0,0), ()->setLEDColor(100,0,0));
+  public Command setShooterLedRed() {
+    return this.runEnd(()->setShooterLED(1,0,0), ()->setShooterLED(1,0,0));
   }
 
-  public void setLedCube() {
-    for (var i = 0; i < buffer.getLength(); i++) {
-      // Sets the specified LED to the RGB values for red
-      buffer.setRGB(i, 0, 0, 255);
-    }
-    leds.setData(buffer);
+  public Command setShooterLedTracking() {
+    return this.runEnd(()->setShooterLED(1,0,0), ()->setShooterLED(0,1,0));
+  }
+
+  public Command setLedsOccupied() {
+    return this.runEnd(()->setAllLED(255,50,0), ()->setAllLED(0,0,255));
+  }
+
+  public Command setLedsPurple() {
+    return this.runEnd(()->setAllLED(255,0,255), ()->setAllLED(0,0,255));
   }
 
   private void rainbow() {
