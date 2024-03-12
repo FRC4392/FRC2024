@@ -15,7 +15,6 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -157,8 +156,7 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-        SmartDashboard.putNumber("Elevator Speed", elevatorMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Elevator Speed", elevatorMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Pivot Speed", shooterPivot.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("PivotPos", shooterPivot.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("ElevatorPos", elevatorMotor.getPosition().getValueAsDouble()); //up 0.015 down .13
@@ -174,21 +172,11 @@ public class Superstructure extends SubsystemBase {
 
   public void setElevatorPos(double pos) {
     elevatorMotor.setControl(m_MotionMagicVoltage.withPosition(pos).withSlot(0));
-    shooterPivot.setControl(m_MotionMagicVoltage.withPosition(.04).withSlot(0));
+    shooterPivot.setControl(m_MotionMagicVoltage.withPosition(.12).withSlot(0));
   }
 
   public void stopElevator() {
     elevatorMotor.set(0);
-  }
-
-  public void setShooterVoltage(double volts){
-    VoltageOut voltage = new VoltageOut(volts);
-    shooterPivot.setControl(voltage);
-  }
-
-  public void setElevatorVoltage(double volts){
-    VoltageOut voltage = new VoltageOut(volts);
-    elevatorMotor.setControl(voltage);
   }
 
   public void setPivotSpeed(double velo) {
