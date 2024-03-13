@@ -194,7 +194,7 @@ public class Robot extends TimedRobot {
     OpOuttake.whileTrue(intake.outfeedCommand());
     ClimbUp.whileTrue(climber.ClimbUpCommand());
     ClimbDown.whileTrue(climber.ClimbDownCommand());
-    AltButton.whileTrue(climber.WallDriveCommand(wallSpeed).alongWith(led.setLedsPurple()));
+    AltButton.whileTrue(led.setLedsPurple().alongWith(climber.ClimbCommand(wallSpeed)));
 
     operatorController.povLeft().whileTrue(superstructure.ElevateCommand());
     operatorController.povRight().whileTrue(superstructure.DeElevateCommand());

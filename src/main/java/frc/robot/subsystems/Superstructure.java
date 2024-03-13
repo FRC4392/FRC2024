@@ -167,7 +167,12 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void setPivotPos(double pos) {
-    shooterPivot.setControl(m_MotionMagicVoltage.withPosition(pos).withSlot(0));
+    if (elevatorMotor.getPosition().getValueAsDouble() > 0 && pos < .1) {
+      
+    } else {
+      shooterPivot.setControl(m_MotionMagicVoltage.withPosition(pos).withSlot(0));
+    }
+    
   }
 
   public void setElevatorPos(double pos) {

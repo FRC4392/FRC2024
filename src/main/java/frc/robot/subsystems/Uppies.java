@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -32,6 +33,12 @@ public class Uppies extends SubsystemBase {
     wallMotor.burnFlash();
 
     climberMotor.setNeutralMode(NeutralModeValue.Brake);
+
+    //CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs();
+
+    //currentLimitsConfigs.StatorCurrentLimit = 120;
+    //currentLimitsConfigs.StatorCurrentLimitEnable = true;
+    //climberMotor.getConfigurator().apply(currentLimitsConfigs);
   }
 
   public void setWallDriveSpeed(double speed){
@@ -61,6 +68,16 @@ public class Uppies extends SubsystemBase {
 
   public Command WallDriveCommand(DoubleSupplier speed){
     return this.runEnd(()->setWallDriveSpeed(speed.getAsDouble()), ()->stopWall());
+  }
+
+  public Command ClimbCommand(DoubleSupplier speed){
+    return this.runEnd(() -> {
+      setClimbSpeed(speed.getAsDouble());
+      setWallDriveSpeed(speed.getAsDouble());
+    }, () -> {
+      stopClimb();
+      stopWall();
+    });
   }
 
   @Override
