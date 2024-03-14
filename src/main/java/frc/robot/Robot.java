@@ -5,21 +5,22 @@
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.Uppies;
-import frc.robot.subsystems.AprilTagLimelight;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -37,15 +38,15 @@ public class Robot extends TimedRobot {
 
   private XboxController driverController = new XboxController(0);
   private CommandXboxController operatorController = new CommandXboxController(1);
- // private CommandXboxController testController = new CommandXboxController(2);
-
 
   private Drivetrain drivetrain = new Drivetrain();
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
   private Uppies climber = new Uppies();
   private Superstructure superstructure = new Superstructure();
-  LED led = new LED();
+  private LED led = new LED();
+
+  SendableChooser<Command> autChooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -53,40 +54,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
     led.setShooterLED(0, 0, 1);
     led.setElevatorLED(0, 0, 255);
     configureButtonBindings();
-    drivetrain.setLocation(0.96, 4.4, -60);
-    m_autonomousCommand = (shooter.runShooter(90).raceWith(Commands.waitSeconds(0.5))).andThen(
-      superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
-        intake.feedCommand()).raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
-          superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
-            drivetrain.FollowPath("New New New Path").raceWith(intake.intakeCommand())).andThen(
-              intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
-              superstructure.setShooterWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
-                  superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
-                  drivetrain.FollowPath("New New New New Path").raceWith(intake.intakeCommand()))).andThen(
-                    intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
-                      superstructure.setShooterWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                        intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
-                        superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))//.andThen(  
-                          // drivetrain.FollowPath("New Path").raceWith(intake.intakeCommand()))).andThen(
-                          //   intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
-                          //     superstructure.setShooterWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                          //       intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
-                          //         superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(  
-                          //           drivetrain.FollowPath("New New Path").raceWith(intake.intakeCommand()))).andThen(
-                          //             intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
-                          //               superstructure.setShooterWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                          //                 intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))))
-                        )
-                )
-              )
-            );
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
   }
 
   /**
@@ -110,7 +80,9 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    SmartDashboard.putString("Selected Auto", autChooser.getSelected().getName());
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -161,6 +133,8 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   public void configureButtonBindings(){
+
+    drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
 
     BooleanSupplier sensorSupplier = () -> intake.getShooterSensor();
     Trigger shooterOccupied = new Trigger(sensorSupplier);
@@ -217,4 +191,17 @@ public class Robot extends TimedRobot {
     driverOuttake.whileTrue(intake.outtakeCommand());
     driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
   }
+
+  public void ConfigureAutonomousMode(){
+
+    Consumer<Command> autoConsumer = command -> {
+      m_autonomousCommand = autChooser.getSelected();
+    };
+
+    autChooser.setDefaultOption("5 Note", Autos.get5NoteAuto(drivetrain, intake, shooter, superstructure));
+    autChooser.addOption("Right 3 Piece", Autos.get3PieceAuto(drivetrain, intake, shooter, superstructure));
+    autChooser.onChange(autoConsumer);
+  }
+
+
 }

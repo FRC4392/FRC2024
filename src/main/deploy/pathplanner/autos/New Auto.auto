@@ -14,25 +14,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TestPath"
+            "pathName": "CenterFront"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "TestPath2"
+            "pathName": "CenterToRight"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "RightToLeft"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "New New Path"
+            "pathName": "LeftMidRave"
           }
         }
       ]
