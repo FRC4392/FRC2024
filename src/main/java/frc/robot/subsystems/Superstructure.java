@@ -150,9 +150,9 @@ public class Superstructure extends SubsystemBase {
 
   public void setPivotPos(double pos) {
     if (elevatorMotor.getPosition().getValueAsDouble() > 0 && pos < .1) {
-      
+      //Do nothing to avoid crash
     } else {
-      shooterPivot.setControl(m_MotionMagicVoltage.withPosition(pos).withSlot(0));
+      shooterPivot.setControl(m_MotionMagicVoltage.withPosition(pos));
     }
     
   }
@@ -210,5 +210,11 @@ public class Superstructure extends SubsystemBase {
     return this.run(this::setPivotWithLimelight);
   }
 
+  public Command moveToAmpPosition(){
+    return pivotToPosCommand(.12).andThen(elevateToPosCommand(.1));
+  }
 
+  public Command returnHome(){
+    return pivotToPosCommand(.12).andThen(elevateToPosCommand(0)).andThen(pivotToPosCommand(0));
+  }
 }

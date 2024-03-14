@@ -147,13 +147,15 @@ public class Robot extends TimedRobot {
     Trigger HumanTake = operatorController.y();
     Trigger OpOuttake = operatorController.x();
     Trigger OpIntake = operatorController.b();
-    Trigger ClimbUp = operatorController.povUp();
-    Trigger ClimbDown = operatorController.povDown();
+    //Trigger ClimbUp = operatorController.povUp();
+    //Trigger ClimbDown = operatorController.povDown();
     Trigger Feed = operatorController.rightTrigger(0);
     Trigger Shoot = operatorController.leftStick().and(AltButton.negate());
     Trigger SlowShoot = operatorController.leftStick().and(AltButton);
-    Trigger PivotUp = operatorController.leftBumper();
-    Trigger PivotDown = operatorController.rightBumper();
+
+    Trigger PivotUp = operatorController.povUp().and(AltButton);
+    Trigger PivotDown = operatorController.povDown().and(AltButton);
+
     Trigger AutoAim = operatorController.leftTrigger(.1);
 
     AutoAim.whileTrue(superstructure.setShooterPivotWithLimelight());
@@ -170,8 +172,11 @@ public class Robot extends TimedRobot {
     //ClimbDown.whileTrue(climber.ClimbDownCommand());
     //AltButton.whileTrue(led.setLedsPurple().alongWith(climber.ClimbCommand(wallSpeed)));
 
-    operatorController.povLeft().whileTrue(superstructure.ElevateCommand());
-    operatorController.povRight().whileTrue(superstructure.DeElevateCommand());
+    operatorController.povLeft().and(AltButton).whileTrue(superstructure.ElevateCommand());
+    operatorController.povRight().and(AltButton).whileTrue(superstructure.DeElevateCommand());
+
+    operatorController.leftBumper().onTrue(superstructure.moveToAmpPosition().alongWith(shooter.runShooter(20)));
+    operatorController.leftBumper().onFalse(superstructure.returnHome().alongWith(shooter.stopShooter()));
 
     //operatorController.povLeft().whileTrue(superstructure.pivotToPosCommand(.0335));
     //operatorController.a().whileFalse(shooter.ElevateCommand(elevateSpeed));

@@ -99,6 +99,10 @@ public class Shooter extends SubsystemBase {
   public Command humanTakeCommand() {
     return this.runEnd(() -> setHumanTake(), () -> stop());
   }
+
+  public Command stopShooter(){
+    return this.run(this::stop);
+  }
   
 
   @Override
