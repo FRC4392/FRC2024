@@ -8,8 +8,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -20,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
-import frc.robot.subsystems.Uppies;
+//import frc.robot.subsystems.Uppies;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -42,11 +40,11 @@ public class Robot extends TimedRobot {
   private Drivetrain drivetrain = new Drivetrain();
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
-  private Uppies climber = new Uppies();
+  //private Uppies climber = new Uppies();
   private Superstructure superstructure = new Superstructure();
   private LED led = new LED();
 
-  SendableChooser<Command> autChooser = new SendableChooser<>();
+  SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -56,7 +54,9 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     led.setShooterLED(0, 0, 1);
     led.setElevatorLED(0, 0, 255);
+
     configureButtonBindings();
+    ConfigureAutonomousMode();
   }
 
   /**
@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    SmartDashboard.putString("Selected Auto", autChooser.getSelected().getName());
+    SmartDashboard.putString("Selected Auto", autoChooser.getSelected().getName());
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -166,9 +166,9 @@ public class Robot extends TimedRobot {
     SlowShoot.whileTrue(shooter.runShooter(130));
     OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand());
     OpOuttake.whileTrue(intake.outfeedCommand());
-    ClimbUp.whileTrue(climber.ClimbUpCommand());
-    ClimbDown.whileTrue(climber.ClimbDownCommand());
-    AltButton.whileTrue(led.setLedsPurple().alongWith(climber.ClimbCommand(wallSpeed)));
+    //ClimbUp.whileTrue(climber.ClimbUpCommand());
+    //ClimbDown.whileTrue(climber.ClimbDownCommand());
+    //AltButton.whileTrue(led.setLedsPurple().alongWith(climber.ClimbCommand(wallSpeed)));
 
     operatorController.povLeft().whileTrue(superstructure.ElevateCommand());
     operatorController.povRight().whileTrue(superstructure.DeElevateCommand());
@@ -195,12 +195,12 @@ public class Robot extends TimedRobot {
   public void ConfigureAutonomousMode(){
 
     Consumer<Command> autoConsumer = command -> {
-      m_autonomousCommand = autChooser.getSelected();
+      m_autonomousCommand = autoChooser.getSelected();
     };
 
-    autChooser.setDefaultOption("5 Note", Autos.get5NoteAuto(drivetrain, intake, shooter, superstructure));
-    autChooser.addOption("Right 3 Piece", Autos.get3PieceAuto(drivetrain, intake, shooter, superstructure));
-    autChooser.onChange(autoConsumer);
+    autoChooser.setDefaultOption("5 Note", Autos.get5NoteAuto(drivetrain, intake, shooter, superstructure));
+    autoChooser.addOption("Right 3 Piece", Autos.get3PieceAuto(drivetrain, intake, shooter, superstructure));
+    autoChooser.onChange(autoConsumer);
   }
 
 
