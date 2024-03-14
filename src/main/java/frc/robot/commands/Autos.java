@@ -32,7 +32,7 @@ public final class Autos {
         .andThen(
             intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor())))
         .andThen(
-            superstructure.setShooterWithLimelight().alongWith(drivetrain.alignCommand())
+            superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand())
                 .raceWith(Commands.waitSeconds(.25)))
         .andThen(
             intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())))
@@ -44,7 +44,7 @@ public final class Autos {
             intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor())))
         .andThen(
             superstructure
-                .setShooterWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)))
+                .setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)))
         .andThen(
             intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())))
         .andThen(
@@ -66,7 +66,7 @@ public final class Autos {
         .andThen(
             intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor())))
         .andThen(
-            superstructure.setShooterWithLimelight().alongWith(drivetrain.alignCommand())
+            superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand())
                 .raceWith(Commands.waitSeconds(.25)))
         .andThen(
             intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())))
@@ -78,7 +78,7 @@ public final class Autos {
             intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor())))
         .andThen(
             superstructure
-                .setShooterWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)))
+                .setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)))
         .andThen(
             intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())))
         .andThen(
@@ -88,7 +88,7 @@ public final class Autos {
         .andThen(
             intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor())))
         .andThen(
-            superstructure.setShooterWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)))
+            superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)))
         .andThen(
             intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())))
         .andThen(
@@ -98,7 +98,7 @@ public final class Autos {
         .andThen(
             intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor())))
         .andThen(
-            superstructure.setShooterWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)))
+            superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)))
         .andThen(
             intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())));
   }

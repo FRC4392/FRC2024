@@ -156,7 +156,7 @@ public class Robot extends TimedRobot {
     Trigger PivotDown = operatorController.rightBumper();
     Trigger AutoAim = operatorController.leftTrigger(.1);
 
-    AutoAim.whileTrue(superstructure.setShooterWithLimelight());
+    AutoAim.whileTrue(superstructure.setShooterPivotWithLimelight());
     FixShotClose.whileTrue(superstructure.pivotToPosCommand(.12));
     HumanTake.whileTrue(shooter.humanTakeCommand().alongWith(intake.outfeedCommand()).alongWith(superstructure.pivotToPosCommand(.12)));
     Feed.whileTrue(intake.feedCommand());

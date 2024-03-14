@@ -25,24 +25,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Superstructure extends SubsystemBase {
 
-  public enum shooterSpeeds {
-
-    kFeedSpeed(.3),
-    kIntakeSpeed(.2),
-    kOutfeedSpeed(-0.3),
-    kBackfeedSpeed(-.15),
-    kPivotSpeed(.1),
-    kPivotBackSpeed(-.1),
-    kSpitSpeed(.1),
-    kStopSpeed(0);
-
-    public final double speed;
-
-    private shooterSpeeds(double speeds) {
-      this.speed = speeds;
-    }
-  }
-
   private static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<>();
   static {
     map.put(new InterpolatingDouble(22.76), new InterpolatingDouble(.12));
@@ -163,7 +145,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void stopPivot() {
-    shooterPivot.set(shooterSpeeds.kStopSpeed.speed);
+    shooterPivot.set(0);
   }
 
   public void setPivotPos(double pos) {
@@ -224,7 +206,7 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> setElevatorPos(pos));
   }
 
-  public Command setShooterWithLimelight(){
+  public Command setShooterPivotWithLimelight(){
     return this.run(this::setPivotWithLimelight);
   }
 
