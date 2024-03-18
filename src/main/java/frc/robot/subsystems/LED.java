@@ -13,7 +13,6 @@ import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.LEDChannel;
 
 public class LED extends SubsystemBase {
-  private CANifier remoteIO = new CANifier(35);
   private AddressableLED leds = new AddressableLED(0);
   private AddressableLEDBuffer buffer = new AddressableLEDBuffer(33);
   int m_rainbowFirstPixelHue = 1;
@@ -21,12 +20,6 @@ public class LED extends SubsystemBase {
   public LED() {
     leds.setLength(buffer.getLength());
     leds.start();
-  }
-  
-  public void setShooterLED(double R, double G, double B) {
-    remoteIO.setLEDOutput(G, LEDChannel.LEDChannelC);
-    remoteIO.setLEDOutput(R, LEDChannel.LEDChannelA);
-    remoteIO.setLEDOutput(B, LEDChannel.LEDChannelB);
   }
 
   public void setElevatorLED(int R, int G, int B) {
@@ -37,9 +30,6 @@ public class LED extends SubsystemBase {
   }
 
   public void setAllLED(int R, int G, int B) {
-    remoteIO.setLEDOutput(G/255, LEDChannel.LEDChannelC);
-    remoteIO.setLEDOutput(R/255, LEDChannel.LEDChannelA);
-    remoteIO.setLEDOutput(B/255, LEDChannel.LEDChannelB);
 
     for (var i = 0; i < buffer.getLength(); i++) {
       buffer.setRGB(i, R, G, B);
@@ -52,20 +42,9 @@ public class LED extends SubsystemBase {
    // rainbow();
   }
 
-  public Command setShooterLedOccupied(){
-    return this.runEnd(()->setShooterLED(0,0,1), ()->setShooterLED(1,.2,0));
-  }
-
-  public Command setShooterLedRed() {
-    return this.runEnd(()->setShooterLED(1,0,0), ()->setShooterLED(1,0,0));
-  }
-
-  public Command setShooterLedTracking() {
-    return this.runEnd(()->setShooterLED(1,0,0), ()->setShooterLED(0,1,0));
-  }
 
   public Command setLedsOccupied() {
-    return this.runEnd(()->setAllLED(255,50,0), ()->setAllLED(0,0,255));
+    return this.runEnd(()->setAllLED(0,0,255), ()->setAllLED(255,50,0));
   }
 
   public Command setLedsPurple() {

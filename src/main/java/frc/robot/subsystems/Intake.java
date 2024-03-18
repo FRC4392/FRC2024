@@ -5,12 +5,15 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkLimitSwitch;
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.SparkLimitSwitch.Type;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -22,7 +25,7 @@ public class Intake extends SubsystemBase {
     kOuttakeSpeed(-0.3),
     kStopSpeed(0),
     kFeedSpeed(.3),
-    kInfeedSpeed(.2),
+    kInfeedSpeed(.15),
     kOutfeedSpeed(-.5);
 
     public final double speed;
@@ -33,9 +36,9 @@ public class Intake extends SubsystemBase {
 
   }
 
-  CANifier shooterCanifier = new CANifier(35);
   private CANSparkMax intakeMotor = new CANSparkMax(21, MotorType.kBrushless);
   private CANSparkMax feederMotor = new CANSparkMax(33, MotorType.kBrushless);
+  private SparkLimitSwitch feederLimit;
 
   /** Creates a new Intake. */
   public Intake() {
@@ -51,6 +54,19 @@ public class Intake extends SubsystemBase {
     feederMotor.setSmartCurrentLimit(40);
     feederMotor.setIdleMode(IdleMode.kBrake);
     feederMotor.setInverted(true);
+
+    feederLimit = feederMotor.getForwardLimitSwitch(Type.kNormallyOpen);
+
+    feederLimit.enableLimitSwitch(false);
+
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 10);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 10);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 10);
 
     feederMotor.burnFlash();
   }
@@ -85,6 +101,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("Shooter Limit", getShooterSensor());
   }
 
   public Command intakeCommand(){
@@ -100,7 +117,11 @@ public class Intake extends SubsystemBase {
   }
 
   public Command feedCommand() {
-    return this.runEnd(() -> setFeedSpeed(), () -> stopFeed());
+    return this.runEnd(() -> setFeedSpeed(IntakeSpeeds.kInfeedSpeed), () -> stopFeed());
+  }
+
+  public Command feedFastCommand(){
+    return this.runEnd(() -> setFeedSpeed(IntakeSpeeds.kFeedSpeed), () ->stopFeed());
   }
 
   public Command outfeedCommand() {
@@ -108,7 +129,7 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean getShooterSensor() {
-    return shooterCanifier.getGeneralInput(GeneralPin.QUAD_A);
+    return !feederLimit.isPressed();
   }
 
 //   public Command intakeandFeedCommand() {

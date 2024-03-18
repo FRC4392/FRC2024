@@ -44,7 +44,15 @@ public class Robot extends TimedRobot {
   private Superstructure superstructure = new Superstructure();
   private LED led = new LED();
 
-  SendableChooser<Command> autoChooser = new SendableChooser<>();
+  SendableChooser<String> autoChooser = new SendableChooser<>();
+
+  Consumer<String> autoConsumer = auto -> {
+    if (auto == "5Note") {
+      m_autonomousCommand = Autos.get5NoteAuto(drivetrain, intake, shooter, superstructure);
+    } else if (auto == "3Piece"){
+      m_autonomousCommand = Autos.get3PieceAuto(drivetrain, intake, shooter, superstructure);
+    }
+  };
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -52,7 +60,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    led.setShooterLED(0, 0, 1);
     led.setElevatorLED(0, 0, 255);
 
     configureButtonBindings();
@@ -81,7 +88,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    SmartDashboard.putString("Selected Auto", autoChooser.getSelected().getName());
+    // SmartDashboard.putString("Selected Auto", autoChooser.getSelected().getName());
+
+    // if (autoChooser.getSelected() == "5Note") {
+    //   m_autonomousCommand = Autos.get5NoteAuto(drivetrain, intake, shooter, superstructure);
+    // } else if (autoChooser.getSelected() == "3Piece"){
+    //   m_autonomousCommand = Autos.get3PieceAuto(drivetrain, intake, shooter, superstructure);
+    // }
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -143,7 +156,7 @@ public class Robot extends TimedRobot {
     DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
     Trigger AltButton = operatorController.rightStick();
-    Trigger FixShotClose = operatorController.a();
+    Trigger FixShotClose = operatorController.rightBumper();
     Trigger HumanTake = operatorController.y();
     Trigger OpOuttake = operatorController.x();
     Trigger OpIntake = operatorController.b();
@@ -158,15 +171,20 @@ public class Robot extends TimedRobot {
 
     Trigger AutoAim = operatorController.leftTrigger(.1);
 
-    AutoAim.whileTrue(superstructure.setShooterPivotWithLimelight());
-    FixShotClose.whileTrue(superstructure.pivotToPosCommand(.12));
+    operatorController.a().whileTrue(intake.outtakeCommand());
+    AutoAim.whileTrue(superstructure.setShooterPivotWithLimelight().alongWith(shooter.runShooter(80)));
+    AutoAim.onFalse(shooter.stopShooter());
+    FixShotClose.whileTrue(superstructure.pivotToPosCommand(.12).alongWith(shooter.runShooter(80)));
+    FixShotClose.onFalse(shooter.stopShooter());
     HumanTake.whileTrue(shooter.humanTakeCommand().alongWith(intake.outfeedCommand()).alongWith(superstructure.pivotToPosCommand(.12)));
-    Feed.whileTrue(intake.feedCommand());
+    HumanTake.onFalse(shooter.stopShooter());
+    Feed.whileTrue(intake.feedFastCommand());
     PivotUp.whileTrue(superstructure.pivotCommand());
     PivotDown.whileTrue(superstructure.pivotBackCommand());
     Shoot.whileTrue(shooter.runShooter(90));
-    SlowShoot.whileTrue(shooter.runShooter(130));
-    OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand());
+    Shoot.onFalse(shooter.stopShooter());
+    SlowShoot.whileTrue(shooter.stopShooter());
+    OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
     OpOuttake.whileTrue(intake.outfeedCommand());
     //ClimbUp.whileTrue(climber.ClimbUpCommand());
     //ClimbDown.whileTrue(climber.ClimbDownCommand());
@@ -175,7 +193,7 @@ public class Robot extends TimedRobot {
     operatorController.povLeft().and(AltButton).whileTrue(superstructure.ElevateCommand());
     operatorController.povRight().and(AltButton).whileTrue(superstructure.DeElevateCommand());
 
-    operatorController.leftBumper().onTrue(superstructure.moveToAmpPosition().alongWith(shooter.runShooter(20)));
+    operatorController.leftBumper().onTrue(superstructure.moveToAmpPosition().alongWith(shooter.runShooter(15)));
     operatorController.leftBumper().onFalse(superstructure.returnHome().alongWith(shooter.stopShooter()));
 
     //operatorController.povLeft().whileTrue(superstructure.pivotToPosCommand(.0335));
@@ -199,13 +217,12 @@ public class Robot extends TimedRobot {
 
   public void ConfigureAutonomousMode(){
 
-    Consumer<Command> autoConsumer = command -> {
-      m_autonomousCommand = autoChooser.getSelected();
-    };
+    autoChooser.setDefaultOption("5 Note", "5Note");
+    autoChooser.addOption("Right 3 Piece", "3Piece");
 
-    autoChooser.setDefaultOption("5 Note", Autos.get5NoteAuto(drivetrain, intake, shooter, superstructure));
-    autoChooser.addOption("Right 3 Piece", Autos.get3PieceAuto(drivetrain, intake, shooter, superstructure));
     autoChooser.onChange(autoConsumer);
+
+    SmartDashboard.putData(autoChooser);
   }
 
 

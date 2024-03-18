@@ -21,6 +21,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -47,7 +48,7 @@ public class DriveCommand extends CommandBase {
   private SlewRateLimiter xfilter = new SlewRateLimiter(1000);
   private SlewRateLimiter yfilter = new SlewRateLimiter(1000);
   private SlewRateLimiter rotfilter = new SlewRateLimiter(1000);
-  private double lastSpeed;
+  private double lastSpeed; 
   private double lastTime;
 
   Rotation2d angle = new Rotation2d(0);
@@ -120,6 +121,14 @@ public class DriveCommand extends CommandBase {
     yVel = yVel * driveFactor;
     xVel = xVel * driveFactor;
     rotVel = rotVel * driveFactor;
+
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      if (alliance.get() == Alliance.Red) {
+        yVel *= -1;
+        xVel *= -1;
+      }
+    }
 
     // Rotation2d joystickAngle = Rotation2d.fromRadians(Math.atan2(-mController.getRightX(), -mController.getRightY()));
     // if (!mController.getLeftBumper()) {

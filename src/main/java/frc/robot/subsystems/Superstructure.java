@@ -149,12 +149,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void setPivotPos(double pos) {
-    if (elevatorMotor.getPosition().getValueAsDouble() > 0 && pos < .1) {
-      //Do nothing to avoid crash
-    } else {
       shooterPivot.setControl(m_MotionMagicVoltage.withPosition(pos));
-    }
-    
   }
 
   public void setElevatorPos(double pos) {
@@ -211,10 +206,13 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command moveToAmpPosition(){
-    return pivotToPosCommand(.12).andThen(elevateToPosCommand(.1));
+    return this. run(() -> {
+      setPivotPos(.12);
+      setElevatorPos(1.75);
+    });
   }
 
   public Command returnHome(){
-    return pivotToPosCommand(.12).andThen(elevateToPosCommand(0)).andThen(pivotToPosCommand(0));
+    return elevateToPosCommand(0);
   }
 }

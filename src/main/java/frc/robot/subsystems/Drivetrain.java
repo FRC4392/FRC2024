@@ -25,6 +25,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -54,6 +55,8 @@ public class Drivetrain extends SubsystemBase {
     private double gyroOffset = 0;
 
     private PIDController rotationController = new PIDController(.5, 0, 0.00);
+
+    Field2d field2d = new Field2d();
 
     
   public Drivetrain() {
@@ -92,9 +95,15 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     mSwerveDrive.updateOdometry();
     mSwerveDrive.log();
+
+    
+
+    field2d.setRobotPose(getPose());
+    SmartDashboard.putData(field2d);
   }
 
   public void setLocation(double x, double y, double angle){
+    setGyro(angle);
     mSwerveDrive.setLocation(x, y, angle);
   }
 
@@ -181,6 +190,10 @@ public class Drivetrain extends SubsystemBase {
         double rotVel = rotationController.calculate(Rotation2d.fromDegrees(this.getRotation()).getRadians(), angle.getRadians());
         drive(0, 0, rotVel, false);
       }, () -> stop());
+    }
+
+    public Command setLocationCommand(double x, double y, double rot){
+      return this.runOnce(() -> setLocation(x, y, rot));
     }
 
 }

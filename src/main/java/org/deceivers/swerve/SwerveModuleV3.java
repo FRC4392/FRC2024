@@ -60,7 +60,7 @@ public class SwerveModuleV3 implements SwerveModule {
         mDriveMotor.setClosedLoopRampRate(0);
         mDriveMotor.setOpenLoopRampRate(.1);
         mDriveMotor.setIdleMode(IdleMode.kBrake);
-        mDriveMotor.setSmartCurrentLimit(70);
+        mDriveMotor.setSmartCurrentLimit(80);
 
         // Configure Drive Encoder
         mDriveEncoder.setPositionConversionFactor(0.2393893602 / ((20.0*45.0)/(13.0*15.0)));
