@@ -25,7 +25,7 @@ public interface SwerveModule {
     /**
      * Return the current state of the swerve module
      */
-    SwerveModuleState getState();
+    SwerveModuleState getSwerveModuleState();
 
     SwerveModulePosition getSwerveModulePosition();
     /**

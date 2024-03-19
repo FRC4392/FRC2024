@@ -23,7 +23,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModuleV3 implements SwerveModule {
 
@@ -136,9 +135,19 @@ public class SwerveModuleV3 implements SwerveModule {
         mAzimuthMotor.burnFlash();
     }
 
+        // Run when swerve drive is first initialized
+    @Override
+    public void init() {
+
+    }
+
     // Sets the drive motor speed in open loop mode
     public void setSpeedOpenLoop(double speed) {
         mDriveMotor.set(speed);
+    }
+
+    public void setSpeedClosedLoop(double speed) {
+        mDriveMotor.setControl(mDriveVelocityControl.withVelocity(speed));
     }
 
     // Sets the rotation speed of the azimuth motor in open loop mode
@@ -146,48 +155,10 @@ public class SwerveModuleV3 implements SwerveModule {
         mAzimuthMotor.set(rotation);
     }
 
-    // Gets the speed of the drive motor
-    public double getDriveVelocity() {
-        return mDriveVelocitySignal.getValueAsDouble();
-    }
-
-    // Gets the rotation position of the azimuth module
-    public double getAzimuthRotation() {
-        return mAzimuthAbsoluteEncoder.getPosition();
-    }
-
-    // Gets the x/y location of the module relative to the center of the robot
+    // set angle of swerve drive
     @Override
-    public Translation2d getModuleLocation() {
-        return mLocation;
-    }
-
-    // Get the state (speed/rotation) of the swerve module
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromDegrees(getAzimuthRotation()));
-    }
-
-    // Run when swerve drive is first initialized
-    @Override
-    public void init() {
-
-    }
-
-    // Get the position of swerve modules (distance and angle)
-    public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(getDriveDistance(), Rotation2d.fromDegrees(getAzimuthRotation()));
-    }
-
-    // Get the distance of the drive encoder
-    public double getDriveDistance() {
-        return mDrivePositionSignal.getValueAsDouble();
-    }
-
-    // Log swerve data
-    @Override
-    public void log() {
-        SmartDashboard.putNumber(mName + " Current", mDriveMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber(mName + " Speed", mDriveMotor.getVelocity().getValueAsDouble());
+    public void setAngle(double angle) {
+        mAzimuthPID.setReference(angle, ControlType.kPosition);
     }
 
     // Set the speed and direction of the swerve module
@@ -218,10 +189,40 @@ public class SwerveModuleV3 implements SwerveModule {
         mDriveMotor.set(0);
     }
 
-    // set angle of swerve drive
-    @Override
-    public void setAngle(double angle) {
-        mAzimuthPID.setReference(angle, ControlType.kPosition);
+    // Gets the speed of the drive motor
+    public double getDriveVelocity() {
+        return mDriveVelocitySignal.getValueAsDouble();
     }
 
+    // Get the distance of the drive encoder
+    public double getDriveDistance() {
+        return mDrivePositionSignal.getValueAsDouble();
+    }
+
+    // Gets the rotation position of the azimuth module
+    public double getAzimuthRotation() {
+        return mAzimuthAbsoluteEncoder.getPosition();
+    }
+
+    // Gets the x/y location of the module relative to the center of the robot
+    @Override
+    public Translation2d getModuleLocation() {
+        return mLocation;
+    }
+
+    // Get the position of swerve modules (distance and angle)
+    public SwerveModulePosition getSwerveModulePosition() {
+        return new SwerveModulePosition(getDriveDistance(), Rotation2d.fromDegrees(getAzimuthRotation()));
+    }
+
+    // Get the state (speed/rotation) of the swerve module
+    public SwerveModuleState getSwerveModuleState() {
+        return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromDegrees(getAzimuthRotation()));
+    }
+
+    // Log swerve data
+    @Override
+    public void log() {
+
+    }
 }

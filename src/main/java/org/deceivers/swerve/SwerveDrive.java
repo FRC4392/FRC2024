@@ -90,7 +90,7 @@ public class SwerveDrive {
     public ChassisSpeeds getChassisSpeeds(){
         SwerveModuleState[] states = new SwerveModuleState[numModules];
         for (int i = 0; i < numModules; i++) {
-            states[i] = mModules[i].getState();
+            states[i] = mModules[i].getSwerveModuleState();
         }
         ChassisSpeeds chassisSpeeds = mKinematics.toChassisSpeeds(states);
         return(chassisSpeeds);
