@@ -60,16 +60,6 @@ public class SwerveModuleV3 implements SwerveModule {
         // Get Azimuth PIDs
         mAzimuthPID = mAzimuthMotor.getPIDController();
 
-        //Configure Drive PID
-        TalonFXConfiguration DriveConfigs = new TalonFXConfiguration();
-
-        DriveConfigs.Feedback.SensorToMechanismRatio = ((0.2393893602 / ((20.0 / 13.0) * (45.0 / 15.0))) / 60);
-
-        DriveConfigs.Slot0.kV = 0; // velocity speed from smart dashboard/11
-        DriveConfigs.Slot0.kP = 0; // proportional
-        DriveConfigs.Slot0.kI = 0; // integral
-        DriveConfigs.Slot0.kD = 0; // derivative
-
         // Configure drive motor controller parameters
         CurrentLimitsConfigs driveCurrentLimits = new CurrentLimitsConfigs();
 
@@ -87,6 +77,22 @@ public class SwerveModuleV3 implements SwerveModule {
 
                 
         mDriveMotor.setNeutralMode(NeutralModeValue.Brake);
+
+//Configure Drive PID
+        TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
+
+        driveConfigs.Feedback.SensorToMechanismRatio = ((0.2393893602 / ((20.0 / 13.0) * (45.0 / 15.0))) / 60);
+
+        driveConfigs.Slot0.kV = 0; // velocity speed from smart dashboard/11
+        driveConfigs.Slot0.kP = 0; // proportional
+        driveConfigs.Slot0.kI = 0; // integral
+        driveConfigs.Slot0.kD = 0; // derivative
+
+        driveConfigs.CurrentLimits = driveCurrentLimits;
+        driveConfigs.MotorOutput = driveOutputConfigs;
+
+        mDriveMotor.getConfigurator().apply(driveConfigs);
+
 
         // Configure drive motor controller parameters (for NEO)    
         // mDriveMotor.setInverted(true);
