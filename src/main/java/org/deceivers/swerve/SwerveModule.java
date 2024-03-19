@@ -27,7 +27,7 @@ public interface SwerveModule {
      */
     SwerveModuleState getState();
 
-    SwerveModulePosition getPosition();
+    SwerveModulePosition getSwerveModulePosition();
     /**
      * Get the location of the swerve module relative to the 
      * center of the robot

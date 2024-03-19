@@ -56,7 +56,7 @@ public class SwerveDrive {
 
         SwerveModulePosition[] states = new SwerveModulePosition[numModules];
         for (int i = 0; i < numModules; i++) {
-            states[i] = mModules[i].getPosition();
+            states[i] = mModules[i].getSwerveModulePosition();
         }
 
         mSwerveDrivePoseEstimator = new SwerveDrivePoseEstimator(mKinematics, Rotation2d.fromDegrees(mGyroAngle.getAsDouble()), states, new Pose2d());
@@ -68,7 +68,7 @@ public class SwerveDrive {
         Pose2d newPose = new Pose2d(x, y, Rotation2d.fromDegrees(angle));
         SwerveModulePosition[] states = new SwerveModulePosition[numModules];
         for (int i = 0; i < numModules; i++) {
-            states[i] = mModules[i].getPosition();
+            states[i] = mModules[i].getSwerveModulePosition();
         }
 
         mSwerveDrivePoseEstimator.resetPosition(Rotation2d.fromDegrees(mGyroAngle.getAsDouble()), states, newPose);
@@ -132,7 +132,7 @@ public class SwerveDrive {
     public Pose2d updateOdometry(){
         SwerveModulePosition[] states = new SwerveModulePosition[numModules];
         for (int i = 0; i < numModules; i++) {
-            states[i] = mModules[i].getPosition();
+            states[i] = mModules[i].getSwerveModulePosition();
         }
 
         return mSwerveDrivePoseEstimator.update(Rotation2d.fromDegrees(mGyroAngle.getAsDouble()), states);
