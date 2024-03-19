@@ -9,6 +9,7 @@ import org.deceivers.swerve.SwerveDrive;
 import org.deceivers.swerve.SwerveModuleV3;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -33,10 +34,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
 
-    private final CANSparkFlex mDriveMotor1 = new CANSparkFlex(11, MotorType.kBrushless);
-    private final CANSparkFlex mDriveMotor2 = new CANSparkFlex(13, MotorType.kBrushless);
-    private final CANSparkFlex mDriveMotor3 = new CANSparkFlex(15, MotorType.kBrushless);
-    private final CANSparkFlex mDriveMotor4 = new CANSparkFlex(17, MotorType.kBrushless);
+    private final TalonFX mDriveMotor1 = new TalonFX(11);
+    private final TalonFX mDriveMotor2 = new TalonFX(13);
+    private final TalonFX mDriveMotor3 = new TalonFX(15);
+    private final TalonFX mDriveMotor4 = new TalonFX(17);
 
     private final CANSparkMax mAzimuth1 = new CANSparkMax(12, MotorType.kBrushless);
     private final CANSparkMax mAzimuth2 = new CANSparkMax(14, MotorType.kBrushless);
