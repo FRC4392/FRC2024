@@ -37,6 +37,8 @@ public class SwerveModuleV3 implements SwerveModule {
     private final StatusSignal<Double> mDriveVelocitySignal;
 
     private final Translation2d mLocation;
+    
+    @SuppressWarnings("unused")
     private final String mName;
 
     // need to update the speed to m/s
