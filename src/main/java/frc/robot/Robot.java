@@ -8,6 +8,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Alert.AlertType;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 //import frc.robot.subsystems.Uppies;
@@ -43,6 +45,7 @@ public class Robot extends TimedRobot {
   //private Uppies climber = new Uppies();
   private Superstructure superstructure = new Superstructure();
   private LED led = new LED();
+  private PowerDistribution m_pdp = new PowerDistribution();
 
   SendableChooser<String> autoChooser = new SendableChooser<>();
 
@@ -88,6 +91,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+   double voltage = m_pdp.getVoltage();
+    new Alert("Voltage is " + voltage, AlertType.INFO).set(true);
     // SmartDashboard.putString("Selected Auto", autoChooser.getSelected().getName());
 
     // if (autoChooser.getSelected() == "5Note") {
