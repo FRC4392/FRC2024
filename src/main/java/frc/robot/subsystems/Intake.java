@@ -36,18 +36,23 @@ public class Intake extends SubsystemBase {
 
   }
 
-  private CANSparkMax intakeMotor = new CANSparkMax(21, MotorType.kBrushless);
+  private CANSparkMax intakeMotor1 = new CANSparkMax(21, MotorType.kBrushless);
+  private CANSparkMax intakeMotor2 = new CANSparkMax(22, MotorType.kBrushless);
   private CANSparkMax feederMotor = new CANSparkMax(33, MotorType.kBrushless);
   private SparkLimitSwitch feederLimit;
 
   /** Creates a new Intake. */
   public Intake() {
-    intakeMotor.restoreFactoryDefaults();
+    intakeMotor1.restoreFactoryDefaults();
+    intakeMotor2.restoreFactoryDefaults();
 
-    intakeMotor.setSmartCurrentLimit(60);
-    intakeMotor.setIdleMode(IdleMode.kBrake);
+    intakeMotor1.setSmartCurrentLimit(60);
+    intakeMotor1.setIdleMode(IdleMode.kBrake);
+    intakeMotor2.setSmartCurrentLimit(60);
+    intakeMotor2.setIdleMode(IdleMode.kBrake);
 
-    intakeMotor.burnFlash();
+    intakeMotor1.burnFlash();
+    intakeMotor2.burnFlash();
 
     feederMotor.restoreFactoryDefaults();
 
@@ -81,7 +86,8 @@ public class Intake extends SubsystemBase {
 
   public void setIntakeSpeed(IntakeSpeeds speed, IntakeSpeeds speed2) {
     if (getShooterSensor()) {
-      intakeMotor.set(speed.speed);
+      intakeMotor1.set(speed.speed);
+      intakeMotor2.set(speed.speed);
       feederMotor.set(speed2.speed);
     } else {
       stop();
@@ -90,11 +96,13 @@ public class Intake extends SubsystemBase {
   }
 
   public void stopIntake() {
-    intakeMotor.set(IntakeSpeeds.kStopSpeed.speed);
+    intakeMotor1.set(IntakeSpeeds.kStopSpeed.speed);
+    intakeMotor2.set(IntakeSpeeds.kStopSpeed.speed);
   }
 
   public void stop() {
-    intakeMotor.set(0);
+    intakeMotor1.set(0);
+    intakeMotor2.set(0);
     feederMotor.set(0);
   }
 
