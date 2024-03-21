@@ -1,22 +1,13 @@
 package org.deceivers.swerve;
 
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.AudioConfigs;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.SparkAbsoluteEncoder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -61,77 +52,32 @@ public class SwerveModuleV3 implements SwerveModule {
         mAzimuthAbsoluteEncoder = mAzimuthMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
         mAzimuthIncrementalEncoder = mAzimuthMotor.getEncoder();
 
-
-        // Configure drive motor controller parameters
-        // Configure current limits
-        CurrentLimitsConfigs driveCurrentLimits = new CurrentLimitsConfigs()
-        .withSupplyCurrentLimit(40)
-        .withSupplyCurrentThreshold(80)
-        .withSupplyTimeThreshold(1.275)
-        .withSupplyCurrentLimitEnable(true)
-
-        .withStatorCurrentLimit(80)
-        .withStatorCurrentLimitEnable(true);
-
-        // Configure drive control
-        MotorOutputConfigs driveOutputConfigs = new MotorOutputConfigs()
-        .withInverted(InvertedValue.Clockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Brake);
-
-        // Configure sensor feedback
-        FeedbackConfigs driveFeedbackConfigs = new FeedbackConfigs()
-        .withSensorToMechanismRatio((0.2393893602 / ((20.0 / 13.0) * (45.0 / 15.0))) / 60);
-
-        // Configure PID
-        Slot0Configs driveSlotConfigs = new Slot0Configs()
-        .withKV(0)
-        .withKP(0)
-        .withKI(0)
-        .withKD(0)
-        .withKS(0);
-
-        // Configure beeps
-        AudioConfigs driveAudioConfigs = new AudioConfigs()
-        .withAllowMusicDurDisable(true)
-        .withBeepOnBoot(true)
-        .withBeepOnConfig(true);
-
-        // Apply Drive motor configuration
-        TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-        driveConfigs.Audio = driveAudioConfigs;
-        driveConfigs.CurrentLimits = driveCurrentLimits;
-        driveConfigs.MotorOutput = driveOutputConfigs;
-        driveConfigs.Feedback = driveFeedbackConfigs;
-        driveConfigs.Slot0 = driveSlotConfigs;
-
-        mDriveMotor.getConfigurator().apply(driveConfigs);
-
+        //Configure Drive motor
+        mDriveMotor.getConfigurator().apply(SwerveConfigs.driveConfigs);
 
         // Configure azimuth motor controller parameters
         // Rest motors to factory defaults to ensure correct parameters
         mAzimuthMotor.restoreFactoryDefaults();
 
         // Configure azimuth motor controller parameters
-        mAzimuthMotor.setInverted(true);
-        mAzimuthMotor.setClosedLoopRampRate(0);
-        mAzimuthMotor.setOpenLoopRampRate(0);
-        mAzimuthMotor.setIdleMode(IdleMode.kBrake);
-        mAzimuthMotor.setSmartCurrentLimit(20);
+        mAzimuthMotor.setInverted(SwerveConfigs.azimuthIsInverted);
+        mAzimuthMotor.setIdleMode(SwerveConfigs.azimuthIdleMode);
+        mAzimuthMotor.setSmartCurrentLimit(SwerveConfigs.azimuthCurrentLimit);
 
         // Configure drive absolute encoder
-        mAzimuthAbsoluteEncoder.setPositionConversionFactor(360);
-        mAzimuthAbsoluteEncoder.setInverted(true);
-        mAzimuthAbsoluteEncoder.setAverageDepth(1);
+        mAzimuthAbsoluteEncoder.setPositionConversionFactor(SwerveConfigs.azimuthAbsolutePositionConversionFactor);
+        mAzimuthAbsoluteEncoder.setInverted(SwerveConfigs.azimuthAbsoluteInverted);
+        mAzimuthAbsoluteEncoder.setAverageDepth(SwerveConfigs.azimuthAbsoluteSamplingDepth);
 
         // Configure azimuth incremental encoder
-        mAzimuthIncrementalEncoder.setPositionConversionFactor(360.0 / (5.23 * 3.61 * (58.0 / 18.0)));
+        mAzimuthIncrementalEncoder.setPositionConversionFactor(SwerveConfigs.azimuthIncrementalPositionConversionFactor);
 
         // Configure azimuth PID
         mAzimuthPID.setFeedbackDevice(mAzimuthAbsoluteEncoder);
-        mAzimuthPID.setP(.05);
-        mAzimuthPID.setPositionPIDWrappingEnabled(true);
-        mAzimuthPID.setPositionPIDWrappingMinInput(0);
-        mAzimuthPID.setPositionPIDWrappingMaxInput(360);
+        mAzimuthPID.setP(SwerveConfigs.azimuthPIDkP);
+        mAzimuthPID.setPositionPIDWrappingEnabled(SwerveConfigs.azimuthPIDwrapping);
+        mAzimuthPID.setPositionPIDWrappingMinInput(SwerveConfigs.azimuthPIDMinWrap);
+        mAzimuthPID.setPositionPIDWrappingMaxInput(SwerveConfigs.azimuthPIDMaxWrap);
 
         // Burn flahs in case of power cycle
         mAzimuthMotor.burnFlash();
