@@ -50,7 +50,8 @@ public class Intake extends SubsystemBase {
     intakeMotor1.setIdleMode(IdleMode.kBrake);
     intakeMotor2.setSmartCurrentLimit(60);
     intakeMotor2.setIdleMode(IdleMode.kBrake);
-    intakeMotor2.setInverted(true);
+    intakeMotor2.setInverted(false);
+    intakeMotor1.setInverted(true);
 
     intakeMotor1.burnFlash();
     intakeMotor2.burnFlash();
