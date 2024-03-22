@@ -65,6 +65,27 @@ public class Drivetrain extends SubsystemBase {
     
   public Drivetrain() {
     pidgey.setYaw(0);
+
+    SmartDashboard.putData("Swerve Drive", new Sendable() {
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.setSmartDashboardType("SwerveDrive");
+
+    builder.addDoubleProperty("Front Left Angle", () -> Module1.getAzimuthRotation(), null);
+    builder.addDoubleProperty("Front Left Velocity", () -> Module1.getDriveVelocity(), null);
+
+    builder.addDoubleProperty("Front Right Angle", () -> Module2.getAzimuthRotation(), null);
+    builder.addDoubleProperty("Front Right Velocity", () -> Module2.getDriveVelocity(), null);
+
+    builder.addDoubleProperty("Back Left Angle", () -> Module3.getAzimuthRotation(), null);
+    builder.addDoubleProperty("Back Left Velocity", () -> Module3.getDriveVelocity(), null);
+
+    builder.addDoubleProperty("Back Right Angle", () -> Module4.getAzimuthRotation(), null);
+    builder.addDoubleProperty("Back Right Velocity", () -> Module4.getDriveVelocity(), null);
+
+    builder.addDoubleProperty("Robot Angle", () -> getRotation(), null);
+  }
+});
   }
 
   public void drive(double forward, double strafe, double azimuth, boolean fieldRelative){
@@ -105,26 +126,7 @@ public class Drivetrain extends SubsystemBase {
     field2d.setRobotPose(getPose());
     SmartDashboard.putData(field2d);
 
-    SmartDashboard.putData("Swerve Drive", new Sendable() {
-  @Override
-  public void initSendable(SendableBuilder builder) {
-    builder.setSmartDashboardType("SwerveDrive");
-
-    builder.addDoubleProperty("Front Left Angle", () -> Module1.getAzimuthRotation(), null);
-    builder.addDoubleProperty("Front Left Velocity", () -> Module1.getDriveVelocity(), null);
-
-    builder.addDoubleProperty("Front Right Angle", () -> Module2.getAzimuthRotation(), null);
-    builder.addDoubleProperty("Front Right Velocity", () -> Module2.getDriveVelocity(), null);
-
-    builder.addDoubleProperty("Back Left Angle", () -> Module3.getAzimuthRotation(), null);
-    builder.addDoubleProperty("Back Left Velocity", () -> Module3.getDriveVelocity(), null);
-
-    builder.addDoubleProperty("Back Right Angle", () -> Module4.getAzimuthRotation(), null);
-    builder.addDoubleProperty("Back Right Velocity", () -> Module4.getDriveVelocity(), null);
-
-    builder.addDoubleProperty("Robot Angle", () -> getRotation(), null);
-  }
-});
+    
   }
 
   public void setLocation(double x, double y, double angle){
