@@ -46,9 +46,9 @@ public class Intake extends SubsystemBase {
     intakeMotor1.restoreFactoryDefaults();
     intakeMotor2.restoreFactoryDefaults();
 
-    intakeMotor1.setSmartCurrentLimit(60);
+    intakeMotor1.setSmartCurrentLimit(80);
     intakeMotor1.setIdleMode(IdleMode.kBrake);
-    intakeMotor2.setSmartCurrentLimit(60);
+    intakeMotor2.setSmartCurrentLimit(80);
     intakeMotor2.setIdleMode(IdleMode.kBrake);
     intakeMotor2.setInverted(false);
     intakeMotor1.setInverted(true);
@@ -65,15 +65,6 @@ public class Intake extends SubsystemBase {
     feederLimit = feederMotor.getForwardLimitSwitch(Type.kNormallyOpen);
 
     feederLimit.enableLimitSwitch(false);
-
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 10);
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 10);
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 10);
 
     feederMotor.burnFlash();
   }
