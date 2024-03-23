@@ -91,8 +91,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-   double voltage = m_pdp.getVoltage();
-    new Alert("Voltage is " + voltage, AlertType.INFO).set(true);
+   //double voltage = m_pdp.getVoltage();
+    //new Alert("Voltage is " + voltage, AlertType.INFO).set(true);
     // SmartDashboard.putString("Selected Auto", autoChooser.getSelected().getName());
 
     // if (autoChooser.getSelected() == "5Note") {
@@ -217,7 +217,7 @@ public class Robot extends TimedRobot {
     brake.whileTrue(drivetrain.brakeCommand());
     driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
     driverOuttake.whileTrue(intake.outtakeCommand());
-    driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.intakeCommand()));
+    driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.sptiCommand()));
   }
 
   public void ConfigureAutonomousMode(){
