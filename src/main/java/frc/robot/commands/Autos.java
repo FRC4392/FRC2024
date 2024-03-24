@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -26,50 +24,50 @@ public final class Autos {
 
     if (alliance.isPresent()){
     if (alliance.get() == DriverStation.Alliance.Red){
-        return (drivetrain.setLocationCommand(16.54-.96, 4.4, -120).andThen(shooter.runShooter(90).raceWith(Commands.waitSeconds(0.5)))).andThen(
+        return drivetrain.setLocationCommand(16.54-.96, 4.4, -120).andThen(shooter.runShooter(80).alongWith(drivetrain.setStraight()).raceWith(Commands.waitSeconds(0.5))).andThen(
         superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
-          intake.feedFastCommand()).raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
             superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
               drivetrain.FollowPath("RightNoteRace").raceWith(intake.intakeCommand())).andThen(
                 intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                 superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                  intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+                  intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
                     superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
                     drivetrain.FollowPath("StageMidNote").raceWith(intake.intakeCommand()))).andThen(
                       intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                         superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                          intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
+                          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
                           superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))))));
     } else {
-        return (drivetrain.setLocationCommand(.96, 4.4, -60).andThen(shooter.runShooter(90).raceWith(Commands.waitSeconds(0.5)))).andThen(
+        return drivetrain.setLocationCommand(.96, 4.4, -60).andThen(shooter.runShooter(80).raceWith(Commands.waitSeconds(0.5))).andThen(
         superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
-          intake.feedFastCommand()).raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
             superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
               drivetrain.FollowPath("RightNoteRace").raceWith(intake.intakeCommand())).andThen(
                 intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                 superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                  intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+                  intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
                     superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
                     drivetrain.FollowPath("StageMidNote").raceWith(intake.intakeCommand()))).andThen(
                       intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                         superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                          intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
+                          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
                           superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))))));
     }
 } else {
-        return (drivetrain.setLocationCommand(16.54-.96, 4.4, -120).andThen(shooter.runShooter(90).raceWith(Commands.waitSeconds(0.5)))).andThen(
+        return drivetrain.setLocationCommand(16.54-.96, 4.4, -120).andThen(shooter.runShooter(80).raceWith(Commands.waitSeconds(0.5))).andThen(
         superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
-          intake.feedFastCommand()).raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
             superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
               drivetrain.FollowPath("RightNoteRace").raceWith(intake.intakeCommand())).andThen(
                 intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                 superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                  intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+                  intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
                     superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
                     drivetrain.FollowPath("StageMidNote").raceWith(intake.intakeCommand()))).andThen(
                       intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                         superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                          intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
+                          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
                           superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))))));
 }
     
@@ -82,78 +80,78 @@ public final class Autos {
 
     if (alliance.isPresent()){
     if (alliance.get() == DriverStation.Alliance.Red){
-        return (drivetrain.setLocationCommand(16.54-1.42, 5.55, -180).andThen(shooter.runShooter(90).raceWith(Commands.waitSeconds(0.5)))).andThen(
+        return drivetrain.setLocationCommand(16.54-1.42, 5.55, -180).andThen(shooter.runShooter(80).raceWith(Commands.waitSeconds(0.5))).andThen(
         superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
-          intake.feedFastCommand()).raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
             superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
               drivetrain.FollowPath("CenterFront").raceWith(intake.intakeCommand())).andThen(
                 intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                 superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                  intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+                  intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
                     superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
                     drivetrain.FollowPath("CenterToRight").raceWith(intake.intakeCommand()))).andThen(
                       intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                         superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                          intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
+                          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
                           superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(  
                             drivetrain.FollowPath("RightToLeft").raceWith(intake.intakeCommand()))).andThen(
                               intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                                 superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                                  intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
+                                  intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
                                      superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(  
                                       drivetrain.FollowPath("LeftMidRave").raceWith(intake.intakeCommand()))).andThen(
                                         intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                                           superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                                            intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))))))));
+                                            intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))))))));
     } else {
-        return (drivetrain.setLocationCommand(1.42, 5.55, 0).andThen(shooter.runShooter(90).raceWith(Commands.waitSeconds(0.5)))).andThen(
+        return drivetrain.setLocationCommand(1.42, 5.55, 0).andThen(shooter.runShooter(80).raceWith(Commands.waitSeconds(0.5))).andThen(
         superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
-          intake.feedFastCommand()).raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
             superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
               drivetrain.FollowPath("CenterFront").raceWith(intake.intakeCommand())).andThen(
                 intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                 superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                  intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+                  intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
                     superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
                     drivetrain.FollowPath("CenterToRight").raceWith(intake.intakeCommand()))).andThen(
                       intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                         superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                          intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
+                          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
                           superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(  
                             drivetrain.FollowPath("RightToLeft").raceWith(intake.intakeCommand()))).andThen(
                               intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                                 superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                                  intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
+                                  intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
                                      superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(  
                                       drivetrain.FollowPath("LeftMidRave").raceWith(intake.intakeCommand()))).andThen(
                                         intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                                           superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                                            intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))))))));
+                                            intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))))))));
     }
 } else {
-    return (drivetrain.setLocationCommand(16.54-1.42, 5.55, 0+180).andThen(shooter.runShooter(90).raceWith(Commands.waitSeconds(0.5)))).andThen(
+    return drivetrain.setLocationCommand(16.54-1.42, 5.55, 0+180).andThen(shooter.runShooter(80).raceWith(Commands.waitSeconds(0.5))).andThen(
         superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
-          intake.feedFastCommand()).raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
             superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
               drivetrain.FollowPath("CenterFront").raceWith(intake.intakeCommand())).andThen(
                 intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                 superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                  intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
+                  intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
                     superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(
                     drivetrain.FollowPath("CenterToRight").raceWith(intake.intakeCommand()))).andThen(
                       intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                         superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                          intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
+                          intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
                           superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(  
                             drivetrain.FollowPath("RightToLeft").raceWith(intake.intakeCommand()))).andThen(
                               intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                                 superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                                  intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
+                                  intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
                                      superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(  
                                       drivetrain.FollowPath("LeftMidRave").raceWith(intake.intakeCommand()))).andThen(
                                         intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
                                           superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
-                                            intake.feedFastCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))))))));
+                                            intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))))))));
 }
   }
 }

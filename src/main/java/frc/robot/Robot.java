@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -25,6 +26,8 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Intake.OccupancyState;
 import frc.robot.subsystems.LED;
 
 /**
@@ -44,8 +47,14 @@ public class Robot extends TimedRobot {
   private Shooter shooter = new Shooter();
   //private Uppies climber = new Uppies();
   private Superstructure superstructure = new Superstructure();
-  private LED led = new LED();
   private PowerDistribution m_pdp = new PowerDistribution();
+
+  Supplier<OccupancyState> occupySupplier = () -> intake.getOccupancy();
+  Supplier<IntakeState> intakeSupplier = () -> intake.getState();
+  Supplier<Superstructure.AimingState> shootSupplier = ()->superstructure.getState();
+  Supplier<Drivetrain.AimingState> driveShotSupplier = () -> drivetrain.getState();
+
+  private LED led = new LED(intakeSupplier, occupySupplier, shootSupplier, driveShotSupplier);
 
   SendableChooser<String> autoChooser = new SendableChooser<>();
 
@@ -154,10 +163,6 @@ public class Robot extends TimedRobot {
 
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
 
-    BooleanSupplier sensorSupplier = () -> intake.getShooterSensor();
-    Trigger shooterOccupied = new Trigger(sensorSupplier);
-    shooterOccupied.whileTrue(led.setLedsOccupied());
-
     DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
     Trigger AltButton = operatorController.rightStick();
@@ -170,30 +175,26 @@ public class Robot extends TimedRobot {
     Trigger Feed = operatorController.rightTrigger(0);
     Trigger Shoot = operatorController.leftStick().and(AltButton.negate());
     Trigger SlowShoot = operatorController.leftStick().and(AltButton);
+    Trigger reverseFeed = operatorController.a();
 
     Trigger PivotUp = operatorController.povUp().and(AltButton);
     Trigger PivotDown = operatorController.povDown().and(AltButton);
 
     Trigger AutoAim = operatorController.leftTrigger(.1);
 
-    operatorController.a().whileTrue(intake.outtakeCommand());
     AutoAim.whileTrue(superstructure.setShooterPivotWithLimelight().alongWith(shooter.runShooter(80)));
     AutoAim.onFalse(shooter.stopShooter());
     FixShotClose.whileTrue(superstructure.pivotToPosCommand(.12).alongWith(shooter.runShooter(80)));
     FixShotClose.onFalse(shooter.stopShooter());
-    HumanTake.whileTrue(shooter.humanTakeCommand().alongWith(intake.outfeedCommand()).alongWith(superstructure.pivotToPosCommand(.12)));
-    HumanTake.onFalse(shooter.stopShooter());
-    Feed.whileTrue(intake.feedFastCommand());
+    HumanTake.whileTrue(shooter.humanTakeCommand().alongWith(intake.humantakeCommand()).alongWith(superstructure.moveToHumanPosition()));
+    HumanTake.onFalse(shooter.stopShooter().alongWith(superstructure.returnHome()));
+    Feed.whileTrue(intake.feedCommand());
+    reverseFeed.whileTrue(intake.reverseFeedCommand());
     PivotUp.whileTrue(superstructure.pivotCommand());
     PivotDown.whileTrue(superstructure.pivotBackCommand());
     Shoot.whileTrue(shooter.runShooter(90));
     Shoot.onFalse(shooter.stopShooter());
     SlowShoot.whileTrue(shooter.stopShooter());
-    OpIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
-    OpOuttake.whileTrue(intake.outfeedCommand());
-    //ClimbUp.whileTrue(climber.ClimbUpCommand());
-    //ClimbDown.whileTrue(climber.ClimbDownCommand());
-    //AltButton.whileTrue(led.setLedsPurple().alongWith(climber.ClimbCommand(wallSpeed)));
 
     operatorController.povLeft().and(AltButton).whileTrue(superstructure.ElevateCommand());
     operatorController.povRight().and(AltButton).whileTrue(superstructure.DeElevateCommand());
@@ -209,15 +210,19 @@ public class Robot extends TimedRobot {
     BooleanSupplier outtakeButton = () -> driverController.getRightBumper();
     BooleanSupplier spitButton = () -> driverController.getLeftBumper();
 
+    Trigger driveVoltage = new Trigger(() -> driverController.getAButton());
+
     Trigger brake = new Trigger(brakeSupplier);
     Trigger driverIntake = new Trigger(intakeButton);
     Trigger driverOuttake = new Trigger(outtakeButton);
     Trigger driverSpit = new Trigger(spitButton);
 
     brake.whileTrue(drivetrain.brakeCommand());
-    driverIntake.and(shooterOccupied).whileTrue(intake.intakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
-    driverOuttake.whileTrue(intake.outtakeCommand());
+    OpIntake.or(driverIntake).whileTrue(intake.intakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
+    OpOuttake.or(driverOuttake).whileTrue(intake.outtakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
     driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.sptiCommand()));
+
+    driveVoltage.whileTrue(drivetrain.driveStraight());
   }
 
   public void ConfigureAutonomousMode(){

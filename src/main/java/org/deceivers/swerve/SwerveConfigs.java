@@ -34,12 +34,12 @@ public class SwerveConfigs {
 
         // Configure sensor feedback
     public static FeedbackConfigs driveFeedbackConfigs = new FeedbackConfigs()
-        .withSensorToMechanismRatio((0.2393893602 / ((20.0 / 13.0) * (45.0 / 15.0))) / 60);
+        .withSensorToMechanismRatio((((20.0 / 12.0) * (45.0 / 15.0)) / 0.2393893602));
 
         // Configure PID
     public static Slot0Configs driveSlotConfigs = new Slot0Configs()
-        .withKV(0)
-        .withKP(0)
+        .withKV(6/2.35)
+        .withKP(.05)
         .withKI(0)
         .withKD(0)
         .withKS(0);
@@ -96,3 +96,4 @@ public class SwerveConfigs {
 
 
 }
+//2.4

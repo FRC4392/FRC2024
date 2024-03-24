@@ -34,4 +34,6 @@ public interface SwerveModule {
      */
     Translation2d getModuleLocation();
 	void setAngle(double angle);
+
+    void driveVoltage(double voltage);
 }

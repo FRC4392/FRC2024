@@ -4,22 +4,33 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.CANifier.LEDChannel;
+import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Intake.OccupancyState;
+import frc.robot.subsystems.Superstructure.AimingState;
 
 public class LED extends SubsystemBase {
   private AddressableLED leds = new AddressableLED(0);
   private AddressableLEDBuffer buffer = new AddressableLEDBuffer(33);
-  int m_rainbowFirstPixelHue = 1;
+
+  private static Supplier<IntakeState> mIntakeStateSupplier;
+  private static Supplier<OccupancyState> mOccupancySupplier;
+  private static Supplier<Superstructure.AimingState> mShooterAimingState;
+  private static Supplier<Drivetrain.AimingState> mDrivetrainAimingState;
   
-  public LED() {
+  public LED(Supplier<IntakeState> intakeStateSupplier, Supplier<OccupancyState> occupancySupplier, Supplier<Superstructure.AimingState> pivotAimingSupplier, Supplier<Drivetrain.AimingState> driveAimSupplier) {
     leds.setLength(buffer.getLength());
     leds.start();
+    mIntakeStateSupplier = intakeStateSupplier;
+    mOccupancySupplier = occupancySupplier;
+    mShooterAimingState = pivotAimingSupplier;
+    mDrivetrainAimingState = driveAimSupplier;
   }
 
   public void setElevatorLED(int R, int G, int B) {
@@ -39,44 +50,32 @@ public class LED extends SubsystemBase {
 
   @Override
   public void periodic() {
-   // rainbow();
-  }
 
-
-  public Command setLedsOccupied() {
-    return this.runEnd(()->setAllLED(0,0,255), ()->setAllLED(255,50,0));
-  }
-
-  public Command setLedsPurple() {
-    return this.runEnd(()->setAllLED(255,0,255), ()->setAllLED(0,0,255));
-  }
-
-  private void rainbow() {
-    // For every pixel
-    for (var i = 0; i < buffer.getLength(); i++) {
-
-      if (i % 2 == 1) {
-        if (m_rainbowFirstPixelHue < 5){
-          buffer.setRGB(i, 255, 64, 0);
-        } else {
-          buffer.setRGB(i, 0, 0, 255);
-        }
-      } else {
-        if (m_rainbowFirstPixelHue < 5){
-          buffer.setRGB(i, 0, 0, 255);
-        } else {
-          buffer.setRGB(i, 255, 64, 0);
-        }
-      }
+    if (mShooterAimingState.get() == AimingState.kTooFar) {
+      setAllLED(255, 255, 255);
     }
-    // Increase by to make the rainbow "move"
-    m_rainbowFirstPixelHue +=1;
-    // Check bounds
-    if (m_rainbowFirstPixelHue > 10){
-      m_rainbowFirstPixelHue = 1;
+    if (mShooterAimingState.get() == AimingState.kAimed && mDrivetrainAimingState.get() == Drivetrain.AimingState.kAimed) {
+      setAllLED(0, 255, 0);
+    } else if ((mShooterAimingState.get() == AimingState.kAiming || (mShooterAimingState.get() == AimingState.kAimed && mDrivetrainAimingState.get() == Drivetrain.AimingState.kNotAiming)) || (mDrivetrainAimingState.get() == Drivetrain.AimingState.kAiming || (mDrivetrainAimingState.get() == Drivetrain.AimingState.kAimed && mShooterAimingState.get() == AimingState.kNotAiming))){
+      setAllLED(255, 0, 0);
+    } else {
+    if (mOccupancySupplier.get() == OccupancyState.kFull) {
+      setAllLED(255, 50, 0);
+    } else if (mOccupancySupplier.get() == OccupancyState.kPartialPickup) {
+      setAllLED(255, 255, 0);
+    } else {
+      setAllLED(0,0, 255);
     }
-
-    leds.setData(buffer);
   }
+  }
+
+
+  // public Command setLedsOccupied() {
+  //   return this.runEnd(()->setAllLED(0,0,255), ()->setAllLED(255,50,0));
+  // }
+
+  // public Command setLedsPurple() {
+  //   return this.runEnd(()->setAllLED(255,0,255), ()->setAllLED(0,0,255));
+  // }
 
 }

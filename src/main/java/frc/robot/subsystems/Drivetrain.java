@@ -35,32 +35,42 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
 
-    private final TalonFX mDriveMotor1 = new TalonFX(11);
-    private final TalonFX mDriveMotor2 = new TalonFX(13);
-    private final TalonFX mDriveMotor3 = new TalonFX(15);
-    private final TalonFX mDriveMotor4 = new TalonFX(17);
+  public enum AimingState {
+    kNotAiming,
+    kAiming,
+    kAimed;
+  }
 
-    private final CANSparkMax mAzimuth1 = new CANSparkMax(12, MotorType.kBrushless);
-    private final CANSparkMax mAzimuth2 = new CANSparkMax(14, MotorType.kBrushless);
-    private final CANSparkMax mAzimuth3 = new CANSparkMax(16, MotorType.kBrushless);
-    private final CANSparkMax mAzimuth4 = new CANSparkMax(18, MotorType.kBrushless);
+  private final TalonFX mDriveMotor1 = new TalonFX(11);
+  private final TalonFX mDriveMotor2 = new TalonFX(13);
+  private final TalonFX mDriveMotor3 = new TalonFX(15);
+  private final TalonFX mDriveMotor4 = new TalonFX(17);
 
-    private final Pigeon2 pidgey = new Pigeon2(10);
+  private final CANSparkMax mAzimuth1 = new CANSparkMax(12, MotorType.kBrushless);
+  private final CANSparkMax mAzimuth2 = new CANSparkMax(14, MotorType.kBrushless);
+  private final CANSparkMax mAzimuth3 = new CANSparkMax(16, MotorType.kBrushless);
+  private final CANSparkMax mAzimuth4 = new CANSparkMax(18, MotorType.kBrushless);
 
-    private final SwerveModuleV3 Module1 = new SwerveModuleV3(mAzimuth1, mDriveMotor1, new Translation2d(0.256519, 0.256519), "Module 1");
-    private final SwerveModuleV3 Module2 = new SwerveModuleV3(mAzimuth2, mDriveMotor2, new Translation2d(0.256519, -0.256519), "Module 2");
-    private final SwerveModuleV3 Module3 = new SwerveModuleV3(mAzimuth3, mDriveMotor3, new Translation2d(-0.256519, -0.256519), "Module 3");
-    private final SwerveModuleV3 Module4 = new SwerveModuleV3(mAzimuth4, mDriveMotor4, new Translation2d(-0.256519,  0.256519), "Module 4");
+  private final Pigeon2 pidgey = new Pigeon2(10);
 
-    private final SwerveDrive mSwerveDrive = new SwerveDrive(this::getRotation, Module1, Module2, Module3, Module4);
+  private final SwerveModuleV3 Module1 = new SwerveModuleV3(mAzimuth1, mDriveMotor1,
+      new Translation2d(0.256519, 0.256519), "Module 1");
+  private final SwerveModuleV3 Module2 = new SwerveModuleV3(mAzimuth2, mDriveMotor2,
+      new Translation2d(0.256519, -0.256519), "Module 2");
+  private final SwerveModuleV3 Module3 = new SwerveModuleV3(mAzimuth3, mDriveMotor3,
+      new Translation2d(-0.256519, -0.256519), "Module 3");
+  private final SwerveModuleV3 Module4 = new SwerveModuleV3(mAzimuth4, mDriveMotor4,
+      new Translation2d(-0.256519, 0.256519), "Module 4");
 
-    private double gyroOffset = 0;
+  private final SwerveDrive mSwerveDrive = new SwerveDrive(this::getRotation, Module1, Module2, Module3, Module4);
 
-    private PIDController rotationController = new PIDController(.5, 0, 0.00);
+  private double gyroOffset = 0;
 
-    Field2d field2d = new Field2d();
+  private PIDController rotationController = new PIDController(.5, 0, 0.00);
 
+  Field2d field2d = new Field2d();
 
+  AimingState state = AimingState.kNotAiming;
 
     
   public Drivetrain() {
@@ -106,6 +116,10 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("AutoChasisSpeedsY", speeds.vyMetersPerSecond);
     SmartDashboard.putNumber("AutoChasisSpeedsX", speeds.vxMetersPerSecond);
     mSwerveDrive.driveClosedLoop(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false);
+  }
+
+  public void driveVoltage(double forward, double strafe, double azimuth, boolean fieldRelative){
+    mSwerveDrive.driveVoltage(forward, strafe, azimuth, fieldRelative);
   }
 
   public void stop(){
@@ -221,6 +235,27 @@ public class Drivetrain extends SubsystemBase {
 
     public Command setLocationCommand(double x, double y, double rot){
       return this.runOnce(() -> setLocation(x, y, rot));
+    }
+
+    public void setState(AimingState state){
+      this.state = state; 
+    }
+
+    public AimingState getState(){
+      return state;
+    }
+
+    public Command driveStraight(){
+      return this.run(() -> driveVoltage(2.4, 0, 0, false));
+    }
+
+    public Command setStraight(){
+      return this.run(() -> {
+        mSwerveDrive.setModulesAngle(0.0, 0);
+        mSwerveDrive.setModulesAngle(0.0, 1);
+        mSwerveDrive.setModulesAngle(0.0, 2);
+        mSwerveDrive.setModulesAngle(0.0, 3);
+      });
     }
 
 }

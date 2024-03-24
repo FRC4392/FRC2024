@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drivetrain.AimingState;
 
 public class DriveCommand extends CommandBase {
   public final Drivetrain mDrivetrain;
@@ -40,7 +41,7 @@ public class DriveCommand extends CommandBase {
   private JoystickHelper xrHelper = new JoystickHelper(0);
   private JoystickHelper yrHelper = new JoystickHelper(0);
   private double driveFactor = 1;
-  private PIDController rotationController = new PIDController(.5, 0, 0.00);
+  private PIDController rotationController = new PIDController(.7, 0, 0.00);
 
   private PIDController limController = new PIDController(0.3, 0.0, 0.0);
   private PIDController strafeController = new PIDController(0.3,0,0);
@@ -108,14 +109,30 @@ public class DriveCommand extends CommandBase {
     
     if (mController.getRightTriggerAxis() > .1){
         new Rotation2d();
+        var targetValid = LimelightHelpers.getTV("limelight-april");
         angle = Rotation2d.fromDegrees(-LimelightHelpers.getTX("limelight-april")).plus(Rotation2d.fromDegrees(mDrivetrain.getRotation()));
-      rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
+        
+        if (targetValid) {
+          rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
+        }
+
+
+
+      if (Math.abs(LimelightHelpers.getTX("limelight-april")) < 1.5 && targetValid) {
+        mDrivetrain.setState(AimingState.kAimed);
+      } else {
+        mDrivetrain.setState(AimingState.kAiming);
+      }
+
+      SmartDashboard.putNumber("DrivetrainTargetAngle", angle.getDegrees());
+
     } else if (mController.getBButton()) {
       new Rotation2d();
       angle = Rotation2d.fromDegrees(0);
       rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
     } else {
       rotationController.reset();
+      mDrivetrain.setState(AimingState.kNotAiming);
     }
 
     yVel = yVel * driveFactor;

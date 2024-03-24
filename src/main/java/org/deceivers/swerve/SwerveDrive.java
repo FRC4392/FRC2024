@@ -129,4 +129,10 @@ public class SwerveDrive {
     public void log(){
         Arrays.stream(mModules).forEach(SwerveModule::log);
     }
+
+    public void driveVoltage(double forward, double strafe, double rotation, boolean fieldrelative){
+        for (SwerveModule swerveModule : mModules) {
+            swerveModule.driveVoltage(forward);
+        }
+    }
 }

@@ -38,6 +38,14 @@ public class Superstructure extends SubsystemBase {
     map.put(new InterpolatingDouble(-12.39), new InterpolatingDouble(.0322));
     map.put(new InterpolatingDouble(-13.47), new InterpolatingDouble(.0315));
     map.put(new InterpolatingDouble(-15.67), new InterpolatingDouble(.026));
+    map.put(new InterpolatingDouble(-18.78), new InterpolatingDouble(.018));
+  }
+
+  public enum AimingState {
+    kNotAiming,
+    kAiming,
+    kAimed,
+    kTooFar;
   }
 
   /** Creates a new Superstructure. */
@@ -47,6 +55,8 @@ public class Superstructure extends SubsystemBase {
 
   private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, false, 0, 0, false, false, false);
   private MotionMagicVoltage m_MotionMagicVoltage = new MotionMagicVoltage(0);
+
+  private AimingState state = AimingState.kNotAiming;
 
 
   public Superstructure() {
@@ -177,8 +187,12 @@ public class Superstructure extends SubsystemBase {
     setPivotPos(angle);
   }
 
+  public double getPivotAngle(){
+    return shooterPivot.getPosition().getValueAsDouble();
+  }
+
   public Command pivotCommand() {
-    return this.runEnd(() -> setPivotSpeed(-.1), () -> stopPivot());
+    return this.runEnd(() -> {setPivotSpeed(-.1);}, () -> stopPivot());
   }
 
   public Command pivotBackCommand() {
@@ -202,7 +216,26 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setShooterPivotWithLimelight(){
-    return this.run(this::setPivotWithLimelight);
+    return this.runEnd(() -> {
+      state = AimingState.kAiming;
+      double target = LimelightHelpers.getTY("limelight-april");
+      Boolean valid = LimelightHelpers.getTV("limelight-april");
+
+      double angle = map.getInterpolated(new InterpolatingDouble(target)).value;
+
+      setPivotPos(angle);
+
+      if ((Math.abs(getPivotAngle() - angle) < .002) && valid) {
+        state = AimingState.kAimed;
+      }
+
+      if (target < -15.67 || target > 22.76) {
+        state = AimingState.kTooFar;
+      }
+    }, () -> {
+      stopPivot();
+      state = AimingState.kNotAiming;
+    });
   }
 
   public Command moveToAmpPosition(){
@@ -212,7 +245,18 @@ public class Superstructure extends SubsystemBase {
     });
   }
 
+  public Command moveToHumanPosition(){
+    return this. run(() -> {
+      setPivotPos(.12);
+      setElevatorPos(1.75);
+    });
+  }
+
   public Command returnHome(){
     return elevateToPosCommand(0);
+  }
+
+  public AimingState getState(){
+    return state;
   }
 }

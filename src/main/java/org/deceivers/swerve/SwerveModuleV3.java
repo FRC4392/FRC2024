@@ -2,6 +2,7 @@ package org.deceivers.swerve;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModuleV3 implements SwerveModule {
 
@@ -26,6 +28,7 @@ public class SwerveModuleV3 implements SwerveModule {
     private final VelocityVoltage mDriveVelocityControl;
     private final StatusSignal<Double> mDrivePositionSignal;
     private final StatusSignal<Double> mDriveVelocitySignal;
+    private final VoltageOut mDriveVoltageControl;
 
     private final Translation2d mLocation;
     
@@ -44,6 +47,7 @@ public class SwerveModuleV3 implements SwerveModule {
 
         //Get Drive Controls and Signals
         mDriveVelocityControl = new VelocityVoltage(0).withSlot(0);
+        mDriveVoltageControl = new VoltageOut(0);
         mDrivePositionSignal = mDriveMotor.getPosition();
         mDriveVelocitySignal = mDriveMotor.getVelocity();
 
@@ -172,5 +176,17 @@ public class SwerveModuleV3 implements SwerveModule {
     @Override
     public void log() {
 
+        SmartDashboard.putNumber(mName + " Velocity", mDriveMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber(mName + " Position", mDriveMotor.getPosition().getValueAsDouble());
+
+    }
+
+    public void setVoltage(double voltage){
+        mDriveMotor.setControl(mDriveVoltageControl.withOutput(voltage));
+    }
+
+    public void driveVoltage(double voltage){
+        setAngle(0);
+        mDriveMotor.setControl(mDriveVelocityControl.withVelocity(voltage));
     }
 }
