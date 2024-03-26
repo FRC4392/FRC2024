@@ -17,7 +17,7 @@ import frc.robot.subsystems.Superstructure.AimingState;
 
 public class LED extends SubsystemBase {
   private AddressableLED leds = new AddressableLED(0);
-  private AddressableLEDBuffer buffer = new AddressableLEDBuffer(33);
+  private AddressableLEDBuffer buffer = new AddressableLEDBuffer(88);
 
   private static Supplier<IntakeState> mIntakeStateSupplier;
   private static Supplier<OccupancyState> mOccupancySupplier;
@@ -51,22 +51,21 @@ public class LED extends SubsystemBase {
   @Override
   public void periodic() {
 
-    if (mShooterAimingState.get() == AimingState.kTooFar) {
+    if (mOccupancySupplier.get() == OccupancyState.kFull) {
+      if (mShooterAimingState.get() == AimingState.kTooFar) {
       setAllLED(255, 255, 255);
-    }
-    if (mShooterAimingState.get() == AimingState.kAimed && mDrivetrainAimingState.get() == Drivetrain.AimingState.kAimed) {
+    } else if (mShooterAimingState.get() == AimingState.kAimed && mDrivetrainAimingState.get() == Drivetrain.AimingState.kAimed) {
       setAllLED(0, 255, 0);
     } else if ((mShooterAimingState.get() == AimingState.kAiming || (mShooterAimingState.get() == AimingState.kAimed && mDrivetrainAimingState.get() == Drivetrain.AimingState.kNotAiming)) || (mDrivetrainAimingState.get() == Drivetrain.AimingState.kAiming || (mDrivetrainAimingState.get() == Drivetrain.AimingState.kAimed && mShooterAimingState.get() == AimingState.kNotAiming))){
       setAllLED(255, 0, 0);
     } else {
-    if (mOccupancySupplier.get() == OccupancyState.kFull) {
       setAllLED(255, 50, 0);
+    }
     } else if (mOccupancySupplier.get() == OccupancyState.kPartialPickup) {
       setAllLED(255, 255, 0);
     } else {
       setAllLED(0,0, 255);
     }
-  }
   }
 
 

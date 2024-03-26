@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase {
     kInfeedSpeed(.25),
     kOutfeedSpeed(-.5),
     kHumanFeedSpeed(-.25),
-    kReverseFeedSpeed(-.1);
+    kReverseFeedSpeed(-.2);
 
     public final double speed;
 
@@ -70,6 +70,7 @@ public class Intake extends SubsystemBase {
   private CANSparkMax feederMotor = new CANSparkMax(33, MotorType.kBrushless);
   private DigitalInput feederLimit = new DigitalInput(0);
   private DigitalInput gapSwitch = new DigitalInput(1);
+  private DigitalInput entrySwitch = new DigitalInput(2);
   private IntakeState state = IntakeState.kStopped;
 
   /** Creates a new Intake. */
@@ -85,7 +86,7 @@ public class Intake extends SubsystemBase {
     intakeMotor2.setIdleMode(IdleMode.kBrake);
     intakeMotor2.setInverted(false);
 
-    intakeMotor2.follow(intakeMotor1);
+    intakeMotor2.follow(intakeMotor1, true);
 
     intakeMotor1.burnFlash();
     intakeMotor2.burnFlash();
@@ -105,7 +106,7 @@ public class Intake extends SubsystemBase {
 
   public void setIntakeMotorSpeed(double speed) {
     intakeMotor1.set(speed);
-    intakeMotor2.follow(intakeMotor1, true);
+    //intakeMotor2.follow(intakeMotor1, true);
   }
 
   public void setIntakeSpeed(IntakeSpeeds speed){
@@ -158,7 +159,7 @@ public class Intake extends SubsystemBase {
   public OccupancyState getOccupancy(){
     if (!getShooterSensor()) {
       return OccupancyState.kFull;
-    } else if (getGap()){
+    } else if (getGap() || getEntrySwitch()){
       return OccupancyState.kPartialPickup;
     } else {
       return OccupancyState.kEmpty;
@@ -222,6 +223,10 @@ public class Intake extends SubsystemBase {
 
   public boolean getGap(){
     return !gapSwitch.get();
+  }
+
+  public boolean getEntrySwitch(){
+    return !entrySwitch.get();
   }
 
   public Command sptiCommand(){

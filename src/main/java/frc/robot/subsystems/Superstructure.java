@@ -27,18 +27,28 @@ public class Superstructure extends SubsystemBase {
 
   private static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<>();
   static {
-    map.put(new InterpolatingDouble(22.76), new InterpolatingDouble(.12));
-    map.put(new InterpolatingDouble(12.25), new InterpolatingDouble(.1));
-    map.put(new InterpolatingDouble(7.0), new InterpolatingDouble(.082));
-    map.put(new InterpolatingDouble(0.0), new InterpolatingDouble(.063));
-    map.put(new InterpolatingDouble(-.38), new InterpolatingDouble(.059));
-    map.put(new InterpolatingDouble(-6.37), new InterpolatingDouble(.048));
-    map.put(new InterpolatingDouble(-8.185), new InterpolatingDouble(.045));
-    map.put(new InterpolatingDouble(-10.15), new InterpolatingDouble(.038));
-    map.put(new InterpolatingDouble(-12.39), new InterpolatingDouble(.0322));
-    map.put(new InterpolatingDouble(-13.47), new InterpolatingDouble(.0315));
-    map.put(new InterpolatingDouble(-15.67), new InterpolatingDouble(.026));
-    map.put(new InterpolatingDouble(-18.78), new InterpolatingDouble(.018));
+    map.put(new InterpolatingDouble(22.5), new InterpolatingDouble(.12));//40in
+    //map.put(new InterpolatingDouble(12.25), new InterpolatingDouble(.1));
+    map.put(new InterpolatingDouble(9.36), new InterpolatingDouble(.09));
+    map.put(new InterpolatingDouble(.935), new InterpolatingDouble(.066));
+    map.put(new InterpolatingDouble(-4.18), new InterpolatingDouble(.052));
+    map.put(new InterpolatingDouble(-7.5), new InterpolatingDouble(.045));//135.5
+    map.put(new InterpolatingDouble(-10.42), new InterpolatingDouble(.037));
+    map.put(new InterpolatingDouble(-12.32), new InterpolatingDouble(.0325));
+    map.put(new InterpolatingDouble(-13.84), new InterpolatingDouble(.026));
+    map.put(new InterpolatingDouble(-15.12), new InterpolatingDouble(.0215));
+    map.put(new InterpolatingDouble(-16.0), new InterpolatingDouble(.0198));
+    map.put(new InterpolatingDouble(-18.31), new InterpolatingDouble(.0178));
+    //map.put(new InterpolatingDouble(7.0), new InterpolatingDouble(.082));
+    //map.put(new InterpolatingDouble(0.0), new InterpolatingDouble(.063));
+    //map.put(new InterpolatingDouble(-.38), new InterpolatingDouble(.059));
+    //map.put(new InterpolatingDouble(-6.37), new InterpolatingDouble(.048));
+    // map.put(new InterpolatingDouble(-8.185), new InterpolatingDouble(.045));
+    // map.put(new InterpolatingDouble(-10.15), new InterpolatingDouble(.038));
+    // map.put(new InterpolatingDouble(-12.39), new InterpolatingDouble(.0322));
+    // map.put(new InterpolatingDouble(-13.47), new InterpolatingDouble(.0315));
+    // map.put(new InterpolatingDouble(-15.67), new InterpolatingDouble(.02));
+    // map.put(new InterpolatingDouble(-18.78), new InterpolatingDouble(.018));
   }
 
   public enum AimingState {
@@ -223,9 +233,11 @@ public class Superstructure extends SubsystemBase {
 
       double angle = map.getInterpolated(new InterpolatingDouble(target)).value;
 
-      setPivotPos(angle);
+      if (valid) {
+        setPivotPos(angle);
+      }
 
-      if ((Math.abs(getPivotAngle() - angle) < .002) && valid) {
+      if ((Math.abs(getPivotAngle() - angle) < .0025) && valid) {
         state = AimingState.kAimed;
       }
 
