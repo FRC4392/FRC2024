@@ -56,6 +56,8 @@ public class LED extends SubsystemBase {
       setAllLED(255, 255, 255);
     } else if (mShooterAimingState.get() == AimingState.kAimed && mDrivetrainAimingState.get() == Drivetrain.AimingState.kAimed) {
       setAllLED(0, 255, 0);
+    } else if(((mShooterAimingState.get() == AimingState.kAimed || mShooterAimingState.get() == AimingState.kAiming) && mDrivetrainAimingState.get() == Drivetrain.AimingState.kNotAiming) || ((mDrivetrainAimingState.get() == Drivetrain.AimingState.kAimed || mDrivetrainAimingState.get() == Drivetrain.AimingState.kAiming) && mShooterAimingState.get() == AimingState.kNotAiming) ){
+      setAllLED(255, 0, 255);
     } else if ((mShooterAimingState.get() == AimingState.kAiming || (mShooterAimingState.get() == AimingState.kAimed && mDrivetrainAimingState.get() == Drivetrain.AimingState.kNotAiming)) || (mDrivetrainAimingState.get() == Drivetrain.AimingState.kAiming || (mDrivetrainAimingState.get() == Drivetrain.AimingState.kAimed && mShooterAimingState.get() == AimingState.kNotAiming))){
       setAllLED(255, 0, 0);
     } else {
