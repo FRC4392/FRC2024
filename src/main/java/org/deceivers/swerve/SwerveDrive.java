@@ -93,7 +93,7 @@ public class SwerveDrive {
         if (fieldRelative){
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, azimuth, Rotation2d.fromDegrees(mGyroAngle.getAsDouble()-180));
         } else {
-            speeds = new ChassisSpeeds(forward, strafe, azimuth);
+            speeds = new ChassisSpeeds(-forward, -strafe, azimuth);
         }
         SwerveModuleState[] states = mKinematics.toSwerveModuleStates(speeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, 1);

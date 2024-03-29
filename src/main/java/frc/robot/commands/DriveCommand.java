@@ -139,13 +139,13 @@ public class DriveCommand extends CommandBase {
     xVel = xVel * driveFactor;
     rotVel = rotVel * driveFactor;
 
-    var alliance = DriverStation.getAlliance();
-    if (alliance.isPresent()) {
-      if (alliance.get() == Alliance.Red) {
-        yVel *= -1;
-        xVel *= -1;
-      }
-    }
+    // var alliance = DriverStation.getAlliance();
+    // if (alliance.isPresent()) {
+    //   if (alliance.get() == Alliance.Red) {
+    //     yVel *= -1;
+    //     xVel *= -1;
+    //   }
+    // }
 
     // Rotation2d joystickAngle = Rotation2d.fromRadians(Math.atan2(-mController.getRightX(), -mController.getRightY()));
     // if (!mController.getLeftBumper()) {
@@ -201,6 +201,16 @@ public class DriveCommand extends CommandBase {
 
       SmartDashboard.putNumber("DrivetrainTargetAngle", angle.getDegrees());
     }
+
+     var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      if (alliance.get() == Alliance.Red && fieldRelative) {
+        yVel *= -1;
+        xVel *= -1;
+      }
+    }
+
+    
 
     
         
