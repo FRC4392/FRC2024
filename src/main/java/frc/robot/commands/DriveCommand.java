@@ -179,6 +179,30 @@ public class DriveCommand extends CommandBase {
     // }
 
     boolean fieldRelative = !mController.getYButton();
+
+    if (mController.getLeftTriggerAxis() > 0.1){
+      fieldRelative = false;
+
+      new Rotation2d();
+        var targetValid = LimelightHelpers.getTV("limelight-note");
+        angle = Rotation2d.fromDegrees(-LimelightHelpers.getTX("limelight-note")).plus(Rotation2d.fromDegrees(mDrivetrain.getRotation()));
+        
+        if (targetValid) {
+          rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
+        }
+
+
+
+      if (Math.abs(LimelightHelpers.getTX("limelight-april")) < 1.5 && targetValid) {
+        mDrivetrain.setState(AimingState.kAimed);
+      } else {
+        mDrivetrain.setState(AimingState.kAiming);
+      }
+
+      SmartDashboard.putNumber("DrivetrainTargetAngle", angle.getDegrees());
+    }
+
+    
         
         //X direction is arm direction on robot, y direction is out from the apriltag
         mDrivetrain.drive(yfilter.calculate(yVel), xfilter.calculate(xVel), rotfilter.calculate(rotVel), fieldRelative); 
