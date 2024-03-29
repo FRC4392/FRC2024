@@ -103,10 +103,18 @@ public class Shooter extends SubsystemBase {
   public Command stopShooter(){
     return this.run(this::stop);
   }
+
+  public Command amp() {
+    return this.runEnd(() -> {
+      shooter1Motor.setControl(m_voltageVelocity.withVelocity(12));
+      shooter2Motor.setControl(m_voltageVelocity.withVelocity(30));
+    },
+    this::stop);
+  }
   
 
   @Override
-  public void periodic() {
+  public void periodic() { 
     // This method will be called once per scheduler run
 
     SmartDashboard.putNumber("Shooter 1 Speed", shooter1Motor.getVelocity().getValueAsDouble());

@@ -21,7 +21,7 @@ public class Uppies extends SubsystemBase {
   /** Creates a new Climber. */
 
   private CANSparkMax wallMotor = new CANSparkMax(42, MotorType.kBrushless);
-  private TalonFX climberMotor = new TalonFX(44);
+  private CANSparkMax climberMotor = new CANSparkMax(61, MotorType.kBrushless);
   
 
   public Uppies() {
@@ -32,13 +32,8 @@ public class Uppies extends SubsystemBase {
 
     wallMotor.burnFlash();
 
-    climberMotor.setNeutralMode(NeutralModeValue.Brake);
-
-    //CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs();
-
-    //currentLimitsConfigs.StatorCurrentLimit = 120;
-    //currentLimitsConfigs.StatorCurrentLimitEnable = true;
-    //climberMotor.getConfigurator().apply(currentLimitsConfigs);
+    climberMotor.restoreFactoryDefaults();
+    climberMotor.setIdleMode(IdleMode.kBrake);
   }
 
   public void setWallDriveSpeed(double speed){

@@ -253,7 +253,7 @@ public class Superstructure extends SubsystemBase {
   public Command moveToAmpPosition(){
     return this. run(() -> {
       setPivotPos(.12);
-      setElevatorPos(1.75);
+      setElevatorPos(1.5);
     });
   }
 

@@ -3,29 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.8860295972328057,
-        "y": 6.808733863691686
+        "x": 2.725903862571614,
+        "y": 6.9123660985169195
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5052498068537807,
-        "y": 6.9647829260285254
+        "x": 3.725903862571614,
+        "y": 6.9123660985169195
+      },
+      "isLocked": false,
+      "linkedName": "AmpNote1"
+    },
+    {
+      "anchor": {
+        "x": 8.245860695714446,
+        "y": 7.4985331489036815
+      },
+      "prevControl": {
+        "x": 7.2458606957144465,
+        "y": 7.4985331489036815
+      },
+      "nextControl": {
+        "x": 9.245860695714446,
+        "y": 7.4985331489036815
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.725903862571614,
-        "y": 6.9123660985169195
+        "x": 4.9401160913143585,
+        "y": 6.357542122853343
       },
       "prevControl": {
-        "x": 2.234510753570118,
-        "y": 6.840046782285405
+        "x": 7.541257866225222,
+        "y": 7.137312359513317
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AmpNote1"
+      "linkedName": "AmpShot"
     }
   ],
   "rotationTargets": [],
@@ -39,13 +55,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 12.47,
+    "rotation": 8.25,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "New Folder",
   "previewStartingState": {
-    "rotation": 58.147576031050896,
+    "rotation": 12.47,
     "velocity": 0
   },
   "useDefaultConstraints": true

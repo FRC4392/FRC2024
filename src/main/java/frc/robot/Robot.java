@@ -26,6 +26,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Uppies;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Intake.OccupancyState;
 import frc.robot.subsystems.LED;
@@ -45,7 +46,7 @@ public class Robot extends TimedRobot {
   private Drivetrain drivetrain = new Drivetrain();
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
-  //private Uppies climber = new Uppies();
+  private Uppies climber = new Uppies();
   private Superstructure superstructure = new Superstructure();
   private PowerDistribution m_pdp = new PowerDistribution();
 
@@ -182,6 +183,8 @@ public class Robot extends TimedRobot {
 
     Trigger AutoAim = operatorController.leftTrigger(.1);
 
+    AltButton.whileTrue(climber.ClimbCommand(wallSpeed));
+
     AutoAim.whileTrue(superstructure.setShooterPivotWithLimelight().alongWith(shooter.runShooter(80)));
     AutoAim.onFalse(shooter.stopShooter());
     FixShotClose.whileTrue(superstructure.pivotToPosCommand(.12).alongWith(shooter.runShooter(80)));
@@ -199,7 +202,7 @@ public class Robot extends TimedRobot {
     operatorController.povLeft().and(AltButton).whileTrue(superstructure.ElevateCommand());
     operatorController.povRight().and(AltButton).whileTrue(superstructure.DeElevateCommand());
 
-    operatorController.leftBumper().onTrue(superstructure.moveToAmpPosition().alongWith(shooter.runShooter(15)));
+    operatorController.leftBumper().onTrue(superstructure.moveToAmpPosition().alongWith(shooter.amp()));
     operatorController.leftBumper().onFalse(superstructure.returnHome().alongWith(shooter.stopShooter()));
 
     //operatorController.povLeft().whileTrue(superstructure.pivotToPosCommand(.0335));
