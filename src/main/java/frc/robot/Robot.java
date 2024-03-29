@@ -64,6 +64,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand = Autos.get5NoteAuto(drivetrain, intake, shooter, superstructure);
     } else if (auto == "3Piece"){
       m_autonomousCommand = Autos.get3PieceAuto(drivetrain, intake, shooter, superstructure);
+    } else if (auto == "Amp") {
+      m_autonomousCommand = Autos.getAmpAuto(drivetrain, intake, shooter, superstructure);
     }
   };
 
@@ -231,7 +233,8 @@ public class Robot extends TimedRobot {
   public void ConfigureAutonomousMode(){
 
     autoChooser.setDefaultOption("5 Note", "5Note");
-    autoChooser.addOption("Right 3 Piece", "3Piece");
+    autoChooser.addOption("Source Side Auto", "3Piece");
+    autoChooser.addOption("Amp Side Auto", "Amp");
 
     autoChooser.onChange(autoConsumer);
 
