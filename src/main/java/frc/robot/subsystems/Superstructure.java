@@ -158,6 +158,7 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("Shooter is Aiming", state == AimingState.kAimed || state == AimingState.kAiming);
     SmartDashboard.putNumber("Elevator Speed", elevatorMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Pivot Speed", shooterPivot.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("PivotPos", shooterPivot.getPosition().getValueAsDouble());

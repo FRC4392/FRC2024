@@ -135,7 +135,7 @@ public class Drivetrain extends SubsystemBase {
     mSwerveDrive.updateOdometry();
     mSwerveDrive.log();
 
-    
+    SmartDashboard.putBoolean("Drivetrain is Aiming", state == AimingState.kAimed || state == AimingState.kAiming);
 
     field2d.setRobotPose(getPose());
     SmartDashboard.putData(field2d);
