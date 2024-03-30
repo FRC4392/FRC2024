@@ -228,9 +228,18 @@ public class Drivetrain extends SubsystemBase {
     public Command alignCommand(){
       return this.runEnd(() -> {
         Rotation2d angle = Rotation2d.fromDegrees(-LimelightHelpers.getTX("limelight-april")).plus(Rotation2d.fromDegrees(this.getRotation()));
+        boolean targetValid = LimelightHelpers.getTV("limelight-april");
         double rotVel = rotationController.calculate(Rotation2d.fromDegrees(this.getRotation()).getRadians(), angle.getRadians());
+
+        if (Math.abs(LimelightHelpers.getTX("limelight-april")) < 1.5 && targetValid) {
+          setState(AimingState.kAimed);
+        } else {
+          setState(AimingState.kAiming);
+        }
+
+
         drive(0, 0, rotVel, false);
-      }, () -> stop());
+      }, () -> {stop(); setState(AimingState.kNotAiming);});
     }
 
     public Command setLocationCommand(double x, double y, double rot){
