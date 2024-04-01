@@ -75,8 +75,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setHumanTake() {
-    shooter1Motor.set(-.1);
-    shooter2Motor.set(-.1);
+    shooter1Motor.set(-.2);
+    shooter2Motor.set(-.2);
   }
 
   public void setSpitSpeed(shooterSpeeds speed) {

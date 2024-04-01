@@ -130,7 +130,7 @@ public class Intake extends SubsystemBase {
     if (getShooterSensor() && !getGap()) {
       intakeMotor1.set(speed.speed);
       intakeMotor2.set(speed.speed);
-      feederMotor.set(speed2.speed);
+      feederMotor.set(speed2.speed/2);
     } else if (getShooterSensor() && getGap()) {
       intakeMotor1.set(speed.speed/2);
       intakeMotor2.set(speed.speed/2);
