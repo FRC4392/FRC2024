@@ -8,36 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.552303626959685,
-        "y": 4.564917965773432
+        "x": 4.837197396906368,
+        "y": 1.3248274306878483
       },
       "isLocked": false,
       "linkedName": "EndSprint1"
     },
     {
       "anchor": {
-        "x": 8.114832777119258,
-        "y": 4.10355516558834
+        "x": 8.281710302425234,
+        "y": 2.4209118044972198
       },
       "prevControl": {
-        "x": 8.115602430134297,
-        "y": 3.8271111956466024
+        "x": 8.272313178534288,
+        "y": 1.260157666487844
       },
       "nextControl": {
-        "x": 8.11399768430324,
-        "y": 4.403503803246033
+        "x": 8.291540272750684,
+        "y": 3.6351321195842625
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.04367596520928,
-        "y": 5.28165307697803
+        "x": 4.348916771618265,
+        "y": 4.966577196898608
       },
       "prevControl": {
-        "x": 6.364710668910631,
-        "y": 3.3394206500869603
+        "x": 5.552798637642993,
+        "y": 3.751002175687802
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1.1,
-      "rotationDegrees": 0,
+      "rotationDegrees": 61.69357336090245,
       "rotateFast": false
     }
   ],
@@ -61,7 +61,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -11.541363693339608,
+    "rotation": -17.036496472885663,
     "rotateFast": false
   },
   "reversed": false,

@@ -200,6 +200,10 @@ public class DriveCommand extends CommandBase {
       }
 
       SmartDashboard.putNumber("DrivetrainTargetAngle", angle.getDegrees());
+    } else if (mController.getBButton()){
+      rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), Rotation2d.fromDegrees(-90).getRadians());
+    } else if (mController.getAButton()) {
+      rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), Rotation2d.fromDegrees(90).getRadians());
     }
 
      var alliance = DriverStation.getAlliance();

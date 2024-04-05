@@ -106,8 +106,8 @@ public class Shooter extends SubsystemBase {
 
   public Command amp() {
     return this.runEnd(() -> {
-      shooter1Motor.setControl(m_voltageVelocity.withVelocity(12));
-      shooter2Motor.setControl(m_voltageVelocity.withVelocity(30));
+      shooter1Motor.setControl(m_voltageVelocity.withVelocity(10));
+      shooter2Motor.setControl(m_voltageVelocity.withVelocity(50));
     },
     this::stop);
   }
