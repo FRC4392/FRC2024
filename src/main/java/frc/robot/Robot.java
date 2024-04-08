@@ -205,6 +205,8 @@ public class Robot extends TimedRobot {
     operatorController.povLeft().and(AltButton).whileTrue(superstructure.ElevateCommand());
     operatorController.povRight().and(AltButton).whileTrue(superstructure.DeElevateCommand());
 
+    operatorController.povUp().and(AltButton.negate()).whileTrue(shooter.Ferry());
+
     operatorController.leftBumper().onTrue(superstructure.moveToAmpPosition().alongWith(shooter.amp()));
     operatorController.leftBumper().onFalse(superstructure.returnHome().alongWith(shooter.stopShooter()));
 

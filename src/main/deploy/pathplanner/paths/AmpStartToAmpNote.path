@@ -16,19 +16,62 @@
     },
     {
       "anchor": {
-        "x": 2.725903862571614,
-        "y": 6.9123660985169195
+        "x": 2.3181742489787065,
+        "y": 7.741162871431646
       },
       "prevControl": {
-        "x": 2.234510753570118,
-        "y": 6.840046782285405
+        "x": 1.8222734830976188,
+        "y": 7.769086006515335
+      },
+      "nextControl": {
+        "x": 2.8985127226620198,
+        "y": 7.70848522560037
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.303754897006321,
+        "y": 7.455071671174882
+      },
+      "prevControl": {
+        "x": 8.287895556549215,
+        "y": 7.792653302646015
+      },
+      "nextControl": {
+        "x": 8.32289037052477,
+        "y": 7.047754331163092
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.9401160913143585,
+        "y": 6.357542122853343
+      },
+      "prevControl": {
+        "x": 5.599512245161644,
+        "y": 6.859239372520629
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AmpNote1"
+      "linkedName": "AmpShot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2.0,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -39,7 +82,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 12.47,
+    "rotation": 21.87602897783028,
     "rotateFast": false
   },
   "reversed": false,

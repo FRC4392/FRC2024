@@ -75,8 +75,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setHumanTake() {
-    shooter1Motor.set(-.2);
-    shooter2Motor.set(-.2);
+    shooter1Motor.setControl(m_voltageVelocity.withVelocity(-20));
+    shooter2Motor.setControl(m_voltageVelocity.withVelocity(-20));
   }
 
   public void setSpitSpeed(shooterSpeeds speed) {
@@ -108,6 +108,14 @@ public class Shooter extends SubsystemBase {
     return this.runEnd(() -> {
       shooter1Motor.setControl(m_voltageVelocity.withVelocity(10));
       shooter2Motor.setControl(m_voltageVelocity.withVelocity(50));
+    },
+    this::stop);
+  }
+
+  public Command Ferry() {
+    return this.runEnd(() -> {
+      shooter1Motor.setControl(m_voltageVelocity.withVelocity(50));
+      shooter2Motor.setControl(m_voltageVelocity.withVelocity(30));
     },
     this::stop);
   }

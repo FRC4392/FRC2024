@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.725903862571614,
-        "y": 6.9123660985169195
+        "x": 4.9401160913143585,
+        "y": 6.357542122853343
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.725903862571614,
-        "y": 6.9123660985169195
+        "x": 5.9401160913143585,
+        "y": 6.357542122853343
       },
       "isLocked": false,
-      "linkedName": "AmpNote1"
+      "linkedName": "AmpShot"
     },
     {
       "anchor": {
-        "x": 8.245860695714446,
-        "y": 7.4985331489036815
+        "x": 8.219000399228516,
+        "y": 5.7513259785663875
       },
       "prevControl": {
-        "x": 7.2458606957144465,
-        "y": 7.4985331489036815
+        "x": 7.754440215817507,
+        "y": 6.636867528121866
       },
       "nextControl": {
-        "x": 9.245860695714446,
-        "y": 7.4985331489036815
+        "x": 8.435142833399874,
+        "y": 5.339316699864477
       },
       "isLocked": false,
       "linkedName": null
@@ -44,7 +44,13 @@
       "linkedName": "AmpShot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.9,
+      "rotationDegrees": -35.14643703879397,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {

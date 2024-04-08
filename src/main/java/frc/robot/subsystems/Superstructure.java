@@ -19,6 +19,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -35,10 +37,10 @@ public class Superstructure extends SubsystemBase {
     map.put(new InterpolatingDouble(-7.5), new InterpolatingDouble(.045));//135.5
     map.put(new InterpolatingDouble(-10.42), new InterpolatingDouble(.037));
     map.put(new InterpolatingDouble(-12.32), new InterpolatingDouble(.0325));
-    map.put(new InterpolatingDouble(-13.84), new InterpolatingDouble(.026));
-    map.put(new InterpolatingDouble(-15.12), new InterpolatingDouble(.0215));
-    map.put(new InterpolatingDouble(-16.0), new InterpolatingDouble(.0198));
-    map.put(new InterpolatingDouble(-18.31), new InterpolatingDouble(.0178));
+    map.put(new InterpolatingDouble(-13.84), new InterpolatingDouble(.0265));
+    map.put(new InterpolatingDouble(-15.12), new InterpolatingDouble(.0225));
+    map.put(new InterpolatingDouble(-16.0), new InterpolatingDouble(.025));
+    map.put(new InterpolatingDouble(-18.31), new InterpolatingDouble(.018));
     //map.put(new InterpolatingDouble(7.0), new InterpolatingDouble(.082));
     //map.put(new InterpolatingDouble(0.0), new InterpolatingDouble(.063));
     //map.put(new InterpolatingDouble(-.38), new InterpolatingDouble(.059));
@@ -233,6 +235,14 @@ public class Superstructure extends SubsystemBase {
       Boolean valid = LimelightHelpers.getTV("limelight-april");
 
       double angle = map.getInterpolated(new InterpolatingDouble(target)).value;
+
+
+      // if (DriverStation.getAlliance().isPresent()) {
+      //   if (DriverStation.getAlliance().get() == Alliance.Red){
+      //       angle -= .01;
+      //   }
+      // }
+      
 
       if (valid) {
         setPivotPos(angle);
