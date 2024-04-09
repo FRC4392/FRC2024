@@ -120,6 +120,9 @@ public class SwerveModuleV3 implements SwerveModule {
         SwerveModuleState optimizedState = SwerveModuleState.optimize(drive, current);
         double setpoint = optimizedState.angle.getDegrees();
         double velocity = optimizedState.speedMetersPerSecond;
+
+        SmartDashboard.putNumber(mName + "open loop velocity", velocity);
+
         mAzimuthPID.setReference(setpoint, ControlType.kPosition);
         mDriveMotor.set(velocity);
     }
