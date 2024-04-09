@@ -24,7 +24,7 @@ public class SwerveConfigs {
         .withSupplyTimeThreshold(1.275)
         .withSupplyCurrentLimitEnable(true)
 
-        .withStatorCurrentLimit(80)
+        .withStatorCurrentLimit(200)
         .withStatorCurrentLimitEnable(true);
 
         // Configure drive control

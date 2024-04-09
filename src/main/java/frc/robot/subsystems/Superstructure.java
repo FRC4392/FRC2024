@@ -130,8 +130,8 @@ public class Superstructure extends SubsystemBase {
 
         MotionMagicConfigs elevatorMotionMagicConfigs = new MotionMagicConfigs();
 
-    elevatorMotionMagicConfigs.MotionMagicAcceleration = 6;
-    elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = 3;
+    elevatorMotionMagicConfigs.MotionMagicAcceleration = 30;
+    elevatorMotionMagicConfigs.MotionMagicCruiseVelocity = 10;
     elevatorMotionMagicConfigs.MotionMagicJerk = 0;
 
      ElevatorConfigs.Feedback.SensorToMechanismRatio = 52/12 * 56/14;
