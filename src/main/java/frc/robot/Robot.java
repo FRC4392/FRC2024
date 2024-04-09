@@ -167,19 +167,23 @@ public class Robot extends TimedRobot {
 
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
 
-    DoubleSupplier shotSpeed = () -> operatorController.getLeftTriggerAxis();
+    DoubleSupplier shotSpeed = () -> operatorController.getLeftY()*100;
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
     Trigger AltButton = operatorController.rightStick();
-    Trigger FixShotClose = operatorController.rightBumper();
+    Trigger OpSpit = operatorController.rightBumper();
     Trigger HumanTake = operatorController.y();
     Trigger OpOuttake = operatorController.x();
     Trigger OpIntake = operatorController.b();
-    //Trigger ClimbUp = operatorController.povUp();
-    //Trigger ClimbDown = operatorController.povDown();
     Trigger Feed = operatorController.rightTrigger(0);
-    Trigger Shoot = operatorController.leftStick().and(AltButton.negate());
-    Trigger SlowShoot = operatorController.leftStick().and(AltButton);
+    Trigger Shoot = operatorController.leftStick();
     Trigger reverseFeed = operatorController.a();
+    Trigger elevateUp = operatorController.povLeft().and(AltButton);
+    Trigger ElevateDown = operatorController.povRight().and(AltButton);
+
+    Trigger FeedShot = operatorController.povDown().and(AltButton.negate());
+    Trigger FixShotAmp = operatorController.povLeft().and(AltButton.negate());
+    Trigger FixShotPodi = operatorController.povRight().and(AltButton.negate());
+    Trigger FixShotClose = operatorController.povUp().and(AltButton.negate());
 
     Trigger PivotUp = operatorController.povUp().and(AltButton);
     Trigger PivotDown = operatorController.povDown().and(AltButton);
@@ -192,20 +196,24 @@ public class Robot extends TimedRobot {
     AutoAim.onFalse(shooter.stopShooter());
     FixShotClose.whileTrue(superstructure.pivotToPosCommand(.12).alongWith(shooter.runShooter(80)));
     FixShotClose.onFalse(shooter.stopShooter());
+    FixShotAmp.whileTrue(superstructure.pivotToPosCommand(.105).alongWith(shooter.runShooter(80)));
+    FixShotAmp.onFalse(shooter.stopShooter());
+    FixShotPodi.whileTrue(superstructure.pivotToPosCommand(.11).alongWith(shooter.runShooter(80)));
+    FixShotPodi.onFalse(shooter.stopShooter());
     HumanTake.whileTrue(shooter.humanTakeCommand().alongWith(intake.humantakeCommand()).alongWith(superstructure.moveToHumanPosition()));
     HumanTake.onFalse(shooter.stopShooter().alongWith(superstructure.returnHome()));
     Feed.whileTrue(intake.feedCommand());
     reverseFeed.whileTrue(intake.reverseFeedCommand());
     PivotUp.whileTrue(superstructure.pivotCommand());
     PivotDown.whileTrue(superstructure.pivotBackCommand());
-    Shoot.whileTrue(shooter.runShooter(90));
+    Shoot.whileTrue(shooter.runShooter(shotSpeed.getAsDouble()));
     Shoot.onFalse(shooter.stopShooter());
-    SlowShoot.whileTrue(shooter.stopShooter());
+    OpSpit.whileTrue(shooter.spitCommand());
 
-    operatorController.povLeft().and(AltButton).whileTrue(superstructure.ElevateCommand());
-    operatorController.povRight().and(AltButton).whileTrue(superstructure.DeElevateCommand());
+    elevateUp.whileTrue(superstructure.ElevateCommand());
+    ElevateDown.whileTrue(superstructure.DeElevateCommand());
 
-    operatorController.povUp().and(AltButton.negate()).whileTrue(shooter.Ferry());
+    FeedShot.whileTrue(shooter.anythingButFerry());
 
     operatorController.leftBumper().onTrue(superstructure.moveToAmpPosition().alongWith(shooter.amp()));
     operatorController.leftBumper().onFalse(superstructure.returnHome().alongWith(shooter.stopShooter()));
