@@ -127,9 +127,9 @@ public class DriveCommand extends CommandBase {
       SmartDashboard.putNumber("DrivetrainTargetAngle", angle.getDegrees());
 
     } else if (mController.getBButton()) {
-      new Rotation2d();
-      angle = Rotation2d.fromDegrees(0);
-      rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
+      // new Rotation2d();
+      // angle = Rotation2d.fromDegrees(0);
+      // rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), angle.getRadians());
     } else {
       rotationController.reset();
       mDrivetrain.setState(AimingState.kNotAiming);
@@ -202,6 +202,9 @@ public class DriveCommand extends CommandBase {
       SmartDashboard.putNumber("DrivetrainTargetAngle", angle.getDegrees());
     } else if (mController.getBButton()){
 
+      var tempXVel = xVel;
+      var tempYVel = yVel;
+
       rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), Rotation2d.fromDegrees(-90).getRadians());
 
       var ampValid = LimelightHelpers.getTV("limelight-note");
@@ -214,7 +217,14 @@ public class DriveCommand extends CommandBase {
         xVel = -xVel;
       }
 
-      yVel = -yVel;
+      yVel = tempXVel;
+
+      var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      if (alliance.get() == Alliance.Red) {
+        yVel *= -1;
+      }
+    }
 
       fieldRelative = false;
 
