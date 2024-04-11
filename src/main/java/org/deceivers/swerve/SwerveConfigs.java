@@ -13,7 +13,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
-
+ 
 /** Add your docs here. */
 public class SwerveConfigs {
     // Configure drive motor controller parameters
@@ -21,10 +21,10 @@ public class SwerveConfigs {
     public static CurrentLimitsConfigs driveCurrentLimits = new CurrentLimitsConfigs()
         .withSupplyCurrentLimit(40)
         .withSupplyCurrentThreshold(80)
-        .withSupplyTimeThreshold(1.275)
+        .withSupplyTimeThreshold(.75)
         .withSupplyCurrentLimitEnable(true)
 
-        .withStatorCurrentLimit(200)
+        .withStatorCurrentLimit(80)
         .withStatorCurrentLimitEnable(true);
 
         // Configure drive control

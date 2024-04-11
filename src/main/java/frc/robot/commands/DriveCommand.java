@@ -43,8 +43,8 @@ public class DriveCommand extends CommandBase {
   private double driveFactor = 1;
   private PIDController rotationController = new PIDController(.7, 0, 0.00);
 
-  private PIDController limController = new PIDController(0.3, 0.0, 0.0);
-  private PIDController strafeController = new PIDController(0.3,0,0);
+  private PIDController limController = new PIDController(0.01, 0.0, 0.0);
+  private PIDController strafeController = new PIDController(0.01,0,0);
 
   private SlewRateLimiter xfilter = new SlewRateLimiter(1000);
   private SlewRateLimiter yfilter = new SlewRateLimiter(1000);
@@ -201,7 +201,23 @@ public class DriveCommand extends CommandBase {
 
       SmartDashboard.putNumber("DrivetrainTargetAngle", angle.getDegrees());
     } else if (mController.getBButton()){
+
       rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), Rotation2d.fromDegrees(-90).getRadians());
+
+      var ampValid = LimelightHelpers.getTV("limelight-note");
+      var error = LimelightHelpers.getTX("limelight-note");
+
+      if (ampValid) {
+      xVel = strafeController.calculate(error, 0);
+      } else {
+        strafeController.reset();
+        xVel = -xVel;
+      }
+
+      yVel = -yVel;
+
+      fieldRelative = false;
+
     } else if (mController.getAButton()) {
       rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), Rotation2d.fromDegrees(90).getRadians());
     }

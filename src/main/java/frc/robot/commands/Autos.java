@@ -80,12 +80,12 @@ public final class Autos {
 
     if (alliance.isPresent()){
     if (alliance.get() == DriverStation.Alliance.Red){
-        return drivetrain.setLocationCommand(16.54-1.42, 5.55, -180).andThen(shooter.runShooter(80).raceWith(Commands.waitSeconds(0.5))).andThen(
-        superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.5))).andThen(
+        return drivetrain.setLocationCommand(16.54-1.42, 5.55, -180).andThen(shooter.runShooter(80).raceWith(Commands.waitSeconds(0.1))).andThen(
+        superstructure.pivotToPosCommand(.12).raceWith(Commands.waitSeconds(0.25))).andThen(
           intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor()))).andThen(
             superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01))).andThen(
               drivetrain.FollowPath("CenterFront").raceWith(intake.intakeCommand())).andThen(
-                intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()))).andThen(
+                intake.intakeCommand().raceWith(Commands.waitUntil(() -> !intake.getShooterSensor()).withTimeout(0.25))).andThen(
                 superstructure.setShooterPivotWithLimelight().alongWith(drivetrain.alignCommand()).raceWith(Commands.waitSeconds(.25)).andThen(
                   intake.feedCommand().raceWith(Commands.waitUntil(() -> intake.getShooterSensor())).andThen(
                     superstructure.pivotToPosCommand(0).raceWith(Commands.waitSeconds(0.01)).andThen(

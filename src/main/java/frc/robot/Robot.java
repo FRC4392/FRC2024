@@ -80,6 +80,8 @@ public class Robot extends TimedRobot {
 
     configureButtonBindings();
     ConfigureAutonomousMode();
+
+    RobotController.setBrownoutVoltage(6);
   }
 
   /**

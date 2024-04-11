@@ -114,8 +114,8 @@ public class Shooter extends SubsystemBase {
 
   public Command anythingButFerry() {
     return this.runEnd(() -> {
-      shooter1Motor.setControl(m_voltageVelocity.withVelocity(50));
-      shooter2Motor.setControl(m_voltageVelocity.withVelocity(30));
+      shooter1Motor.setControl(m_voltageVelocity.withVelocity(80));
+      shooter2Motor.setControl(m_voltageVelocity.withVelocity(40));
     },
     this::stop);
   }

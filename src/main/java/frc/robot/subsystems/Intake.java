@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase {
   public enum FeederSpeeds{
 
     kStopSpeed(0),
-    kFeedSpeed(1),
+    kFeedSpeed(.5),
     kInfeedSpeed(.25),
     kOutfeedSpeed(-.5),
     kHumanFeedSpeed(-.25),
