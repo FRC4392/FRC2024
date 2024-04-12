@@ -214,7 +214,14 @@ public class DriveCommand extends CommandBase {
       xVel = strafeController.calculate(error, 0);
       } else {
         strafeController.reset();
-        xVel = -xVel;
+        xVel = tempYVel;
+
+        var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      if (alliance.get() == Alliance.Red) {
+        xVel *= -1;
+      }
+    }
       }
 
       yVel = tempXVel;
