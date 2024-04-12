@@ -224,7 +224,7 @@ public class DriveCommand extends CommandBase {
     }
       }
 
-      yVel = -tempXVel;
+      yVel = tempXVel;
 
       var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
