@@ -9,14 +9,19 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Alert.AlertType;
@@ -67,6 +72,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand = Autos.get3PieceAuto(drivetrain, intake, shooter, superstructure);
     } else if (auto == "Amp") {
       m_autonomousCommand = Autos.getAmpAuto(drivetrain, intake, shooter, superstructure);
+    } else if (auto == "MidRush") {
+      m_autonomousCommand = Autos.get5SprintNoteAuto(drivetrain, intake, shooter, superstructure);
     }
   };
 
@@ -172,7 +179,7 @@ public class Robot extends TimedRobot {
     DoubleSupplier shotSpeed = () -> operatorController.getLeftY()*100;
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
     Trigger AltButton = operatorController.rightStick();
-    Trigger OpSpit = operatorController.rightBumper();
+    Trigger OpSpit = operatorController.rightBumper().and(AltButton.negate());
     Trigger HumanTake = operatorController.y();
     Trigger OpOuttake = operatorController.x();
     Trigger OpIntake = operatorController.b();
@@ -183,6 +190,7 @@ public class Robot extends TimedRobot {
     Trigger ElevateDown = operatorController.povRight().and(AltButton);
 
     Trigger FeedShot = operatorController.povDown().and(AltButton.negate());
+    Trigger FeedShot2 = operatorController.rightBumper().and(AltButton);
     Trigger FixShotAmp = operatorController.povLeft().and(AltButton.negate());
     Trigger FixShotPodi = operatorController.povRight().and(AltButton.negate());
     Trigger FixShotClose = operatorController.povUp().and(AltButton.negate());
@@ -194,13 +202,21 @@ public class Robot extends TimedRobot {
 
     AltButton.whileTrue(climber.ClimbCommand(wallSpeed));
 
+    Trigger intakedTrigger = new Trigger(() -> intake.getEntrySwitch());
+
+    Trigger endGameTrigger = new Trigger(() -> DriverStation.getMatchTime() < 25);
+
+    endGameTrigger.onTrue(Commands.runEnd(() -> operatorController.getHID().setRumble(RumbleType.kBothRumble, 1), () -> operatorController.getHID().setRumble(RumbleType.kBothRumble, 0), new Subsystem[0]).withTimeout(1));
+
+    intakedTrigger.onTrue(Commands.runEnd(() -> driverController.setRumble(RumbleType.kBothRumble, 1), () -> driverController.setRumble(RumbleType.kBothRumble, 1), new Subsystem[0]).withTimeout(1));
+
     AutoAim.whileTrue(superstructure.setShooterPivotWithLimelight().alongWith(shooter.runShooter(80)));
     AutoAim.onFalse(shooter.stopShooter());
     FixShotClose.whileTrue(superstructure.pivotToPosCommand(.12).alongWith(shooter.runShooter(80)));
     FixShotClose.onFalse(shooter.stopShooter());
     FixShotAmp.whileTrue(superstructure.pivotToPosCommand(.105).alongWith(shooter.runShooter(80)));
     FixShotAmp.onFalse(shooter.stopShooter());
-    FixShotPodi.whileTrue(superstructure.pivotToPosCommand(.11).alongWith(shooter.runShooter(80)));
+    FixShotPodi.whileTrue(superstructure.pivotToPosCommand(.11).alongWith(shooter.runShooter(80))); 
     FixShotPodi.onFalse(shooter.stopShooter());
     HumanTake.whileTrue(shooter.humanTakeCommand().alongWith(intake.humantakeCommand()).alongWith(superstructure.moveToHumanPosition()));
     HumanTake.onFalse(shooter.stopShooter().alongWith(superstructure.returnHome()));
@@ -210,12 +226,13 @@ public class Robot extends TimedRobot {
     PivotDown.whileTrue(superstructure.pivotBackCommand());
     Shoot.whileTrue(shooter.runShooter(shotSpeed.getAsDouble()));
     Shoot.onFalse(shooter.stopShooter());
-    OpSpit.whileTrue(shooter.spitCommand());
+    //OpSpit.whileTrue(shooter.spitCommand());
 
     elevateUp.whileTrue(superstructure.ElevateCommand());
     ElevateDown.whileTrue(superstructure.DeElevateCommand());
 
-    FeedShot.whileTrue(shooter.anythingButFerry());
+    FeedShot.or(OpSpit).whileTrue(shooter.anythingButFerry().alongWith(superstructure.pivotToPosCommand(0)));
+    FeedShot2.whileTrue(shooter.anythingButFerry2().alongWith(superstructure.pivotToPosCommand(.2)));
 
     operatorController.leftBumper().onTrue(superstructure.moveToAmpPosition().alongWith(shooter.amp()));
     operatorController.leftBumper().onFalse(superstructure.returnHome().alongWith(shooter.stopShooter()));
@@ -248,6 +265,7 @@ public class Robot extends TimedRobot {
     autoChooser.setDefaultOption("5 Note", "5Note");
     autoChooser.addOption("Source Side Auto", "3Piece");
     autoChooser.addOption("Amp Side Auto", "Amp");
+    autoChooser.addOption("Center Mid Rush", "MidRush");
 
     autoChooser.onChange(autoConsumer);
 

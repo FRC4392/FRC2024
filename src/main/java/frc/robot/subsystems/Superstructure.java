@@ -35,12 +35,12 @@ public class Superstructure extends SubsystemBase {
     map.put(new InterpolatingDouble(.935), new InterpolatingDouble(.066));
     map.put(new InterpolatingDouble(-4.18), new InterpolatingDouble(.052));
     map.put(new InterpolatingDouble(-7.5), new InterpolatingDouble(.045));//135.5
-    map.put(new InterpolatingDouble(-10.42), new InterpolatingDouble(.037));
+    map.put(new InterpolatingDouble(-10.42), new InterpolatingDouble(.0368));
     map.put(new InterpolatingDouble(-12.32), new InterpolatingDouble(.0325));
-    map.put(new InterpolatingDouble(-13.84), new InterpolatingDouble(.0265));
+    map.put(new InterpolatingDouble(-13.84), new InterpolatingDouble(.02765));
     map.put(new InterpolatingDouble(-15.12), new InterpolatingDouble(.0225));
-    map.put(new InterpolatingDouble(-16.0), new InterpolatingDouble(.025));
-    map.put(new InterpolatingDouble(-18.31), new InterpolatingDouble(.018));
+    map.put(new InterpolatingDouble(-16.0), new InterpolatingDouble(.0218));
+    map.put(new InterpolatingDouble(-18.31), new InterpolatingDouble(.0197));
     //map.put(new InterpolatingDouble(7.0), new InterpolatingDouble(.082));
     //map.put(new InterpolatingDouble(0.0), new InterpolatingDouble(.063));
     //map.put(new InterpolatingDouble(-.38), new InterpolatingDouble(.059));
