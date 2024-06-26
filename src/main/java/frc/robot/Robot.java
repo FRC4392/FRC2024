@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
@@ -49,6 +48,8 @@ public class Robot extends TimedRobot {
   private XboxController driverController = new XboxController(0);
   private CommandXboxController operatorController = new CommandXboxController(1);
 
+  public boolean drivemode;
+
   private Drivetrain drivetrain = new Drivetrain();
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
@@ -64,6 +65,7 @@ public class Robot extends TimedRobot {
   private LED led = new LED(intakeSupplier, occupySupplier, shootSupplier, driveShotSupplier);
 
   SendableChooser<String> autoChooser = new SendableChooser<>();
+  SendableChooser<String> demoChooser = new SendableChooser<>();
 
   Consumer<String> autoConsumer = auto -> {
     if (auto == "5Note") {
@@ -77,6 +79,14 @@ public class Robot extends TimedRobot {
     }
   };
 
+  Consumer<String> demoConsumer = mode -> {
+    if (mode == "comp") {
+      drivemode = false;
+    } else if (mode == "demo"){
+      drivemode = true;
+    }
+  };
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -87,6 +97,7 @@ public class Robot extends TimedRobot {
 
     configureButtonBindings();
     ConfigureAutonomousMode();
+    ConfigureDriveMode();
 
     RobotController.setBrownoutVoltage(6);
   }
@@ -105,6 +116,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    SmartDashboard.putBoolean("Drive Mode",drivemode);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -176,7 +188,43 @@ public class Robot extends TimedRobot {
 
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
 
-    DoubleSupplier shotSpeed = () -> operatorController.getLeftY()*100;
+    // demo buttons
+    double shotSpeed = driverController.getLeftTriggerAxis()*25; 
+    BooleanSupplier demoShotButton = () -> driverController.getLeftTriggerAxis() > .1;
+    BooleanSupplier demoAmpButton = () -> driverController.getRightBumper();
+    BooleanSupplier demoAimButton = () -> driverController.getRightTriggerAxis() > .1;
+    BooleanSupplier demoIntakeButton = () -> driverController.getXButton();
+    BooleanSupplier demoOuttakeButton = () -> driverController.getBButton();
+    BooleanSupplier demoHumanTakeButton = () -> driverController.getLeftBumper();
+    BooleanSupplier demoFeedButton = () -> driverController.getYButton();
+    BooleanSupplier demoPivotUpButton = () -> driverController.getPOV() == 0;
+    BooleanSupplier demoPivotDownButton = () -> driverController.getPOV() == 180;
+    BooleanSupplier demoElevatorUpButton = () -> driverController.getPOV() == 270;
+    BooleanSupplier demoElevatorDownButton = () -> driverController.getPOV() == 90;
+
+    Trigger demoShot = new Trigger(demoShotButton);
+    Trigger demoAmp = new Trigger(demoAmpButton);
+    Trigger demoAim = new Trigger(demoAimButton);
+    Trigger demoIntake = new Trigger(demoIntakeButton);
+    Trigger demoOuttake = new Trigger(demoOuttakeButton);
+    Trigger demoHumanTake = new Trigger(demoHumanTakeButton);
+    Trigger demoFeed = new Trigger(demoFeedButton);
+    Trigger demoPivotUp = new Trigger(demoPivotUpButton);
+    Trigger demoPivotDown = new Trigger(demoPivotDownButton);
+    Trigger demoElevatorUp = new Trigger(demoElevatorUpButton);
+    Trigger demoElevatorDown = new Trigger(demoElevatorDownButton);
+
+
+    //demo specific actions
+    demoAim.whileTrue(superstructure.setShooterPivotWithLimelight().alongWith(shooter.runShooter(shotSpeed)));
+    demoAim.onFalse(shooter.stopShooter());
+    demoShot.whileTrue(shooter.runShooter(shotSpeed));
+    demoShot.onFalse(shooter.stopShooter());
+    demoAmp.onTrue(superstructure.moveToAmpPosition().alongWith(shooter.softamp()));
+    demoAmp.onFalse(superstructure.returnHome().alongWith(shooter.stopShooter()));
+    demoHumanTake.whileTrue(shooter.softHumanTakeCommand().alongWith(intake.humantakeCommand()));
+    demoHumanTake.onFalse(shooter.stopShooter().alongWith(superstructure.returnHome()));
+
     DoubleSupplier wallSpeed = () -> operatorController.getRightY();
     Trigger AltButton = operatorController.rightStick();
     Trigger OpSpit = operatorController.rightBumper().and(AltButton.negate());
@@ -184,7 +232,7 @@ public class Robot extends TimedRobot {
     Trigger OpOuttake = operatorController.x();
     Trigger OpIntake = operatorController.b();
     Trigger Feed = operatorController.rightTrigger(0);
-    Trigger Shoot = operatorController.leftStick();
+    //Trigger Shoot = operatorController.leftStick();
     Trigger reverseFeed = operatorController.a();
     Trigger elevateUp = operatorController.povLeft().and(AltButton);
     Trigger ElevateDown = operatorController.povRight().and(AltButton);
@@ -220,16 +268,16 @@ public class Robot extends TimedRobot {
     FixShotPodi.onFalse(shooter.stopShooter());
     HumanTake.whileTrue(shooter.humanTakeCommand().alongWith(intake.humantakeCommand()).alongWith(superstructure.moveToHumanPosition()));
     HumanTake.onFalse(shooter.stopShooter().alongWith(superstructure.returnHome()));
-    Feed.whileTrue(intake.feedCommand());
+    Feed.or(demoFeed).whileTrue(intake.feedCommand());
     reverseFeed.whileTrue(intake.reverseFeedCommand());
-    PivotUp.whileTrue(superstructure.pivotCommand());
-    PivotDown.whileTrue(superstructure.pivotBackCommand());
-    Shoot.whileTrue(shooter.runShooter(shotSpeed.getAsDouble()));
-    Shoot.onFalse(shooter.stopShooter());
+    PivotUp.or(demoPivotUp).whileTrue(superstructure.pivotCommand());
+    PivotDown.or(demoPivotDown).whileTrue(superstructure.pivotBackCommand());
+    //Shoot.whileTrue(shooter.runShooter(shotSpeed.getAsDouble()));
+    //Shoot.onFalse(shooter.stopShooter());
     //OpSpit.whileTrue(shooter.spitCommand());
 
-    elevateUp.whileTrue(superstructure.ElevateCommand());
-    ElevateDown.whileTrue(superstructure.DeElevateCommand());
+    elevateUp.or(demoElevatorUp).whileTrue(superstructure.ElevateCommand());
+    ElevateDown.or(demoElevatorDown).whileTrue(superstructure.DeElevateCommand());
 
     FeedShot.or(OpSpit).whileTrue(shooter.anythingButFerry().alongWith(superstructure.pivotToPosCommand(0)));
     FeedShot2.whileTrue(shooter.anythingButFerry2().alongWith(superstructure.pivotToPosCommand(.2)));
@@ -244,20 +292,23 @@ public class Robot extends TimedRobot {
     BooleanSupplier intakeButton = () -> driverController.getLeftStickButton();
     BooleanSupplier outtakeButton = () -> driverController.getRightBumper();
     BooleanSupplier spitButton = () -> driverController.getLeftBumper();
+    BooleanSupplier driveModeSupplier = () -> drivemode;
 
     Trigger driveVoltage = new Trigger(() -> driverController.getAButton());
 
-    Trigger brake = new Trigger(brakeSupplier);
-    Trigger driverIntake = new Trigger(intakeButton);
-    Trigger driverOuttake = new Trigger(outtakeButton);
-    Trigger driverSpit = new Trigger(spitButton);
+    Trigger demoMode = new Trigger(driveModeSupplier);
+    Trigger brake = new Trigger(brakeSupplier).and(demoMode.negate());
+    Trigger driverIntake = new Trigger(intakeButton).and(demoMode.negate());
+    Trigger driverOuttake = new Trigger(outtakeButton).and(demoMode.negate());
+    Trigger driverSpit = new Trigger(spitButton).and(demoMode.negate());
 
     brake.whileTrue(drivetrain.brakeCommand());
-    OpIntake.or(driverIntake).whileTrue(intake.intakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
-    OpOuttake.or(driverOuttake).whileTrue(intake.outtakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
+    OpIntake.or(driverIntake).or(demoIntake).whileTrue(intake.intakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
+    OpOuttake.or(driverOuttake).or(demoOuttake).whileTrue(intake.outtakeCommand().alongWith(superstructure.pivotToPosCommand(0)));
     driverSpit.whileTrue(shooter.spitCommand().alongWith(intake.sptiCommand()));
 
     driveVoltage.whileTrue(drivetrain.driveStraight());
+
   }
 
   public void ConfigureAutonomousMode(){
@@ -270,6 +321,19 @@ public class Robot extends TimedRobot {
     autoChooser.onChange(autoConsumer);
 
     SmartDashboard.putData(autoChooser);
+
+    
+  }
+
+  public void ConfigureDriveMode(){
+
+    demoChooser.setDefaultOption("Competition", "comp");
+    demoChooser.addOption("Demonstration", "demo");
+
+    demoChooser.onChange(demoConsumer);
+
+    SmartDashboard.putData(demoChooser);
+
   }
 
 

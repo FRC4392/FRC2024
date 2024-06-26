@@ -74,9 +74,9 @@ public class Shooter extends SubsystemBase {
     shooter2Motor.setControl(m_voltageVelocity.withVelocity(velo));
   }
 
-  public void setHumanTake() {
-    shooter1Motor.setControl(m_voltageVelocity.withVelocity(-20));
-    shooter2Motor.setControl(m_voltageVelocity.withVelocity(-20));
+  public void setHumanTake(double speed) {
+    shooter1Motor.setControl(m_voltageVelocity.withVelocity(speed));
+    shooter2Motor.setControl(m_voltageVelocity.withVelocity(speed));
   }
 
   public void setSpitSpeed(shooterSpeeds speed) {
@@ -89,7 +89,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runShooter(double velo) {
-    return this.run(() -> setShooterSpeed(velo));
+    return this.runEnd(() -> setShooterSpeed(velo), () -> stop());
   }
 
   public Command spitCommand() {
@@ -97,7 +97,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command humanTakeCommand() {
-    return this.runEnd(() -> setHumanTake(), () -> stop());
+    return this.runEnd(() -> setHumanTake(-20), () -> stop());
+  }
+
+  public Command softHumanTakeCommand() {
+    return this.runEnd(() -> setHumanTake(-8), () -> stop());
   }
 
   public Command stopShooter(){
@@ -108,6 +112,14 @@ public class Shooter extends SubsystemBase {
     return this.runEnd(() -> {
       shooter1Motor.setControl(m_voltageVelocity.withVelocity(10));
       shooter2Motor.setControl(m_voltageVelocity.withVelocity(50));
+    },
+    this::stop);
+  }
+
+  public Command softamp() {
+    return this.runEnd(() -> {
+      shooter1Motor.setControl(m_voltageVelocity.withVelocity(2));
+      shooter2Motor.setControl(m_voltageVelocity.withVelocity(10));
     },
     this::stop);
   }

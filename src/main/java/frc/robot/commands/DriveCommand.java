@@ -178,9 +178,9 @@ public class DriveCommand extends CommandBase {
     // mDrivetrain.drive(yVel*-1, xVel*-1, rotVel, fieldRelative);
     // }
 
-    boolean fieldRelative = !mController.getYButton();
+    boolean fieldRelative = !mController.getLeftStickButtonPressed();
 
-    if (mController.getLeftTriggerAxis() > 0.1){
+    if (mController.getXButton()){
       fieldRelative = false;
 
       new Rotation2d();
