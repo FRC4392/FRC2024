@@ -189,6 +189,8 @@ public class Robot extends TimedRobot {
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
 
     // demo buttons
+    BooleanSupplier driveModeSupplier = () -> drivemode;
+    Trigger demoMode = new Trigger(driveModeSupplier);    
     DoubleSupplier shotSpeed = () -> driverController.getLeftTriggerAxis()*25; 
     BooleanSupplier demoShotButton = () -> driverController.getLeftTriggerAxis() > .1;
     BooleanSupplier demoAmpButton = () -> driverController.getRightBumper();
@@ -202,17 +204,17 @@ public class Robot extends TimedRobot {
     BooleanSupplier demoElevatorUpButton = () -> driverController.getPOV() == 270;
     BooleanSupplier demoElevatorDownButton = () -> driverController.getPOV() == 90;
 
-    Trigger demoShot = new Trigger(demoShotButton);
-    Trigger demoAmp = new Trigger(demoAmpButton);
-    Trigger demoAim = new Trigger(demoAimButton);
-    Trigger demoIntake = new Trigger(demoIntakeButton);
-    Trigger demoOuttake = new Trigger(demoOuttakeButton);
-    Trigger demoHumanTake = new Trigger(demoHumanTakeButton);
-    Trigger demoFeed = new Trigger(demoFeedButton);
-    Trigger demoPivotUp = new Trigger(demoPivotUpButton);
-    Trigger demoPivotDown = new Trigger(demoPivotDownButton);
-    Trigger demoElevatorUp = new Trigger(demoElevatorUpButton);
-    Trigger demoElevatorDown = new Trigger(demoElevatorDownButton);
+    Trigger demoShot = new Trigger(demoShotButton).and(demoMode);
+    Trigger demoAmp = new Trigger(demoAmpButton).and(demoMode);
+    Trigger demoAim = new Trigger(demoAimButton).and(demoMode);
+    Trigger demoIntake = new Trigger(demoIntakeButton).and(demoMode);
+    Trigger demoOuttake = new Trigger(demoOuttakeButton).and(demoMode);
+    Trigger demoHumanTake = new Trigger(demoHumanTakeButton).and(demoMode);
+    Trigger demoFeed = new Trigger(demoFeedButton).and(demoMode);
+    Trigger demoPivotUp = new Trigger(demoPivotUpButton).and(demoMode);
+    Trigger demoPivotDown = new Trigger(demoPivotDownButton).and(demoMode);
+    Trigger demoElevatorUp = new Trigger(demoElevatorUpButton).and(demoMode);
+    Trigger demoElevatorDown = new Trigger(demoElevatorDownButton).and(demoMode);
 
 
     //demo specific actions
@@ -292,11 +294,11 @@ public class Robot extends TimedRobot {
     BooleanSupplier intakeButton = () -> driverController.getLeftStickButton();
     BooleanSupplier outtakeButton = () -> driverController.getRightBumper();
     BooleanSupplier spitButton = () -> driverController.getLeftBumper();
-    BooleanSupplier driveModeSupplier = () -> drivemode;
+
 
     Trigger driveVoltage = new Trigger(() -> driverController.getAButton());
 
-    Trigger demoMode = new Trigger(driveModeSupplier);
+    
     Trigger brake = new Trigger(brakeSupplier).and(demoMode.negate());
     Trigger driverIntake = new Trigger(intakeButton).and(demoMode.negate());
     Trigger driverOuttake = new Trigger(outtakeButton).and(demoMode.negate());
