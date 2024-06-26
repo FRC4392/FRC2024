@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -90,6 +92,10 @@ public class Shooter extends SubsystemBase {
 
   public Command runShooter(double velo) {
     return this.runEnd(() -> setShooterSpeed(velo), () -> stop());
+  }
+
+  public Command runShooterVariable(DoubleSupplier speed){
+    return this.runEnd(() -> setShooterSpeed(speed.getAsDouble()), () -> stop());
   }
 
   public Command spitCommand() {

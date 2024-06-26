@@ -189,7 +189,7 @@ public class Robot extends TimedRobot {
     drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driverController));
 
     // demo buttons
-    double shotSpeed = driverController.getLeftTriggerAxis()*25; 
+    DoubleSupplier shotSpeed = () -> driverController.getLeftTriggerAxis()*25; 
     BooleanSupplier demoShotButton = () -> driverController.getLeftTriggerAxis() > .1;
     BooleanSupplier demoAmpButton = () -> driverController.getRightBumper();
     BooleanSupplier demoAimButton = () -> driverController.getRightTriggerAxis() > .1;
@@ -216,9 +216,9 @@ public class Robot extends TimedRobot {
 
 
     //demo specific actions
-    demoAim.whileTrue(superstructure.setShooterPivotWithLimelight().alongWith(shooter.runShooter(shotSpeed)));
+    demoAim.whileTrue(superstructure.setShooterPivotWithLimelight().alongWith(shooter.runShooterVariable(shotSpeed)));
     demoAim.onFalse(shooter.stopShooter());
-    demoShot.whileTrue(shooter.runShooter(shotSpeed));
+    demoShot.whileTrue(shooter.runShooterVariable(shotSpeed));
     demoShot.onFalse(shooter.stopShooter());
     demoAmp.onTrue(superstructure.moveToAmpPosition().alongWith(shooter.softamp()));
     demoAmp.onFalse(superstructure.returnHome().alongWith(shooter.stopShooter()));
