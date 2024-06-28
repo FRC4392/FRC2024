@@ -236,7 +236,7 @@ public class DriveCommand extends CommandBase {
       fieldRelative = false;
 
     } else if (mController.getAButton()) {
-      rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), Rotation2d.fromDegrees(90).getRadians());
+     // rotVel = rotationController.calculate(Rotation2d.fromDegrees(mDrivetrain.getRotation()).getRadians(), Rotation2d.fromDegrees(90).getRadians());
     }
 
      var alliance = DriverStation.getAlliance();
