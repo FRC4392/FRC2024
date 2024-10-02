@@ -66,7 +66,7 @@ public class SwerveConfigs {
     public static IdleMode azimuthIdleMode = IdleMode.kBrake;
 
     //azimuth current limit
-    public static int azimuthCurrentLimit = 20;
+    public static int azimuthCurrentLimit = 30;
 
     // Azimuith absolute encoder position conversion factor
     public static double azimuthAbsolutePositionConversionFactor = 360;
@@ -83,7 +83,7 @@ public class SwerveConfigs {
     public static double azimuthIncrementalPositionConversionFactor = 360.0 / (5.23 * 3.61 * (58.0 / 18.0));
 
     // kp
-    public static double azimuthPIDkP = 0.05;
+    public static double azimuthPIDkP = 0.075;
 
     //does azimuth pid wrap
     public static boolean azimuthPIDwrapping = true;
