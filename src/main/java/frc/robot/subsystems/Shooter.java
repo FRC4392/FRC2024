@@ -91,7 +91,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runShooter(double velo) {
-    return this.runEnd(() -> setShooterSpeed(velo), () -> stop());
+    return this.run(() -> setShooterSpeed(velo));
   }
 
   public Command runShooterVariable(DoubleSupplier speed){
